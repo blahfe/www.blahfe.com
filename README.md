@@ -1,4 +1,4 @@
-# Company ----company configuration
+# Company --- company configuration
 
 ## Deployment
 ```
