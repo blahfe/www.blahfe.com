@@ -1,9 +1,14 @@
-# Company --- company configuration
+# Site configuration of Blahfe & Grpr
 
-## Deployment
-```
-s3cmd/deploy.sh
-```
+## Useful commands
+
+- `npm run build`   compile typescript to js
+- `npm run watch`   watch for changes and compile
+- `npm run test`    perform the jest unit tests
+- `s3cmd/deploy.sh` deploy this stack to your default AWS account/region
+- `cdk deploy`      deploy this stack to your default AWS account/region
+- `cdk diff`        compare deployed stack with current state
+- `cdk synth`       emits the synthesized CloudFormation template
 
 ---
 
