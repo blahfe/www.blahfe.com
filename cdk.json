@@ -1,3 +1,7 @@
 {
+  "context": {
+    "project": "www.blahfe.com",
+    "owner": "nabinno"
+  },
   "app": "npx ts-node bin/www.blahfe.com.ts"
 }

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import "source-map-support/register";
 import cdk = require("@aws-cdk/core");
-import { WwwBlahfeComStack } from "../lib/www.blahfe.com-stack";
+import { CodepipelineStack } from "../lib/codepipeline-stack";
+import { S3deployStack } from "../lib/s3deploy-stack";
 
 const app = new cdk.App();
-new WwwBlahfeComStack(app, "WwwBlahfeComStack");
+new CodepipelineStack(app, "CodepipelineStack");
+new S3deployStack(app, "S3deployStack");
