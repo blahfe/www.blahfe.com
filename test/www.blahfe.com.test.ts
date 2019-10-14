@@ -4,19 +4,20 @@ import {
   MatchStyle
 } from "@aws-cdk/assert";
 import cdk = require("@aws-cdk/core");
-import WwwBlahfeCom = require("../lib/www.blahfe.com-stack");
+import { CodepipelineStack } from "../lib/codepipeline-stack";
 
-test("Empty Stack", () => {
+describe("CodepipelineStack", () => {
   const app = new cdk.App();
-  // WHEN
-  const stack = new WwwBlahfeCom.WwwBlahfeComStack(app, "MyTestStack");
-  // THEN
-  expectCDK(stack).to(
-    matchTemplate(
-      {
-        Resources: {}
-      },
-      MatchStyle.EXACT
-    )
-  );
+  const stack = new CodepipelineStack(app, "MyTestStack");
+
+  it("should match template", () => {
+    expectCDK(stack).to(
+      matchTemplate(
+        {
+          Resources: {}
+        },
+        MatchStyle.EXACT
+      )
+    );
+  });
 });
