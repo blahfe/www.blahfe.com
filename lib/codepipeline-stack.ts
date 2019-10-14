@@ -36,7 +36,7 @@ export class CodepipelineStack extends cdk.Stack {
           repo: projectName,
           oauthToken: cdk.SecretValue.secretsManager(projectName, { jsonField: "github-token" }),
           output: sourceOutput,
-          branch: "feature/aws-codepipeline-actions",
+          branch: "master",
           trigger: codepipeline_actions.GitHubTrigger.POLL
         })
       ]
