@@ -3,11 +3,12 @@ import codepipeline = require("@aws-cdk/aws-codepipeline");
 import codepipeline_actions = require("@aws-cdk/aws-codepipeline-actions");
 import codebuild = require("@aws-cdk/aws-codebuild");
 
-export class CodepipelineStack extends cdk.Stack {
+export class WwwBlahfeComCodepipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    let stageName: string = "prod";
+    const stackName = this.stackName;
+    let stageName: string = "Prod";
     if (this.node.tryGetContext("stage") !== undefined) {
       stageName = this.node.tryGetContext("stage");
     }
@@ -23,7 +24,7 @@ export class CodepipelineStack extends cdk.Stack {
       jsonField: "region"
     }).toString();
     const pipeline = new codepipeline.Pipeline(this, "pipeline", {
-      pipelineName: `${projectName}-${stageName}`
+      pipelineName: `${stackName}-${stageName}`
     });
     const sourceOutput = new codepipeline.Artifact();
 
@@ -47,7 +48,8 @@ export class CodepipelineStack extends cdk.Stack {
       actions: [
         new codepipeline_actions.CodeBuildAction({
           actionName: "NpmAndS3deploy_Build",
-          project: new codebuild.PipelineProject(this, projectName, {
+          project: new codebuild.PipelineProject(this, "NpmAndS3deploy", {
+            projectName: `${stackName}-NpmAndS3deploy-${stageName}`,
             environment: {
               buildImage: codebuild.LinuxBuildImage.UBUNTU_14_04_NODEJS_10_1_0,
               privileged: true
@@ -72,7 +74,9 @@ EOF`
                 },
                 build: { commands: ["npm run build"] },
                 post_build: {
-                  commands: ["npm run cdk deploy -v S3deployStack --require-approval=never"]
+                  commands: [
+                    "npm run cdk deploy -v WwwBlahfeComS3deployStack --require-approval=never"
+                  ]
                 }
               }
             })
