@@ -8,10 +8,11 @@ export class WwwBlahfeComCodepipelineStack extends cdk.Stack {
     super(scope, id, props);
 
     const stackName = this.stackName;
-    let stageName: string = "Prod";
+    let stageName: string = "prod";
     if (this.node.tryGetContext("stage") !== undefined) {
       stageName = this.node.tryGetContext("stage");
     }
+    const capStageName: string = stageName.charAt(0).toUpperCase() + stageName.slice(1);
     const projectName: string = this.node.tryGetContext("project");
     const ownerName: string = this.node.tryGetContext("owner");
     const awsAccessKeyId: string = cdk.SecretValue.secretsManager(projectName, {
@@ -20,11 +21,9 @@ export class WwwBlahfeComCodepipelineStack extends cdk.Stack {
     const awsSecretAccessKey: string = cdk.SecretValue.secretsManager(projectName, {
       jsonField: "aws-secret-access-key"
     }).toString();
-    const region: string = cdk.SecretValue.secretsManager(projectName, {
-      jsonField: "region"
-    }).toString();
+    const region = this.region;
     const pipeline = new codepipeline.Pipeline(this, "pipeline", {
-      pipelineName: `${stackName}-${stageName}`
+      pipelineName: `${stackName}-${capStageName}`
     });
     const sourceOutput = new codepipeline.Artifact();
 
@@ -49,7 +48,7 @@ export class WwwBlahfeComCodepipelineStack extends cdk.Stack {
         new codepipeline_actions.CodeBuildAction({
           actionName: "NpmAndS3deploy_Build",
           project: new codebuild.PipelineProject(this, "NpmAndS3deploy", {
-            projectName: `${stackName}-NpmAndS3deploy-${stageName}`,
+            projectName: `${stackName}-NpmAndS3deploy-${capStageName}`,
             environment: {
               buildImage: codebuild.LinuxBuildImage.UBUNTU_14_04_NODEJS_10_1_0,
               privileged: true
