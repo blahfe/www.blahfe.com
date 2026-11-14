@@ -3,7 +3,8 @@
 Blahfe & Grprの公開Webサイト。Confluence / RefinedからGitHub Pagesへ移行。
 
 - `content/`: 公開済みコンテンツのMarkdown。内部資料・下書きは含めない。
-- `assets/`: CMSに依存しない画像とスタイル。
+- `assets/`: CMSに依存しない画像・フォント・既存テーマCSS。
+- `templates/`: 現行HPの固定ページと共通ヘッダー・フッターのレイアウト。
 - `scripts/build.py`: Markdownから静的HTMLを生成。
 - `docs/`: GitHub Pages配信ディレクトリ（生成物もコミットする）。
 - `legacy/`: 旧AWS/CDK構成。現行サイトでは使用しない。
@@ -14,10 +15,14 @@ Blahfe & Grprの公開Webサイト。Confluence / RefinedからGitHub Pagesへ�
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python scripts/build.py
+.venv/bin/python scripts/build.py --base /
 python3 -m http.server 8000 --directory docs
 ```
 
-`content/`を編集し、再生成した`docs/`とともにコミットする。
+ナレッジ本文は`content/`、固定ページの配置・文言は`templates/`で編集し、再生成した`docs/`とともにコミットする。固定ページのMarkdownも併せて更新する。
+
+元HPの青いヒーロー・3列サービス紹介・画像カード・フォント・配色を引き継ぐ。画像とスタイルはローカル配信し、CMSへの実行時依存を持たない。ナレッジ検索・ツリー展開・追加読み込み、モバイルメニューは`assets/site.js`で動作する。
+ローカル確認後、コミット前に引数なしの`build.py`でプロジェクトURL向けに再生成する。
 GitHub Pagesの配信元は`master`ブランチの`/docs`。
 カスタムドメイン切替前は`https://blahfe.github.io/www.blahfe.com/`で確認する。
 内部資料は非公開の https://github.com/blahfe/docs に置く。
