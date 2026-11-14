@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hyper-VモードでLinux OSとAndroid OSを同時使用する | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n53/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-03-09">9 3月, 2017</time><h1>Hyper-VモードでLinux OSとAndroid OSを同時使用する</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#hyper-vモードでlinux-osvmとandroid-osvmを同時使用する方法">Hyper-VモードでLinux OS（VM）とAndroid OS（VM）を同時使用する方法</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="800" alt="thumbnail" src="/assets/blog/32ef0cf5c44b9ebd.png"></p>
+<p>Xamarinの開発環境を模索しています。普段はLinux/Hyper-V上でAPIを開発しているのですが、Hyper-VとAndroid Emulatorとの組み合わせがまだ整備されておらず一筋縄ではいかなかったのでその備忘となります。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>普段の開発環境CentOS/Hyper-Vを変更することなく、Xamarinをつかいたい</li>
+<li>CentOS/Hyper-V上にAPIサーバーをたてて、XamarinアプリからAPIをたたく構成</li>
+<li>Android EmulatorはIntel HAXM＋ホスト型Hypervisor前提のものが多い</li>
+<li>VirtualBoxなどホスト型HypervisorだとVMがよくクラッシュしてつらい<ul>
+<li>なので、APIサーバーはHyper-Vでたてている</li>
+<li>また、オフィス移動が多いのでネットワーク環境はおもにWi-Fi（無線LAN）を使用している</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、Hyper-Vでイメージ管理するVisual Studio Emulator for Android（VS Emulator）を使うことにしました。これで何もせずに解決かというそうではなく、まず前提としてネットワーク上の注意があります。</p>
+<ol>
+<li>VS EmulatorはHyper-VのNetwork AdapterをEthernet（有線LAN）しか使用できません。Wi-Fi（無線LAN）は使用できません</li>
+<li>VS Emulatorの各デバイス(Android VM）を初回起動させる際に、有線LANと無線LAN双方からネットワークにつなげていると失敗します</li>
+</ol>
+<h3 id="hyper-vモードでlinux-osvmとandroid-osvmを同時使用する方法">Hyper-VモードでLinux OS（VM）とAndroid OS（VM）を同時使用する方法</h3>
+<p>その上で、同時使用する方法ですが、先ほどネットワークの注意を考慮すると下記のような流れになります。</p>
+<ol>
+<li><code>Stop-VM CentOS</code> 現在稼働しているLinux VMを停止します</li>
+<li><code>Disable-NetAdapter Wi-Fi</code> 無線LANの接続を停止し、有線LANのみの接続にします</li>
+<li>VS EmulatorからAndroid VMを初回起動します、そうすると有線LAN用のvEthernetが作成されます</li>
+<li><code>Enable-NetAdapter Wi-Fi</code> - 無線LAN、有線LAN、双方を接続します</li>
+<li><code>Start-VM CentOS</code> - Linux VMを起動します</li>
+</ol>
+<h2 id="wrapup">WRAPUP</h2>
+<p>Windows Subsystems for Linux等、Windowsの仮想化環境はまだ発展途上にあります。おそらく今回の対処方法は一時的なものに過ぎず、こうしたネットワーク上の注意を意識することなく解決できると思われます。しばし様子見です。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

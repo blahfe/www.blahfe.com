@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>踏み台をSSM Session ManagerとAWS SSOで実現する | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n119/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-11-21">21 11月, 2021</time><h1>踏み台をSSM Session ManagerとAWS SSOで実現する</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#踏み台サーバーの設定">踏み台サーバーの設定</a></li>
+<li><a href="#ssoの設定">SSOの設定</a></li>
+<li><a href="#セッションを張るための事前準備">セッションを張るための事前準備</a></li>
+<li><a href="#dbクライアントの設定">DBクライアントの設定</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>踏み台のユーザーが増えてきたため公開鍵管理や監視と運用負荷が上がってきました。オペミスが発生しやすい上 監査的な意味で無視できない状況になってきたので重い腰を上げることにしました。</p>
+<p><img alt="thumbnail" src="/assets/blog/f3d1192d49a5c996.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>EC2インスタンスの踏み台運用がつらい<ul>
+<li>公開鍵管理がつらい<ul>
+<li>提出・設定・確認ともに運用コストがかかる</li>
+<li>AWSアカウント数 x ユーザー数で指数関数的に運用コストが増していくことが想定される</li>
+<li>インフラ管理が分散していると、提出側・設定側ともに重複コストが発生する</li>
+</ul>
+</li>
+<li>監視運用がつらい<ul>
+<li>定期的に踏み台がブルートフォース攻撃を受けており、脅威が低いとは言えストレスがかかる</li>
+<li>踏み台アクセスへの監査ログが不十分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、Session ManagerとSSOでアクセス管理の効率化を狙います。</p>
+<h3 id="踏み台サーバーの設定">踏み台サーバーの設定</h3>
+<p>まず、データフローとしては下記の図の通りで、今回はプライベートサブネット上にEC2を置いて素のSession ManagerでDBへの接続することにします。当該インスタンスは <code>AmazonSSMManagedInstanceCore</code> ポリシー<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>を含んだロールを適用。なお、ECS ExecではSession Managerでポートフォワーディングを実現でき無かったことに加え、既存の踏み台資産を流用するため今回の実装対象から外しました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor &quot;端末\nDBクライアント&quot; as U
+box AWS
+    actor &quot;STS/SSO&quot; as S
+    participant &quot;踏み台サーバ\nprivate subnet&quot; as E
+    database DB as D
+end box
+
+U &lt;-&gt; S: AssumeRole
+activate U
+activate S
+U &lt;-&gt; E: aws ssm start-session\nポートフォワード
+activate E
+E &lt;-&gt; D: 認証
+activate D
+U -&gt; E
+E &lt;-&gt; D: クエリ
+deactivate D
+E ---&gt; U
+deactivate E
+deactivate U
+deactivate S
+</code></pre>
+<h3 id="ssoの設定">SSOの設定</h3>
+<p>踏み台サーバーの設定が終わったら、次に当該インスタンスへ接続するためにSSOで渡すロールをアクセス権限セットに設定します。下記カスタムポリシーはEC2インスタンスにアクセスするための必要最低限のものになります。</p>
+<details><summary>カスタムポリシー</summary>
+
+
+<pre><code class="language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;cloudwatch:PutMetricData&quot;,
+                &quot;ds:CreateComputer&quot;,
+                &quot;ds:DescribeDirectories&quot;,
+                &quot;ec2:DescribeInstanceStatus&quot;,
+                &quot;logs:*&quot;,
+                &quot;ssm:*&quot;,
+                &quot;ec2messages:*&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;ssm:StartSession&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:ssm:*:*:session/&lt;EC2インスタンスID&gt;&quot;,
+                &quot;arn:aws:ec2:*:*:instance/&lt;EC2インスタンスID&gt;&quot;
+            ]
+        },
+        {
+            &quot;Effect&quot;: &quot;Deny&quot;,
+            &quot;Action&quot;: [
+                &quot;ssm:Describe*&quot;,
+                &quot;ssm:Get*&quot;,
+                &quot;ssm:List*&quot;,
+                &quot;logs:Describe*&quot;,
+                &quot;logs:Get*&quot;,
+                &quot;logs:List*&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: &quot;iam:CreateServiceLinkedRole&quot;,
+            &quot;Resource&quot;: &quot;arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM*&quot;,
+            &quot;Condition&quot;: {
+                &quot;StringLike&quot;: {
+                    &quot;iam:AWSServiceName&quot;: &quot;ssm.amazonaws.com&quot;
+                }
+            }
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: &quot;iam:CreateServiceLinkedRole&quot;,
+            &quot;Resource&quot;: &quot;arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM*&quot;,
+            &quot;Condition&quot;: {
+                &quot;StringLike&quot;: {
+                    &quot;iam:AWSServiceName&quot;: &quot;ssm.amazonaws.com&quot;
+                }
+            }
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;iam:DeleteServiceLinkedRole&quot;,
+                &quot;iam:GetServiceLinkedRoleDeletionStatus&quot;
+            ],
+            &quot;Resource&quot;: &quot;arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM*&quot;
+        },
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;ssmmessages:CreateControlChannel&quot;,
+                &quot;ssmmessages:CreateDataChannel&quot;,
+                &quot;ssmmessages:OpenControlChannel&quot;,
+                &quot;ssmmessages:OpenDataChannel&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        }
+    ]
+}
+</code></pre>
+
+</details>
+
+<h3 id="セッションを張るための事前準備">セッションを張るための事前準備</h3>
+<p>セッションを張るためには下記3つの手順が必要になります。SSO経由のセッション設定が2通りありますが、クレデンシャル方式はセッションが切れる毎に変更する手間があるため、CLI方式をお薦めします。</p>
+<ol>
+<li><a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/install-cliv2.html">AWS CLI v2をインストール</a></li>
+<li>下記いずれかの方式でSSO経由のセッション設定を行う<ul>
+<li><a href="https://aws.amazon.com/jp/blogs/news/aws-single-sign-on-now-enables-command-line-interface-access-for-aws-accounts-using-corporate-credentials/">クレデンシャル方式</a></li>
+<li><a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-configure-sso.html">CLI（ <code>aws sso login</code> ）方式</a></li>
+</ul>
+</li>
+<li><a href="https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html">Session Manager プラグインをインストール</a></li>
+</ol>
+<h3 id="dbクライアントの設定">DBクライアントの設定</h3>
+<p>最後に、DBクライアントについて3つの手順を踏んで接続を試みます<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。なお、ローカル環境でポートフォワーディングを都度行うのを省略したい方は、<a href="https://zenn.dev/nabinno/articles/ssm-session-manager-for-datagrip">DataGripを利用する</a>と良いでしょう。</p>
+<ol>
+<li>ローカル環境にて <code>~/.ssh/config</code> ファイルを編集<ul>
+<li>Session Managerにproxyと対象RDSのエンドポイントを記載
+    <code>config
+    Host &lt;任意のhost名&gt;
+        HostName &lt;※ 指定しなければlocalhostになる&gt;
+        User ec2-user
+        ProxyCommand sh -c "aws ssm start-session --target &lt;接続する踏み台のインスタンスID&gt; --document-name AWS-StartSSHSession --parameters 'portNumber=%p' --region ap-northeast-1 --profile &lt;プロフィール&gt;"
+        LocalForward &lt;任意のポート&gt; &lt;RDSエンドポイント&gt;:&lt;RDSポート&gt;
+        IdentityFile ~/.ssh/&lt;EC2に接続する秘密鍵&gt;</code></li>
+<li>設定したhost名でセッションマネージャー越しにssh接続できるかを確認
+    <code>sh
+    $ ssh &lt;設定したhost名&gt;</code></li>
+</ul>
+</li>
+<li>手順1で設定したsshで接続することでポートフォワーディング</li>
+<li>DBクライアントで下記のように接続情報を設定し接続する<ul>
+<li>Host: <code>&lt;手順1のconfigファイルにて任意指定したホスト名&gt;</code></li>
+<li>Port: <code>&lt;手順4のconfigファイルにて任意指定したポート&gt;</code></li>
+<li>他項目: DB接続情報</li>
+</ul>
+</li>
+</ol>
+<h2 id="wrapup">WRAPUP</h2>
+<p>パブリックサブネット上の踏み台に慣れている方は馴染みのない方法に戸惑うかも知れませんが、踏み台資産を流用できるという意味で導入のコストもそれほどかかりませんし、ユーザーとしても利用の敷居は高くありませんでした。後々の管理コストを心配している方は一度検討してみてはいかがでしょうか。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><a href="https://dev.classmethod.jp/articles/check-amazonec2roleforssm-policy/"><code>AmazonEC2RoleforSSM</code> は非推奨</a>のため適用しないように注意します。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>今回はメンテナンスコストを避けるためSSH over SSMの関連ツール <code>ssh-ssm.sh</code> <code>ssm-tool</code> は使わない方針でいます。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

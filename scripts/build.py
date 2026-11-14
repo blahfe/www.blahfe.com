@@ -46,7 +46,7 @@ def local_urls(markup):
     return markup.replace('url(&quot;/assets/', 'url(&quot;' + base + 'assets/').replace('url("/assets/', 'url("' + base + 'assets/').replace("url('/assets/", "url('" + base + 'assets/')
 
 
-def page(title, body, route, toc_html=''):
+def page(title, body, route, toc_html='', date_html=''):
     title = html.escape(title)
     templates = ROOT / 'templates'
     name = {'': 'home', 'page/vision/': 'vision', 'page/member/': 'member', 'page/contact/': 'contact', 'space/knowledge/': 'knowledge'}.get(route)
@@ -54,7 +54,7 @@ def page(title, body, route, toc_html=''):
         main = (templates / (name + '.html')).read_text()
     else:
         outline = f'<details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次">{toc_html}</nav></details>' if toc_html else ''
-        main = f'<main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><h1>{title}</h1>{outline}{body}</article></main>'
+        main = f'<main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a>{date_html}<h1>{title}</h1>{outline}{body}</article></main>'
     header = (templates / 'header.html').read_text()
     header = re.sub(r' aria-current="page"', '', header)
     header = header.replace(' rw_active', '').replace('router-link-active', '').replace('router-link-exact-active', '')
@@ -74,6 +74,7 @@ for source in sorted((ROOT / 'content').rglob('*.md')):
     text = source.read_text()
     title = source.stem
     toc_depth = '1-3'
+    date_html = ''
     if text.startswith('---\n'):
         meta, text = text[4:].split('\n---\n', 1)
         match = re.search(r'^title: (.+)$', meta, re.M)
@@ -82,11 +83,16 @@ for source in sorted((ROOT / 'content').rglob('*.md')):
         depth_match = re.search(r'^toc_depth: "([1-6]-[1-6])"$', meta, re.M)
         if depth_match:
             toc_depth = depth_match.group(1)
+        date_match = re.search(r'^date: "(\d{4}-\d{2}-\d{2})"$', meta, re.M)
+        if date_match:
+            year, month, day = date_match.group(1).split('-')
+            label = f'{int(day)} {int(month)}月, {year}'
+            date_html = f'<time class="article-date" datetime="{date_match.group(1)}">{label}</time>'
     title = html.unescape(title)
     # Local public links keep working both at the project URL and custom domain.
     text = re.sub(r'(?m)^\[TOC\]\s*$', '', text)
     renderer = markdown.Markdown(
-        extensions=['tables', 'fenced_code', 'sane_lists', 'toc'],
+        extensions=['tables', 'fenced_code', 'sane_lists', 'footnotes', 'toc'],
         extension_configs={'toc': {'slugify': slugify_unicode, 'toc_depth': toc_depth}},
     )
     body = renderer.convert(text)
@@ -94,7 +100,7 @@ for source in sorted((ROOT / 'content').rglob('*.md')):
     body = re.sub(r'<(/?)h([1-5])(\s[^>]*)?>', lambda m: '<' + m[1] + 'h' + str(int(m[2])+1) + (m[3] or '') + '>', body)
     dest = out / route / 'index.html'
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text('\n'.join(line.rstrip() for line in page(title, body, route, toc_html).splitlines()) + '\n')
+    dest.write_text('\n'.join(line.rstrip() for line in page(title, body, route, toc_html, date_html).splitlines()) + '\n')
     raw = out / rel
     raw.parent.mkdir(parents=True, exist_ok=True)
     raw.write_text(source.read_text())

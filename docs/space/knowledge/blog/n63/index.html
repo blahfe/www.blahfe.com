@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>イケてるしヤバい言語REBOLの後継Redでクライアントソフトをつくった話 | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n63/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2019-03-31">31 3月, 2019</time><h1>イケてるしヤバい言語REBOLの後継Redでクライアントソフトをつくった話</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#やったこと">やったこと</a><ul>
+<li><a href="#エディター">エディター</a></li>
+<li><a href="#糖衣構文の適用">糖衣構文の適用</a></li>
+<li><a href="#タスクランナーの用意">タスクランナーの用意</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>Redという言語はご存じでしょうか。可読性が高いシンタックスを持ち、ワンバイナリーをクロスコンパイルでき、かつ、クライアント用のUIコンポーネントを標準ライブラリに備えたプログラミング言語です。その野心的な挑戦にすぐに虜になりました。新年早々の恋です。</p>
+<p><img alt="thumbnail" src="/assets/blog/1c096d99647ebce3.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>クロスプラットフォーム用のクライアントソフトをつくるにあたり<ul>
+<li>重たいフレームワークが多い</li>
+<li>汎用的な言語をつかってるものが多く、そのためライブラリー等の依存関係が多くなりやすい</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、年明け見つけたRedがシンプルだったので使ってみました。題材は以前つくったEmacsライブラリ「<a href="https://github.com/nabinno/esa.el">esa.el</a>」の移植です。</p>
+<ul>
+<li>今回作ったコード <a href="https://github.com/nabinno/esa.red">https://github.com/nabinno/esa.red</a></li>
+</ul>
+<h3 id="やったこと">やったこと</h3>
+<h4 id="エディター">エディター</h4>
+<p>構文がすなおなので特にエディタは関係なさそうでしたが、慣れ親しんでるEmacsに「<a href="https://github.com/Skrylar/red.el">Skrylar/red.el</a>」を適用しました。その際、 <code>red-font-lock-keywords</code> と <code>red-indent-line</code> に足りない箇所があったので<a href="https://github.com/nabinno/dotfiles/blob/master/.emacs.d/lisp/init-red.el">オーバーライドしました</a>。</p>
+<h4 id="糖衣構文の適用">糖衣構文の適用</h4>
+<p>RedはコマンドラインREPLがつかえるので、 <a href="https://github.com/red/docs/blob/master/en/SUMMARY.adoc">docs.red-lang.org</a> と<a href="https://www.red-by-example.org/">Red by Example</a>をみながらひとつひとつ挙動を確認しました。その中でどうしても慣れない表現が2つあったので糖衣構文を実装しました。</p>
+<ul>
+<li>実装した糖衣構文 <a href="https://github.com/nabinno/red-elixir">nabinno/red-elixir</a></li>
+</ul>
+<p><strong>1. compose</strong></p>
+<p>ブロック内の変数を評価しブロックとして返す関数 <code>compose</code> は、VIDのフェイス更新によく使われます。HTML/JavaScripでいうところDOM更新にあたるものといえば分かるでしょうか。頻繁に「 <code>compose [foo (bar)]</code> 」のような表現がつづくとほかの変数や関数とまざり可読性がおちるので、Elixirのシジルを参考に <code>compose</code> 関数を省略しました。こんな感じです。</p>
+<pre><code>;-- before
+compose [foo (bar)]
+
+;-- after
+~c[foo (bar)]
+</code></pre>
+<p><strong>2. 関数の入れ子</strong></p>
+<p>素のRedはイテレーター構文なので、関数の入れ子による可読性低下をおさえるため変数定義をよく使います。個人的には変数は意味のあるものだけ使いたい派なので、パイプを導入しました。といっても、フロントエンドの場合、データ加工はあまりやらないのでつかうケースはほぼありませんでした。あってもこのくらいです。</p>
+<pre><code class="language-red">;-- before
+rejoin collect [
+    foreach d data [
+        keep rejoin [d &quot;  &quot;]
+    ]
+]
+
+;-- after
+data .[
+    |&gt; Series/map 'd [rejoin [d &quot;  &quot;]]
+    |&gt; rejoin
+]
+</code></pre>
+<h4 id="タスクランナーの用意">タスクランナーの用意</h4>
+<p>今回は上で実装したライブラリ「red-elixir」のほかにHTTPリクエスト・JSONパーサーライブラリを使っています。ライブラリパッケージはインストールはgit submodulesで良いですが、呼び出しも考えると実装が冗長的になるのでパッケージ管理とタスクランナーをあわせて用意しました（<a href="https://github.com/nabinno/hot">nabinno/hot</a>、<a href="https://github.com/nabinno/mods">nabinno/mods</a>）。</p>
+<p><strong>タスクランナーインストール後、パッケージのインストールから呼び出しまでの流れ</strong></p>
+<p>RedはGoとおなじくワンバイナリーなので、wgetやcurlだけでインストールが完了します。</p>
+<pre><code class="language-sh">&gt; mkdir -p ~/.local/bin
+&gt; wget https://github.com/nabinno/hot/releases/download/0.0.3/hot-linux -O ~/.local/bin/hot
+&gt; chmod 744 ~/.local/bin/hot
+</code></pre>
+<p>パッケージ管理はElixirのmixを参考にタスクランナー管理ファイル内に定義します。</p>
+<pre><code class="language-sh">&gt; hot cmd/install https://raw.githubusercontent.com/nabinno/mods/master/mods.red
+&gt; cat hots.red
+Red []
+
+hots: context [
+    mods: [
+        red-elixir #(init: %init.red git: https://github.com/nabinno/red-elixir)
+        json #(init: %json.red git: https://github.com/rebolek/red-tools)
+        http-tools #(init: %http-tools.red git: https://github.com/rebolek/red-tools)
+    ]
+]
+&gt; hot mods/get
+</code></pre>
+<p>ビルド時は <code>#include</code> をつかうのでパッケージ呼び出し機能は使えないですが、コマンドラインREPLで挙動確認している際は <code>do/args %require</code> を使います。</p>
+<pre><code class="language-sh">&gt; red
+&gt;&gt; do/args %require [red-elixir]
+&gt;&gt; 1 .. 10 .[
+    |&gt; Series/map 'i [i * 2]
+    |&gt; Series/map 'i [i + 1]
+]
+== [3 5 7 9 11 13 15 17 19 21]
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>クライアントソフトを作る中で感じたことは、この1点です。Redは既存のフレームワークと比べるとまだまだ機能不足感が拭えませんが、それを補えるだけの表現力を持っていました。手触りが本当に良い言語でした。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

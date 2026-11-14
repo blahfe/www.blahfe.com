@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>提供していない決済方法を業務で取り扱う際に気をつけること | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n140/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2022-05-02">2 5月, 2022</time><h1>提供していない決済方法を業務で取り扱う際に気をつけること</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a><ul>
+<li><a href="#通常のケース">通常のケース</a></li>
+<li><a href="#不整合が起きるケース銀行振込と通常決済が同時に実行">不整合が起きるケース「銀行振込と通常決済が同時に実行」</a></li>
+</ul>
+</li>
+<li><a href="#solution">SOLUTION</a></li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>ECプロダクトを扱っていると、銀行振込という決済方法には欠かせないものとなります。しかしながら、特定のターゲット層を除いて、高いコストがかかる銀行振込は通常は裏メニューとして実装されることが多いでしょう。今回は、このケースにおける課題と解決策について詳しくご説明いたします。事前に対策を講じておくことで、業務の硬直化やスケーリングへの影響を最小限に抑えることができるでしょう。</p>
+<p><img alt="thumbnail" src="/assets/blog/4e78353582c3e70a.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<p>銀行振込のみを通常の決済方法として提供している場合には、以下のような問題が生じることがあります。</p>
+<ol>
+<li>人力でトランザクションを処理する必要があるため、予期せぬ支払いや二重決済が発生する可能性があります。</li>
+<li>不整合処理に関わるCS担当者に権限が集中してしまい、運用上の制約が生じることがあります。</li>
+</ol>
+<h3 id="通常のケース">通常のケース</h3>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor ユーザ as U
+box プロダクト
+    database &quot;プロダクト\nアプリ&quot; as D
+    database &quot;プロダクト\n決済&quot; as N
+end box
+database 銀行 as B
+actor &quot;CS&quot; as C
+actor 配送 as L
+
+group (1) 決済方法を銀行に変更
+    U &lt;-&gt; C: |問い合わせ|\n決済方法を銀行に変更
+    activate U
+    activate C
+    C -&gt; D: |管理画面|\n決済方法を銀行振込にロック
+    activate D
+end
+
+group (2) 支払い
+    U -&gt; B: 銀行振込
+    deactivate U
+    activate B
+end
+
+group (3) 決済完了
+    C -&gt; B: 振込確認
+    deactivate B
+    C &lt;-&gt; D: |管理画面|\n決済状況を銀行振込完了に変更
+    deactivate C
+end
+
+group (4) 発送
+    L &lt;-&gt; D: |管理画面|\n決済完了により指示に上がっているアイテムを発送
+    deactivate D
+end
+</code></pre>
+<p>「ユーザ」：もしも銀行振込に変更したいんだけど、できる？
+「CS」：（管理画面を通じて）了解しました。銀行振込を設定しますね。</p>
+<h3 id="不整合が起きるケース銀行振込と通常決済が同時に実行">不整合が起きるケース「銀行振込と通常決済が同時に実行」</h3>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor ユーザ as U
+box プロダクト
+    database &quot;プロダクト\nアプリ&quot; as D
+    database &quot;プロダクト\n決済&quot; as N
+end box
+database 銀行 as B
+actor &quot;CS&quot; as C
+actor 配送 as L
+
+U &lt;-&gt; C: |問い合わせ|\n決済方法を銀行に変更\n* この時点ではCSとユーザ間の取り決めに過ぎない\n* トランザクションなし
+activate U
+activate C
+
+group (1) 正常な支払い
+    U -&gt; B: 銀行振込
+    activate B
+end
+
+group (2) 想定外の支払い
+    U -&gt; D: |アプリ|\n決済
+    deactivate U
+    activate D
+    D &lt;-&gt; N: 決済
+    activate N
+end
+
+group (3) 発送
+    L &lt;-&gt; D: |管理画面|\n決済完了により指示に上がっているアイテムを発送
+end
+
+group (4) 決済確認
+    C -&gt; B: 振込確認
+    deactivate B
+end
+
+group (5) 想定外の支払いを確認
+    C &lt;-&gt; D: |管理画面|\n決済方法が変更できないことを確認
+end
+
+group (6) 不整合処理
+    C -&gt; D: |管理画面|\n請求情報の支払い方法の変更
+    deactivate D
+
+    C &lt;-&gt; N: 決済のキャンセル
+    deactivate C
+    deactivate N
+end
+</code></pre>
+<p>「ユーザ」：（問い合わせをする）銀行振込に変更したいです。
+「CS」：（了承を得て）もちろん、銀行振込をお使いいただけますよ。</p>
+<p>（ユーザが「銀行振込」を選択し、一方で「通常決済」も行われるシーン）</p>
+<p>「ユーザ」：（アプリを通じて）支払い完了！
+「CS」：（困惑した表情で）えっ、銀行振込を選択してくれたはずなのに、通常決済も同時に行われている…？何が起きているのか調べないと。</p>
+<h2 id="solution">SOLUTION</h2>
+<p>銀行振込の不整合を防ぐために、システム側に決済ロックを実装することが重要です。ただし、振込確認を人力で行っている場合には、銀行振込を表側に出すのは難しいかもしれません。そこで、問い合わせタイミングでロックできるよう、問い合わせ窓口を工夫する必要があるでしょう。プロダクトのUXにも関わる重要な課題ですが、根気よく取り組んでいくことが必要です。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor ユーザ as U
+box プロダクト
+    database &quot;プロダクト\nアプリ&quot; as D
+    database &quot;プロダクト\n決済&quot; as N
+end box
+database 銀行 as B
+actor &quot;CS&quot; as C
+actor 配送 as L
+
+group (1) 決済方法を銀行に変更
+    U -&gt; D: |問い合わせ|\n決済方法を\n銀行に変更
+    activate U
+    activate D
+    D -&gt; D: 決済方法を\n銀行振込に\nロック
+    D -&gt; C: 問い合わせ
+    activate C
+    C --&gt; U: 銀行振込方法の案内
+end
+
+group (2) 支払い
+    U -&gt; B: 銀行振込
+    deactivate U
+    activate B
+end
+
+group (3) 決済完了
+    C -&gt; B: 振込確認
+    deactivate B
+    C &lt;-&gt; D: |管理画面|\n決済状況を銀行振込完了に変更
+    deactivate C
+end
+
+group (4) 発送
+    L &lt;-&gt; D: |管理画面|\n決済完了により指示に上がっているアイテムを発送
+    deactivate D
+end
+</code></pre>
+<p>「ユーザ」：（問い合わせをする）銀行振込に変更したいです。
+「プロダクトアプリ」：（問い合わせを受け取りつつ）わかりました。銀行振込をロックしますね。</p>
+<p>「CS」：（ユーザへ案内しながら）銀行振込の方法についてご案内いたします。</p>
+<h2 id="wrapup">WRAPUP</h2>
+<p>ECプロダクトが成長し、決済方法が増えてくると業務処理が複雑化してきます。特に決済の適正性には細心の注意が必要であり、トランザクションの量に応じてリスクアセスメントを行い、適切な対応策を講じていくことが大切です。これにより、業務のスムーズな運営と顧客満足度の向上につなげることができるでしょう。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

