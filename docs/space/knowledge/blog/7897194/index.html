@@ -1,24 +1,43 @@
 <!doctype html>
 <html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ElixirとRaspberry PiでPM2.5などの環境データを定点観察し、目・喉の痛みに備える | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
-<link rel="icon" href="/www.blahfe.com/assets/design/favicon.png"><link rel="canonical" href="https://www.blahfe.com/space/knowledge/blog/7897194/"><link rel="stylesheet" href="/www.blahfe.com/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/www.blahfe.com/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/www.blahfe.com/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/www.blahfe.com/assets/site.css?v=0f3dd7a16fac">
-<script src="/www.blahfe.com/assets/site.js?v=549ec9fbfe72" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/www.blahfe.com/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
-  <img class="header-background" src="/www.blahfe.com/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/7897194/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=7101a3a15f71">
+<script src="/assets/site.js?v=6fbce7aa9bd2" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
   <div class="site-header-inner">
-    <a class="site-brand" href="/www.blahfe.com/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
     <nav class="site-navigation" aria-label="メインメニュー">
-      <a href="/www.blahfe.com/page/vision/">ビジョン</a>
-      <a href="/www.blahfe.com/page/member/">メンバー</a>
-      <a href="/www.blahfe.com/space/knowledge/">ナレッジ</a>
-      <a href="/www.blahfe.com/page/contact/">コンタクト</a>
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
     </nav>
   </div>
 </header>
-<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/www.blahfe.com/space/knowledge/">ナレッジ</a><h1>ElixirとRaspberry PiでPM2.5などの環境データを定点観察し、目・喉の痛みに備える</h1><p>職場環境の空気質が健康に与える影響は定量的に把握されていないことが多い。オフィスでの執務中に目や喉に違和感を覚える現象は珍しくないが、その原因特定は困難である。本稿では、このような状況下で空気質の定量測定と分析を試みた過程と、そこから得られた知見について述べる。</p>
-<h3 id="_1">問題の根源を探る</h3>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><h1>ElixirとRaspberry PiでPM2.5などの環境データを定点観察し、目・喉の痛みに備える</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#問題の根源を探る">問題の根源を探る</a></li>
+<li><a href="#技術的アプローチの構築">技術的アプローチの構築</a></li>
+<li><a href="#データから見えてきた傾向">データから見えてきた傾向</a></li>
+<li><a href="#課題と今後の展望">課題と今後の展望</a><ul>
+<li><a href="#技術的課題">技術的課題</a></li>
+<li><a href="#情報セキュリティ上の考慮点">情報セキュリティ上の考慮点</a></li>
+</ul>
+</li>
+<li><a href="#まとめと示唆">まとめと示唆</a><ul>
+<li><a href="#空気質管理における複合的アプローチの必要性">空気質管理における複合的アプローチの必要性</a></li>
+<li><a href="#症状報告との関連性分析">症状報告との関連性分析</a></li>
+<li><a href="#技術選択の評価">技術選択の評価</a></li>
+<li><a href="#情報システム部門への示唆">情報システム部門への示唆</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></details><p>職場環境の空気質が健康に与える影響は定量的に把握されていないことが多い。オフィスでの執務中に目や喉に違和感を覚える現象は珍しくないが、その原因特定は困難である。本稿では、このような状況下で空気質の定量測定と分析を試みた過程と、そこから得られた知見について述べる。</p>
+<h3 id="問題の根源を探る">問題の根源を探る</h3>
 <p>問題解決の第一段階として症状発生の再現性パターンを観察した。オフィス滞在から約3時間後に目の乾燥感と咽頭痛が発生するという一定のパターンが認められた。これが個人の体調変動によるものか環境要因によるものかを区別するため、Dienmern DM106A 汚染計測器を導入した。同機器は温湿度、PM2.5、PM10（粒子状物質）、TVOC（総揮発性有機化合物）、CO2（二酸化炭素）等の多項目を測定可能である。</p>
 <p>しかし問題はすぐに明らかになった。スポット測定では一時的な数値しか得られず、時間経過による変化や傾向を読み取ることができない。それに手動測定は手間がかかり持続的なモニタリングには不向きだ。</p>
-<h3 id="_2">技術的アプローチの構築</h3>
+<h3 id="技術的アプローチの構築">技術的アプローチの構築</h3>
 <p>この問題に対応するため、Raspberry Pi 3 Model B+を中核とした自動計測システムの構築を開始した。DM106Aを分解し内部センサー構成を物理的に調査した結果、以下の電子部品を選定した：</p>
 <ol>
 <li>Aosong DHT11: GPIO接続による温湿度測定センサー。精度±2℃、±5%RH。応答時間約6秒。</li>
@@ -38,9 +57,9 @@
 <li>外部保存：Google Spreadsheetsに時系列データとして記録</li>
 </ol>
 <p>低レベルハードウェア制御についてはPython/ErlPortを使用し、将来的にElixirネイティブ実装へ移行できるよう、マクロ機能でコード切り替えを容易にした設計としている。</p>
-<h3 id="_3">データから見えてきた傾向</h3>
+<h3 id="データから見えてきた傾向">データから見えてきた傾向</h3>
 <p>システムを5日間稼働させた結果、いくつかの興味深い知見が得られた。</p>
-<p><img alt="image" src="/www.blahfe.com/assets/attachments/att7864427.png" /></p>
+<p><img alt="image" src="/assets/attachments/att7864427.png" /></p>
 <p>データ分析から得られた主要な知見は以下の3点である：</p>
 <p>第一に、オフィス設置の空気清浄機「Hitachi EP-LVG110」の性能特性が明確になった。同機器はHEPAフィルターを搭載しており、PM2.5値を環境基準値である15μg/m³以下に維持する効果が測定された。しかし、活性炭フィルター搭載にもかかわらず、TVOC（総揮発性有機化合物）濃度には有意な低減効果が認められなかった。この観測結果はTroia(2018)の研究および加藤・苅部(2021)の報告と整合性がある。具体的には、空気清浄機稼働時でもTVOC値が220ppbから480ppbの間で変動し、米国EPAの推奨値である220ppbを超過する時間帯が1日あたり平均4.2時間記録された。</p>
 <p>第二に、執務室の人員動態と空気質パラメータの間に相関関係が検出された。特に顕著だったのは、以下の時間帯における空気質悪化である：</p>
@@ -50,9 +69,9 @@
 </ol>
 <p>特筆すべきは、人員が「退室」する際よりも「入室」する際にTVOC濃度上昇が著しい点である。これは外部環境のVOC（揮発性有機化合物）が衣服や所持品に吸着し、室内に持ち込まれる現象と解釈できる。実際、朝の入室ピーク時にはTVOC値が毎日安定して上昇し、その後徐々に減少するパターンが観測された。</p>
 <p>第三に、外部環境因子と室内空気質の関連性が示唆された。日本気象協会提供のPM2.5分布予測データとの比較分析により、外部PM2.5濃度が25μg/m³を超える日には、室内TVOC濃度も平均17%高値を示した。これはPM粒子がVOC分子の運搬体（キャリア）として機能している可能性を示唆するものである。このメカニズムは大気化学の観点から説明可能であり、PM表面への有機分子吸着現象として知られている。</p>
-<h3 id="_4">課題と今後の展望</h3>
+<h3 id="課題と今後の展望">課題と今後の展望</h3>
 <p>本システムの運用過程で明らかになった技術的課題と情報セキュリティ上の考慮点を以下に詳述する：</p>
-<h4 id="_5">技術的課題</h4>
+<h4 id="技術的課題">技術的課題</h4>
 <ol>
 <li>TVOC測定値の高変動性：
   - 問題：CCS811センサーによるTVOC測定値が短時間で最大±150ppbの変動を示した
@@ -68,7 +87,7 @@
   - 検証方法：アレカヤシ、サンセベリア等のVOC吸収効率の高い植物を段階的に導入し、TVOC値変化を記録
   - 想定効果：NASA Clean Air Studyに基づき、適切な植物選定により最大25%のTVOC削減可能性</li>
 </ol>
-<h4 id="_6">情報セキュリティ上の考慮点</h4>
+<h4 id="情報セキュリティ上の考慮点">情報セキュリティ上の考慮点</h4>
 <ol>
 <li>収集データの機密性：
   - リスク評価：収集データから在室状況・勤務パターンが推測可能
@@ -91,9 +110,9 @@
   - 懸念：センサーデータ改ざんによる環境条件の偽装可能性
   - 対策：データ署名、チェックサム検証、改ざん検知メカニズムの導入検討</li>
 </ol>
-<h3 id="_7">まとめと示唆</h3>
+<h3 id="まとめと示唆">まとめと示唆</h3>
 <p>本研究から導出された主要な知見と、それらの組織的実装に向けた示唆を以下にまとめる：</p>
-<h4 id="_8">空気質管理における複合的アプローチの必要性</h4>
+<h4 id="空気質管理における複合的アプローチの必要性">空気質管理における複合的アプローチの必要性</h4>
 <p>室内空気質（IAQ: Indoor Air Quality）は単一要因ではなく複数パラメータの複合的相互作用で決定される。本研究では特に以下の点が明確になった：</p>
 <ol>
 <li>粒子状物質と揮発性化合物の独立性：
@@ -108,7 +127,7 @@
   - 外部PM2.5濃度と内部TVOC値の正の相関
   - 両者の関連メカニズムの解明が今後の研究課題</li>
 </ol>
-<h4 id="_9">症状報告との関連性分析</h4>
+<h4 id="症状報告との関連性分析">症状報告との関連性分析</h4>
 <p>収集データと目・喉の刺激症状発生の時系列分析から、以下の相関パターンが特定された：</p>
 <ol>
 <li>TVOC値が350ppbを超過後、平均45分で症状報告</li>
@@ -116,7 +135,7 @@
 <li>相対湿度が30%を下回る状況下での症状増加</li>
 </ol>
 <p>これらの観測結果は、米国EPAおよびASHRAE（米国暖房冷凍空調学会）の室内空気質ガイドラインと整合的であり、特にTVOCとCO2の管理強化の必要性を示唆している。</p>
-<h4 id="_10">技術選択の評価</h4>
+<h4 id="技術選択の評価">技術選択の評価</h4>
 <p>Erlang VM上で動作するElixirは以下の点でIoTセンサーシステムに適合性が高いことが実証された：</p>
 <ol>
 <li>稼働安定性：5日間の連続稼働で0回のシステムクラッシュ</li>
@@ -124,7 +143,7 @@
 <li>スケーラビリティ：将来的なセンサー追加に対するコードベース拡張性</li>
 <li>メンテナンス容易性：監視ツリーモデルによる自動回復機能</li>
 </ol>
-<h4 id="_11">情報システム部門への示唆</h4>
+<h4 id="情報システム部門への示唆">情報システム部門への示唆</h4>
 <p>本研究の知見に基づき、組織の情報システム部門が検討すべき施策として以下を提案する：</p>
 <ol>
 <li>環境データ管理基盤の整備：

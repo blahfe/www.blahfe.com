@@ -1,3 +1,7 @@
+// Keep links from the previous project Pages URL after moving to the organization root.
+if (location.hostname === 'blahfe.github.io' && location.pathname.startsWith('/www.blahfe.com/')) {
+  location.replace(location.pathname.slice('/www.blahfe.com'.length) + location.search + location.hash);
+}
 // Preserve the original banner pixels when a browser extension filters the entire page.
 (() => {
   let last = '';
