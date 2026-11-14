@@ -7,7 +7,6 @@ Blahfe & Grprの公開Webサイト。Confluence / RefinedからGitHub Pagesへ�
 - `templates/`: 現行HPの固定ページと共通ヘッダー・フッターのレイアウト。
 - `scripts/build.py`: Markdownから静的HTMLを生成。
 - `docs/`: GitHub Pages配信ディレクトリ（生成物もコミットする）。
-- `legacy/`: 旧AWS/CDK構成。現行サイトでは使用しない。
 
 ## 更新
 
