@@ -27,3 +27,7 @@ html{scroll-behavior:smooth}body{margin:0}.skip{position:absolute;left:-10000px;
 /* Undo only page-level brightness/contrast on the original pale artwork, without darkening it. */
 html[nighteye="active"] .header-background,html[nighteye="active"] .static-banner-background{filter:brightness(var(--artwork-brightness,1)) contrast(var(--artwork-contrast,1))}
 @media(max-width:767px){#rw_header.site-header{height:auto;min-height:112px;padding:16px!important}.site-header-inner{flex-direction:column;height:auto;gap:8px}.site-brand{font-size:20px;line-height:30px;padding:0}.site-navigation{height:auto;gap:8px 12px}.site-navigation a{font-size:14px;line-height:24px;height:32px;padding:4px 0}}
+
+/* Keep the original service blue as artwork when browser color rewriting replaces CSS backgrounds. */
+.services-section{background-color:#0086ea}
+html[nighteye="active"] .service-background{filter:brightness(var(--artwork-brightness,1)) contrast(var(--artwork-contrast,1))}
