@@ -21,7 +21,7 @@ python3 -m http.server 8000 --directory docs
 ナレッジ本文は`content/`、固定ページの配置・文言は`templates/`で編集し、再生成した`docs/`とともにコミットする。固定ページのMarkdownも併せて更新する。
 
 元HPの青いヒーロー・3列サービス紹介・画像カード・フォント・配色を引き継ぐ。画像とスタイルはローカル配信し、CMSへの実行時依存を持たない。ナレッジ検索・ツリー展開・追加読み込みは`assets/site.js`で動作する。
-公開URLは https://blahfe.github.io/ 。ソースはこのリポジトリで管理し、`docs/`の生成物を公開専用の`blahfe/blahfe.github.io`へ配置する。
+公開URLは https://www.blahfe.com/ 。ソースはこのリポジトリで管理し、`docs/`の生成物を公開専用の`blahfe/blahfe.github.io`へ配置する。`build.py --domain www.blahfe.com` が canonical と `docs/CNAME` を書く。
 引数なしの`build.py`はルートURL向けに生成する。`scripts/publish.py`でビルド・公開し、GitHub Pagesのビルド完了を確認する。
 更新はソースと生成物をコミット・マージ後、同じPython環境で`python scripts/publish.py`を実行する（GitHubへのGit書き込み権限が必要）。
 配信元は`blahfe/blahfe.github.io`の`main`ブランチ・ルート。旧プロジェクトURLからの内部リンクも新URLへ向かう。
@@ -35,18 +35,13 @@ nabinno.github.io の公開記事38本は `content/space/knowledge/blog/n*.md`�
 Confluence固有の画像参照は添付ファイルに置換する。
 旧URLのID付きパスは404ページで移管先へ案内する。
 
-## 独自ドメインへの切替
+## 独自ドメイン
 
-AWSにログインできたら、Route 53の`blahfe.com`ゾーンの`www`レコードを確認する。
-切替前の値は`CNAME blahfe.refined.site.`。他のレコードは変更しない。
+正本のホストゾーンは Infrastructure（158393879384）の `Z052732628FNUHCOJ247C`。委任されている NS は `ns-218.awsdns-27.com`、`ns-1645.awsdns-13.co.uk`、`ns-1347.awsdns-40.org`、`ns-635.awsdns-15.net`。CorporateSite の `Z05416883ATWMHT2BYQGW` は同名だが委任されていないので変更しない。
 
-1. GitHub Pages設定に`www.blahfe.com`を登録する。
-2. `.venv/bin/python scripts/build.py --base / --domain www.blahfe.com`で再生成・コミットする。
-3. Route 53の`www` CNAMEを`blahfe.github.io.`に変更する。
-4. DNS伝播、HTTPS証明書、全ページと画像を確認してHTTPS強制を有効にする。
-5. 検証後にRefined契約を解約する。Confluenceは内部資料と添付の完全性を別途確認してから解約する。
+`www` は `CNAME blahfe.github.io.`。apex は GitHub Pages の A（185.199.108.153、185.199.109.153、185.199.110.153、185.199.111.153）と AAAA（2606:50c0:8000::153、2606:50c0:8001::153、2606:50c0:8002::153、2606:50c0:8003::153）。カスタムドメインは `www.blahfe.com` なので、apex は www へ誘導される。MX、TXT、DKIM、`mail`、`autodiscover` は変更しない。
 
-ロールバックはDNSのCNAMEを旧値へ戻す。旧CMSは検証完了まで契約を維持する。
+ロールバックは `www` の CNAME を `blahfe.refined.site.` に戻し、apex の A と AAAA を削除する。
 
 ヘッダーメニューは画面幅にかかわらず常時表示する。文字サイズを維持し、現行サイトの透明な背景・余白・文字の太さ・下線に合わせる。背景画像はページ上部500pxとヘッダーで同じ範囲を表示し、濃い帯を加えない。Night Eyeがページ全体にかける明るさ・コントラストは画像側で逆補正し、元画像の色を維持する。
 
