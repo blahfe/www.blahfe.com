@@ -14,17 +14,14 @@ Blahfe & Grprの公開Webサイト。Confluence / RefinedからGitHub Pagesへ�
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python scripts/build.py
-.venv/bin/python scripts/build.py --base /
 python3 -m http.server 8000 --directory docs
 ```
 
 ナレッジ本文は`content/`、固定ページの配置・文言は`templates/`で編集し、再生成した`docs/`とともにコミットする。固定ページのMarkdownも併せて更新する。
 
 元HPの青いヒーロー・3列サービス紹介・画像カード・フォント・配色を引き継ぐ。画像とスタイルはローカル配信し、CMSへの実行時依存を持たない。ナレッジ検索・ツリー展開・追加読み込みは`assets/site.js`で動作する。
-公開URLは https://www.blahfe.com/ 。ソースはこのリポジトリで管理し、`docs/`の生成物を公開専用の`blahfe/blahfe.github.io`へ配置する。`build.py --domain www.blahfe.com` が canonical と `docs/CNAME` を書く。
-引数なしの`build.py`はルートURL向けに生成する。`scripts/publish.py`でビルド・公開し、GitHub Pagesのビルド完了を確認する。
-更新はソースと生成物をコミット・マージ後、同じPython環境で`python scripts/publish.py`を実行する（GitHubへのGit書き込み権限が必要）。
-配信元は`blahfe/blahfe.github.io`の`main`ブランチ・ルート。旧プロジェクトURLからの内部リンクも新URLへ向かう。
+公開URLは https://www.blahfe.com/ 。引数なしの`build.py`が canonical と `docs/CNAME`（`www.blahfe.com`）を書き出す。
+GitHub Pagesの配信元はこのリポジトリ（`blahfe/www.blahfe.com`）の`master`ブランチ・`/docs`ディレクトリ。`master`へマージするとそのまま公開される。
 内部資料は非公開の https://github.com/blahfe/docs に置く。
 
 ## 移管元

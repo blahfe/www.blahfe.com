@@ -13,9 +13,11 @@ from markdown.extensions.toc import slugify_unicode
 
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
-parser.add_argument('--base', default='/', help='URL prefix (default: organization site root)')
-parser.add_argument('--domain', help='Verified custom domain; requires --base /')
+parser.add_argument('--base', default='/', help='URL prefix (default: /)')
+parser.add_argument('--domain', default='www.blahfe.com', help='Verified custom domain; requires --base /')
 args = parser.parse_args()
+if args.base != '/' and args.domain == 'www.blahfe.com':
+    args.domain = None
 if args.domain and args.base != '/':
     parser.error('--domain requires --base /')
 base = '/' + args.base.strip('/') + '/' if args.base.strip('/') else '/'
