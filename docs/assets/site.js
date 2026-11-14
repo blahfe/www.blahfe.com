@@ -1,16 +1,3 @@
-const menu = document.querySelector('#mobile_navigation_dropdown');
-const mobileNav = document.querySelector('#static-mobile-nav');
-menu?.addEventListener('click', () => {
-  const open = menu.getAttribute('aria-expanded') !== 'true';
-  menu.setAttribute('aria-expanded', String(open));
-  mobileNav.hidden = !open;
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && mobileNav) {
-    mobileNav.hidden = true;
-    menu.setAttribute('aria-expanded', 'false');
-  }
-});
 for (const button of document.querySelectorAll('[data-tree-toggle]')) {
   button.addEventListener('click', () => {
     const list = document.getElementById(button.getAttribute('aria-controls'));
