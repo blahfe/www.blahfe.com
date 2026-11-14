@@ -1,16 +1,4 @@
-const menu = document.querySelector('#mobile_navigation_dropdown');
-const mobileNav = document.querySelector('#static-mobile-nav');
-menu?.addEventListener('click', () => {
-  const open = menu.getAttribute('aria-expanded') !== 'true';
-  menu.setAttribute('aria-expanded', String(open));
-  mobileNav.hidden = !open;
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && mobileNav) {
-    mobileNav.hidden = true;
-    menu.setAttribute('aria-expanded', 'false');
-  }
-});
+const siteScriptURL = document.currentScript?.src;
 for (const button of document.querySelectorAll('[data-tree-toggle]')) {
   button.addEventListener('click', () => {
     const list = document.getElementById(button.getAttribute('aria-controls'));
@@ -38,7 +26,7 @@ search?.addEventListener('input', async () => {
   results.hidden = !query;
   if (!query) return;
   try {
-    const url = new URL('../search-index.json', document.currentScript?.src || document.querySelector('script[src$="site.js"]').src);
+    const url = new URL('../search-index.json', siteScriptURL || document.querySelector('script[src*="assets/site.js"]').src);
     const response = await fetch(url);
     if (!response.ok) throw new Error('Search unavailable');
     const index = await response.json();
