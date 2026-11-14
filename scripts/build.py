@@ -12,7 +12,10 @@ import markdown
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--base', default='/www.blahfe.com/', help='URL prefix, / after custom-domain cutover')
+parser.add_argument('--domain', help='Verified custom domain; requires --base /')
 args = parser.parse_args()
+if args.domain and args.base != '/':
+    parser.error('--domain requires --base /')
 base = '/' + args.base.strip('/') + '/' if args.base.strip('/') else '/'
 out = ROOT / 'docs'
 if out.exists():
@@ -20,6 +23,8 @@ if out.exists():
 out.mkdir()
 shutil.copytree(ROOT / 'assets', out / 'assets')
 (out / '.nojekyll').touch()
+if args.domain:
+    (out / 'CNAME').write_text(args.domain + '\n')
 nav = [('ビジョン', 'page/vision/'), ('メンバー', 'page/member/'), ('ナレッジ', 'space/knowledge/'), ('コンタクト', 'page/contact/')]
 manifest = []
 
