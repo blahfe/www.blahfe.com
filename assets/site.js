@@ -1,3 +1,4 @@
+const siteScriptURL = document.currentScript?.src;
 for (const button of document.querySelectorAll('[data-tree-toggle]')) {
   button.addEventListener('click', () => {
     const list = document.getElementById(button.getAttribute('aria-controls'));
@@ -25,7 +26,7 @@ search?.addEventListener('input', async () => {
   results.hidden = !query;
   if (!query) return;
   try {
-    const url = new URL('../search-index.json', document.currentScript?.src || document.querySelector('script[src$="site.js"]').src);
+    const url = new URL('../search-index.json', siteScriptURL || document.querySelector('script[src*="assets/site.js"]').src);
     const response = await fetch(url);
     if (!response.ok) throw new Error('Search unavailable');
     const index = await response.json();

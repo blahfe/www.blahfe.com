@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the public Markdown snapshot; no CMS or JavaScript runtime required."""
 import argparse
+import hashlib
 import html
 import json
 import re
@@ -28,6 +29,7 @@ if args.domain:
 nav = [('ビジョン', 'page/vision/'), ('メンバー', 'page/member/'), ('ナレッジ', 'space/knowledge/'), ('コンタクト', 'page/contact/')]
 manifest = []
 search_index = []
+asset_versions = {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12] for name in ["assets/design/refined.css", "assets/design/theme.css", "assets/design/components.css", "assets/site.css", "assets/site.js"]}
 
 def local_urls(markup):
     def attribute(match):
@@ -60,8 +62,8 @@ def page(title, body, route):
     return f'''<!doctype html>
 <html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}{"" if title == "Blahfe &amp; Grpr" else " | Blahfe &amp; Grpr"}</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
-<link rel="icon" href="{base}assets/design/favicon.png"><link rel="canonical" href="https://www.blahfe.com/{route}"><link rel="stylesheet" href="{base}assets/design/refined.css"><link rel="stylesheet" href="{base}assets/design/theme.css"><link rel="stylesheet" href="{base}assets/design/components.css"><link rel="stylesheet" href="{base}assets/site.css">
-<script src="{base}assets/site.js" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a>{shell}</body></html>'''
+<link rel="icon" href="{base}assets/design/favicon.png"><link rel="canonical" href="https://www.blahfe.com/{route}"><link rel="stylesheet" href="{base}assets/design/refined.css?v={asset_versions['assets/design/refined.css']}"><link rel="stylesheet" href="{base}assets/design/theme.css?v={asset_versions['assets/design/theme.css']}"><link rel="stylesheet" href="{base}assets/design/components.css?v={asset_versions['assets/design/components.css']}"><link rel="stylesheet" href="{base}assets/site.css?v={asset_versions['assets/site.css']}">
+<script src="{base}assets/site.js?v={asset_versions['assets/site.js']}" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a>{shell}</body></html>'''
 
 for source in sorted((ROOT / 'content').rglob('*.md')):
     rel = source.relative_to(ROOT / 'content')
