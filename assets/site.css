@@ -33,7 +33,7 @@ html[nighteye="active"] .header-background,html[nighteye="active"] .static-banne
 html[nighteye="active"] .service-background{filter:brightness(var(--artwork-brightness,1)) contrast(var(--artwork-contrast,1))}
 
 /* Published article typography and functional, heading-linked table of contents. */
-.knowledge-article article{max-width:620px;margin:24px auto 4.375rem;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;font-size:15px;line-height:1.8;word-break:break-all;color:#263445}
+.knowledge-article article{max-width:620px;margin:24px auto 4.375rem;font-family:-apple-system-body,"Source Han Mono",BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans Japanese","游ゴシック  Medium","Yu Gothic Medium","メイリオ",meiryo,sans-serif;font-size:15px;line-height:1.8;word-break:break-all;color:rgba(26,32,44,.88)}
 .knowledge-article article p{margin:16px 0}
 .knowledge-article article ul,.knowledge-article article ol{margin:16px 0;padding-left:40px}
 .knowledge-article article li{margin:4px 0}
@@ -41,9 +41,9 @@ html[nighteye="active"] .service-background{filter:brightness(var(--artwork-brig
 .knowledge-article article td,.knowledge-article article th{font-size:1em;line-height:1.6}
 .knowledge-article article h1,.knowledge-article article h2,.knowledge-article article h3,.knowledge-article article h4,.knowledge-article article h5,.knowledge-article article h6{font-family:inherit!important;font-weight:700;line-height:1.4;scroll-margin-top:9rem}
 .knowledge-article article h1{font-size:30px;margin:0 0 16px}
-.knowledge-article article h2{font-size:1.6em;margin:30px 0 16px;padding-bottom:4px}
-.knowledge-article article h3{font-size:1.3em;margin:24px 0 10px}
-.knowledge-article article h4{font-size:1.2em;margin:20px 0 8px}
+.knowledge-article article h2{font-size:1.6em;margin:30px 0 16px;padding-bottom:4px;font-weight:900}
+.knowledge-article article h3{font-size:1.3em;margin:24px 0 10px;font-weight:900}
+.knowledge-article article h4{font-size:1.2em;margin:20px 0 8px;font-weight:900}
 .knowledge-article article h5,.knowledge-article article h6{font-size:1em;margin:16px 0 8px}
 .knowledge-article article blockquote{margin:0 0 30px;padding:0 20px}
 .knowledge-article article pre{margin:0 0 11px;padding:10.5px;font-size:13px;line-height:1.6}
@@ -59,3 +59,4 @@ html[nighteye="active"] .service-background{filter:brightness(var(--artwork-brig
 .image_container.has-card-image .footer_container{z-index:1}
 .le_element_icon .social-x{display:block;width:40px;height:40px;fill:currentColor}
 @media(max-width:767px){.knowledge-article article{font-size:15px;line-height:1.8}.knowledge-article article h1{font-size:24px}.article-toc{padding:16px}.article-toc nav{max-height:24rem}}
+@media screen and (-webkit-min-device-pixel-ratio:2),screen and (min-resolution:2dppx){body{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}}
