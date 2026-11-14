@@ -42,6 +42,10 @@ document.querySelector('[data-load-pages]')?.addEventListener('click', event => 
   for (const card of document.querySelectorAll('[data-extra-page]')) card.hidden = false;
   event.currentTarget.hidden = true;
 });
+document.querySelector('[data-load-blog]')?.addEventListener('click', event => {
+  for (const card of document.querySelectorAll('[data-extra-blog]')) card.hidden = false;
+  event.currentTarget.hidden = true;
+});
 const search = document.querySelector('[data-static-search]');
 search?.addEventListener('input', async () => {
   const query = search.value.trim().toLocaleLowerCase();

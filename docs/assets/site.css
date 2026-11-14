@@ -33,15 +33,29 @@ html[nighteye="active"] .header-background,html[nighteye="active"] .static-banne
 html[nighteye="active"] .service-background{filter:brightness(var(--artwork-brightness,1)) contrast(var(--artwork-contrast,1))}
 
 /* Published article typography and functional, heading-linked table of contents. */
-.knowledge-article article{max-width:78ch;margin-inline:auto;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;font-size:18px;line-height:1.9;color:#263445}
-.knowledge-article article p,.knowledge-article article li,.knowledge-article article td,.knowledge-article article th{font-size:1em;line-height:inherit}
-.knowledge-article article h1,.knowledge-article article h2,.knowledge-article article h3,.knowledge-article article h4,.knowledge-article article h5,.knowledge-article article h6{font-family:inherit!important;line-height:1.5;scroll-margin-top:9rem}
-.knowledge-article article h1{font-size:36px}.knowledge-article article h2{font-size:28px;margin-top:48px}.knowledge-article article h3{font-size:24px;margin-top:36px}.knowledge-article article h4{font-size:21px;margin-top:28px}.knowledge-article article h5{font-size:19px;margin-top:24px;font-weight:600}.knowledge-article article h6{font-size:18px;margin-top:24px;font-weight:600}
-.article-toc{margin:0 0 40px;padding:20px 24px;border:1px solid #dbe0da;border-radius:6px;background:#f7fafc}
-.article-toc summary{cursor:pointer;font-size:18px;font-weight:600;color:#06325e}
+.knowledge-article article{max-width:620px;margin:24px auto 4.375rem;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;font-size:15px;line-height:1.8;word-break:break-all;color:#263445}
+.knowledge-article article p{margin:16px 0}
+.knowledge-article article ul,.knowledge-article article ol{margin:16px 0;padding-left:40px}
+.knowledge-article article li{margin:4px 0}
+.knowledge-article article li>p{margin:0}
+.knowledge-article article td,.knowledge-article article th{font-size:1em;line-height:1.6}
+.knowledge-article article h1,.knowledge-article article h2,.knowledge-article article h3,.knowledge-article article h4,.knowledge-article article h5,.knowledge-article article h6{font-family:inherit!important;font-weight:700;line-height:1.4;scroll-margin-top:9rem}
+.knowledge-article article h1{font-size:30px;margin:0 0 16px}
+.knowledge-article article h2{font-size:1.6em;margin:30px 0 16px;padding-bottom:4px}
+.knowledge-article article h3{font-size:1.3em;margin:24px 0 10px}
+.knowledge-article article h4{font-size:1.2em;margin:20px 0 8px}
+.knowledge-article article h5,.knowledge-article article h6{font-size:1em;margin:16px 0 8px}
+.knowledge-article article blockquote{margin:0 0 30px;padding:0 20px}
+.knowledge-article article pre{margin:0 0 11px;padding:10.5px;font-size:13px;line-height:1.6}
+.knowledge-article article table{margin:20px 0 30px}
+.knowledge-article article hr{margin:32px 0}
+.knowledge-article .article-date{display:block;margin:0 0 4px;font-size:15px;font-weight:600;letter-spacing:.5px;opacity:.6}
+.knowledge-article .footnote{margin-top:4.375rem;font-size:13px;line-height:1.6}
+.article-toc{margin:0 0 24px;padding:16px 20px;border:1px solid #dbe0da;border-radius:6px;background:#f7fafc}
+.article-toc summary{cursor:pointer;font-size:15px;font-weight:600;color:#06325e}
 .article-toc nav{max-height:32rem;overflow:auto;margin-top:12px}.article-toc ul{margin:4px 0;padding-left:24px}.article-toc li{margin:4px 0}.article-toc a{color:#175e8a;text-underline-offset:3px}
 .image_container.has-card-image{position:relative;overflow:hidden;isolation:isolate}
 .image_container .knowledge-card-image{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center;z-index:0}
 .image_container.has-card-image .footer_container{z-index:1}
 .le_element_icon .social-x{display:block;width:40px;height:40px;fill:currentColor}
-@media(max-width:767px){.knowledge-article article{font-size:18px;line-height:1.85}.knowledge-article article h1{font-size:28px}.knowledge-article article h2{font-size:25px}.knowledge-article article h3{font-size:22px}.article-toc{padding:16px}.article-toc nav{max-height:24rem}}
+@media(max-width:767px){.knowledge-article article{font-size:15px;line-height:1.8}.knowledge-article article h1{font-size:24px}.article-toc{padding:16px}.article-toc nav{max-height:24rem}}

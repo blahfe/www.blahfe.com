@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Increment Pは住所のバリデーションチェックでどの程度使えるか | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n124/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-11-23">23 11月, 2021</time><h1>Increment Pは住所のバリデーションチェックでどの程度使えるか</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#increment-pとは">Increment Pとは</a></li>
+<li><a href="#検証用データ">検証用データ</a></li>
+<li><a href="#increment-pで検証用データを確認する">Increment Pで検証用データを確認する</a></li>
+<li><a href="#解析結果を確認する">解析結果を確認する</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>7月に調査した「<a href="/space/knowledge/blog/n89/">imi-enrichment-addressは住所のバリデーションチェックでどの程度使えるか</a>」の続きになります。コロナ禍であらゆる流通がオンラインに移行する中、正しい住所を使うことはいっそう求められています。ユーザーが配送用に住所を入力する時そのデータが正しいとどうやって判定するのでしょうか。今回は商用サービスIncrement Pが住所のバリデーションチェックでどの程度使えるか検証してみました。</p>
+<p><img width="640" alt="thumbnail" src="/assets/blog/cce0f1c0a496b969.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>住所の不備が至るところで起きている<ul>
+<li>特に町名番地の抜けもれや不備が多くこの点をどうにか拾いたい</li>
+<li>可能ならユーザーの入力時点でFEあるいはBE側でバリデーションチェックしたい<ul>
+<li>imi-enrichment-addressで精度が思わしくなかったので今回は商用サービスで検証したい</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、住所のバリデーションチェックで商用版「<a href="https://anorm.mapfan.com/">Increment P</a>」がどの程度使えるか検証します。</p>
+<h3 id="increment-pとは">Increment Pとは</h3>
+<p>住所をAPIを介すことで正規化することができます。APIの返値に解析レベル・解析ログを加えることでより柔軟な検証をおこなうことができるようになっています。</p>
+<p>解析レベルとは、対象住所のマッチ度合いを都道府県・市区町村・町域・丁目・番地・号というレベルで分けたものです。APIの結果が解析レベル5「番地・番」以上になっていれば配送が確実に為されると言うように、配送の確実性を前提にして住所の入力者とやりとりを実現します。また、解析ログメッセージとは、住所の正規化を試みた際のログであり、バリデーションを調整する際に頻繁に確認するものです。詳細は「<a href="https://anorm.mapfan.com/documents/">ドキュメント</a>」をご覧下さい。</p>
+<table>
+<thead>
+<tr>
+<th>解析レベル</th>
+<th>レベルの数字</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>都道府県</td>
+<td>1</td>
+<td>県レベルでマッチしました</td>
+</tr>
+<tr>
+<td>市区町村</td>
+<td>2</td>
+<td>市区町村レベルでマッチしました</td>
+</tr>
+<tr>
+<td>町域 (大字)</td>
+<td>3</td>
+<td>町域レベルでマッチしました</td>
+</tr>
+<tr>
+<td>丁目 / 小字</td>
+<td>4</td>
+<td>丁目または小字レベルでマッチしました</td>
+</tr>
+<tr>
+<td>番地（番）</td>
+<td>5</td>
+<td>番地（番）レベルでマッチしました</td>
+</tr>
+<tr>
+<td>号情報が存在しない番地</td>
+<td>7</td>
+<td>番地（番）レベルでマッチしました（号情報が存在しない地域）</td>
+</tr>
+<tr>
+<td>号</td>
+<td>8</td>
+<td>号レベルでマッチしました</td>
+</tr>
+<tr>
+<td>不明</td>
+<td>-1</td>
+<td>不明</td>
+</tr>
+</tbody>
+</table>
+<p>試しにIncrement Pを実行してみましょう。正確な住所を渡したときと不正確な住所を渡したときで解析レベルが5と3と異なった結果を返すことが見て取れます。</p>
+<pre><code class="language-sh">$ curl &quot;https://api-anorm.mapfan.com/v1/$(echo -n 長野県長野市大字長野旭町1108 | jq -sRr @uri).json&quot; \
+    -H 'x-api-key: &lt;api-key&gt;' \
+    -H 'Content-Type: application/json' | jq -r
+{
+  &quot;type&quot;: &quot;FeatureCollection&quot;,
+  &quot;query&quot;: [
+    &quot;長野県長野市大字長野旭町1108&quot;
+  ],
+  &quot;features&quot;: [
+    {
+      &quot;type&quot;: &quot;Feature&quot;,
+      &quot;geometry&quot;: null,
+      &quot;properties&quot;: {
+        &quot;query&quot;: &quot;長野県長野市大字長野旭町1108&quot;,
+        &quot;place_name&quot;: &quot;長野県長野市長野旭町 1108&quot;,
+        &quot;pref&quot;: &quot;長野県&quot;,
+        &quot;pref_kana&quot;: &quot;ナガノケン&quot;,
+        &quot;city&quot;: &quot;長野市&quot;,
+        &quot;city_kana&quot;: &quot;ナガノシ&quot;,
+        &quot;area&quot;: &quot;長野&quot;,
+        &quot;area_kana&quot;: &quot;ナガノ&quot;,
+        &quot;koaza_chome&quot;: &quot;旭町&quot;,
+        &quot;koaza_chome_kana&quot;: &quot;アサヒマチ&quot;,
+        &quot;banchi_go&quot;: &quot;1108&quot;,
+        &quot;building&quot;: &quot;&quot;,
+        &quot;building_number&quot;: &quot;&quot;,
+        &quot;zipcode&quot;: &quot;3800846&quot;,
+        &quot;geocoding_level&quot;: 5,
+        &quot;geocoding_level_desc&quot;: &quot;番地（番）レベルでマッチしました(5)&quot;,
+        &quot;log&quot;: &quot;RM002:[大字(字)]の文字を除去しました&quot;,
+        &quot;not_normalized&quot;: &quot;&quot;
+      }
+    }
+  ],
+  &quot;attribution&quot;: &quot;(c) INCREMENT P CORPORATION&quot;
+}
+
+$ curl &quot;https://api-anorm.mapfan.com/v1/$(echo -n 長野県長野市旭町1108 | jq -sRr @uri).json&quot; \
+    -H 'x-api-key: &lt;api-key&gt;' \
+    -H 'Content-Type: application/json' | jq -r
+{
+  &quot;type&quot;: &quot;FeatureCollection&quot;,
+  &quot;query&quot;: [
+    &quot;長野県長野市旭町1108&quot;
+  ],
+  &quot;features&quot;: [
+    {
+      &quot;type&quot;: &quot;Feature&quot;,
+      &quot;geometry&quot;: null,
+      &quot;properties&quot;: {
+        &quot;query&quot;: &quot;長野県長野市旭町1108&quot;,
+        &quot;place_name&quot;: &quot;長野県長野市旭町&quot;,
+        &quot;pref&quot;: &quot;長野県&quot;,
+        &quot;pref_kana&quot;: &quot;ナガノケン&quot;,
+        &quot;city&quot;: &quot;長野市&quot;,
+        &quot;city_kana&quot;: &quot;ナガノシ&quot;,
+        &quot;area&quot;: &quot;旭町&quot;,
+        &quot;area_kana&quot;: &quot;アサヒマチ&quot;,
+        &quot;koaza_chome&quot;: &quot;&quot;,
+        &quot;koaza_chome_kana&quot;: &quot;&quot;,
+        &quot;banchi_go&quot;: &quot;&quot;,
+        &quot;building&quot;: &quot;&quot;,
+        &quot;building_number&quot;: &quot;&quot;,
+        &quot;zipcode&quot;: &quot;3800846&quot;,
+        &quot;geocoding_level&quot;: 3,
+        &quot;geocoding_level_desc&quot;: &quot;町域レベルでマッチしました(3)&quot;,
+        &quot;log&quot;: &quot;NT001:正規化処理状況が建物名正規化処理の必要条件を満たさないので建物名正規化は行われません&quot;,
+        &quot;not_normalized&quot;: &quot;1108&quot;
+      }
+    }
+  ],
+  &quot;attribution&quot;: &quot;(c) INCREMENT P CORPORATION&quot;
+}
+</code></pre>
+<p>なお、上記結果を見て分かるとおり、Increment Pは大字省略には強そうですが町域自体の省略は苦手なようです。imi-enrichment-addressより柔軟ですが、基本は<a href="https://nlftp.mlit.go.jp/isj/">街区レベル位置参照情報</a>を利用しているように推察されます。</p>
+<h3 id="検証用データ">検証用データ</h3>
+<p>さて、検証用データですが、imi-enrichment-addressの検証データと合わせて<a href="http://jusyo.jp/">住所.jp</a>を使います。今回はトライアルが1000件と制限があるので、imi-enrichment-addressで無効割合が54.42%と一番多かった青森県と住所の登録数が多い東京・愛知・北海道・大阪・福岡・神奈川、さらに通りが独特な京都、町字の組み合わせで住所が2つ以上存在する長野に対象を絞ります。各々100件ずつの検証になります。</p>
+<pre><code class="language-sh">$ {
+    curl -sSL http://jusyo.jp/downloads/new/csv/csv_zenkoku.zip -o csv_zenkoku.zip;
+    unzip -p csv_zenkoku.zip | nkf -w;
+    rm csv_zenkoku.zip
+} &gt;zenkoku.csv
+$ brew install noborus/tap/trdsql
+
+$ trdsql &quot;
+    SELECT COUNT(*)
+    FROM zenkoku.csv
+    WHERE c21 &lt;&gt; ''
+&quot;
+22431
+
+$ trdsql -otbln &quot;
+    SELECT c8, count(*) cn
+    FROM zenkoku.csv
+    WHERE c21 != ''
+    GROUP BY c8
+    ORDER BY cn DESC&quot;
+| 都道府県 | count(*) |
+| --- | --- |
+| 東京都 | 4734 |
+| 愛知県 | 1541 |
+| 北海道 | 1251 |
+| 大阪府 | 884 |
+| 福岡県 | 845 |
+| 神奈川県 | 820 |
+[..]
+| 長野県 | 594 |
+[..]
+| 京都府 | 255 |
+[..]
+| 青森県 | 216 |
+</code></pre>
+<h3 id="increment-pで検証用データを確認する">Increment Pで検証用データを確認する</h3>
+<pre><code class="language-sh">$ for p in 東京都 愛知県 北海道 大阪府 福岡県 神奈川県 青森県 京都府 長野県; do
+    for a in $(trdsql &quot;
+        SELECT c8||c10||c21
+        FROM zenkoku.csv
+        WHERE c21 != '' AND c8 = '$p'
+        ORDER BY RANDOM()
+        LIMIT 100
+    &quot;); do
+        curl -w'\n' &quot;https://api-anorm.mapfan.com/v1/$(echo -n $a | jq -sRr @uri).json&quot; \
+            -H 'x-api-key: &lt;api-key&gt;' \
+            -H 'Content-Type: application/json' &gt;&gt;output.jsonl;
+    done &amp;
+done &amp;
+</code></pre>
+<h3 id="解析結果を確認する">解析結果を確認する</h3>
+<p>Increment Pの解析結果を確認したところ、imi-enrichment-addressと比べると大方改善しました。特に青森県、北海道の改善率は高く字・条・線に対して有効に機能していることが伺えます。一方、京都や長野のように特殊な住所がある府県については改善が思うように行かないケースもあるようです。</p>
+<pre><code class="language-sh">$ cat output.jsonl \
+    | jq -r '[
+        .features[].properties.pref,
+        .features[].properties.query,
+        .features[].properties.geocoding_level,
+        .features[].properties.log
+    ] | @csv' \
+    | trdsql -otbln &quot;
+        SELECT c1, COUNT(*) cn
+        FROM -
+        WHERE c3 &gt;= 5
+        GROUP BY c1
+        ORDER BY cn DESC
+    &quot;
+</code></pre>
+<p>解析レベル5「番地・番」以上の場合（※ 参考値はimi-enrichment-addressの有効割合）
+| 都道府県 | 有効割合 | 参考値 |
+| --- | --- | --- |
+| 東京都 | 100 | 99.11 |
+| 大阪府 | 100 | 96.72 |
+| 福岡県 | 95 | 91 |
+| 神奈川県 | 95 | 98.28 |
+| 愛知県 | 92 | 92.6 |
+| 青森県 | 90 | 45.58 |
+| 長野県 | 84 | 55.72 |
+| 北海道 | 80 | 86.24 |
+| 京都府 | 79 | 63.14 |</p>
+<p>解析レベル4「丁目/小字」以上の場合（※ 参考値はimi-enrichment-addressの有効割合）
+| 都道府県 | 有効割合 | 参考値 |
+| --- | --- | --- |
+| 東京都 | 100 | 99.11 |
+| 大阪府 | 100 | 96.72 |
+| 北海道 | 98 | 86.24 |
+| 愛知県 | 97 | 92.6 |
+| 福岡県 | 96 | 91 |
+| 神奈川県 | 95 | 98.28 |
+| 青森県 | 93 | 45.58 |
+| 長野県 | 84 | 55.72 |
+| 京都府 | 79 | 63.14 |</p>
+<h2 id="wrapup">WRAPUP</h2>
+<p>青森県の有効率が45.58%だったimi-enrichment-addressと比べると、Increment Pは調査した大凡の都道府県で改善し70%以上の有効割合を出していました。バリデーションチェックで使えるのかというと全ての都道府県で100%になっていないため心許ない状況ではあるものの、解析レベル4「丁目/小字」以下の住所については最終確認を促すフローを入れる等ひと手間加えれば実用に耐えうると考えます。</p>
+<pre><code class="language-uml">skinparam handwritten true
+
+actor User as U
+actor App as A
+actor &quot;Increment P&quot; as I
+
+U -&gt; A: フォーム入力
+activate U
+activate A
+A &lt;-&gt; I: 妥当性確認
+
+alt xxx
+    A -&gt; U: 成功
+else 解析レベルが4「丁目/小字」以下の場合
+    A -&gt; U: 問題ないか確認
+    alt 問題ない場合
+        U &lt;-&gt; A: 成功
+    else 問題がある場合
+        U -&gt; A: フォーム修正
+        A &lt;-&gt; I: 妥当性確認
+        ...
+    end
+end
+</code></pre></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

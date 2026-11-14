@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WSL（Windows Subsystem for Linux）でDockerをつかったWebアプリケーション開発をおこなう際の注意点 | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n58/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-12-10">10 12月, 2017</time><h1>WSL（Windows Subsystem for Linux）でDockerをつかったWebアプリケーション開発をおこなう際の注意点</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#対象環境">対象環境</a></li>
+<li><a href="#windowsの開発環境を構築する">Windowsの開発環境を構築する</a><ul>
+<li><a href="#wslのインストール">WSLのインストール</a></li>
+<li><a href="#ターミナルのインストール">ターミナルのインストール</a></li>
+<li><a href="#wsltty">WSLtty</a></li>
+<li><a href="#docker-for-windowsのインストール">Docker for Windowsのインストール</a></li>
+</ul>
+</li>
+<li><a href="#さてwslからdocker-for-windowsはどの程度つかえるのか">さて、WSLからDocker for Windowsはどの程度つかえるのか</a><ul>
+<li><a href="#1-docker-for-windowsはntfs-wslからみるとdrvfs-mnt-上のファイルしかvolumeマウントできません">1. Docker for WindowsはNTFS (WSLからみるとdrvfs /mnt/) 上のファイルしかVolumeマウントできません</a></li>
+<li><a href="#2-wslはlinux形式のパスしか扱えませんドライブ名にコロンをつけたuriスキーマは扱えません">2. WSLはLinux形式のパスしか扱えません、ドライブ名にコロンをつけたURIスキーマは扱えません</a></li>
+<li><a href="#3-wsl上のdocker-composeはパスを絶対参照しかできません相対参照できません">3. WSL上のdocker-composeはパスを絶対参照しかできません、相対参照できません</a></li>
+<li><a href="#4-wsl上のnpmyarnによるjsビルドをntfs-drvfs上でおこなうとエラーになります">4. WSL上のnpm/yarnによるJSビルドをNTFS (drvfs)上でおこなうとエラーになります</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="2399" alt="thumbnail" src="/assets/blog/9811a8a2a4075dd6.png"></p>
+<p>これは無宗教ななびの :construction_worker: が書く<a href="https://qiita.com/advent-calendar/2017/docker">Docker Advent Calendar 2017</a>用記事です。前日はinductorさんの「<a href="https://mohikanz.kibe.la/shared/entries/c170117c-b876-49da-931a-9788a473164e">Docker Meetupの中身まとめ</a>」でした :whale: （写真は<a href="https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9#%E6%98%8E%E6%B2%BB%E6%99%82%E4%BB%A3">クリスマスを日本にひろめた明治屋</a> :christmas_tree:）</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>macOSとWindowsでWebアプリケーション開発をする際に<ul>
+<li>環境が異なって管理しづらい<ul>
+<li>それならDockerで<ul>
+<li>と思ったが、macOSはBashでWindowsはPowerShellなのか<ul>
+<li>せめてPowerShellではなくBash...<ul>
+<li>となると、いまWindowsでLinux環境をつかうならWSLか<ul>
+<li>ただ、実際どこまで開発ができるかわからんしなあ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、この記事ではmacOSとWindowsによるWebアプリケーション開発について、どこまで共有できるか書いていきます。</p>
+<p>前提条件として、当該WebアプリケーションはmacOSというより、Bash/Ubuntu14.04~のLinux環境で動くことを想定しています。macOSはHFS+やAPFSのUnicode正規化以外はおおよそLinux環境に適応できているという判断によります。</p>
+<p>要は、WSLでDockerをつかったWebアプリケーション開発ができるかどうかという点に焦点をしぼります。</p>
+<h3 id="対象環境">対象環境</h3>
+<ul>
+<li>Windows 10 Pro 1709 16299.64<ul>
+<li>Hyper-V 10.0.16299.15</li>
+<li>Docker for Windows 17.09.0-ce-win33</li>
+<li>Ubuntu 16.04 (Linux 4.4.0-43-Microsoft)<ul>
+<li>Docker Client 1.12.6</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="windowsの開発環境を構築する">Windowsの開発環境を構築する</h3>
+<p>まず、Windowsの開発環境の構築ですが、既知の情報をふまえつつTIPSを順次紹介します。</p>
+<h4 id="wslのインストール">WSLのインストール</h4>
+<ul>
+<li><a href="https://qiita.com/Aruneko/items/c79810b0b015bebf30bb">Windows Subsystem for Linuxをインストールしてみよう！</a></li>
+</ul>
+<p>WSLのパッケージ管理は下記3つを押さえておけば問題ないでしょう。
+1. apt
+    - WSLではデーモンがつかえないのでDockerクライアントを入れましょう、Dockerデーモンの詳細は後ほど言及します
+2. <a href="https://github.com/riywo/anyenv">anyenv</a>
+    - プログラミング言語をバージョンごとにわけて使いたい場合はこちらをつかいましょう
+    - exenvがビルドで失敗するためElixirインストールできないほかは、各言語問題なくビルドできます
+3. <a href="https://nixos.org/nix/">nix</a>
+    - ElixirやHaskellのようにanyenvでインストールできない、あるいは、扱われいないパッケージはnixをつかいましょう
+    - また、aptのバージョンが古すぎるパッケージもnixが最適です</p>
+<h4 id="ターミナルのインストール">ターミナルのインストール</h4>
+<p>WSLttyかConEmuをおすすめします。各々の特徴は下記のとおりですが、通常のWebアプリケーション開発であればWSLttyがいいでしょう。</p>
+<ul>
+<li>WSLtty<ul>
+<li>Pros<ul>
+<li>ConEmuとくらべてファイルの読込速度が速い (VMよりは遅い)</li>
+<li>EmacsでCtrl-SPC <code>set-mark</code> が機能する</li>
+<li>画面サイズの変更が柔軟</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>PowerShellなどほかのコンソールの呼び出しが面倒</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ConEmu<ul>
+<li>Pros<ul>
+<li>PowerShellなどほかのコンソールの呼び出しが楽</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>ファイルの読込速度がおそい</li>
+<li>EmacsでCtrl-SPC <code>set-mark</code> が機能しない</li>
+<li>画面サイズの変更に制限がある</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="wsltty">WSLtty</h4>
+<ul>
+<li><a href="https://github.com/mintty/wsltty">mintty/wsltty</a></li>
+</ul>
+<p>WSL用ターミナルとしてのMinttyです。操作はMinttyとかわらず、元Cygwinづかいにはうれしい操作感です。というわけで、いつものごとく起動用ショートカットのターゲットを準備します。WSLは <code>chsh</code> がつかえないのでログイン時につかいたいシェルを指定します。もし、 <code>screen</code> をつかいたい場合は <code>/run/screen</code> ディレクトリを作成してからコマンド指定します。</p>
+<pre><code class="language-bat">%LOCALAPPDATA%\wsltty\bin\mintty.exe --wsl -o Locale=C -o Charset=UTF-8 /bin/wslbridge -t /bin/bash -c 'sudo mkdir /run/screen &amp;&amp; sudo chmod 775 $_ &amp;&amp; sudo chown root:utmp $_ &amp;&amp; SHELL=/usr/bin/zsh screen'
+</code></pre>
+<h5 id="conemu">ConEmu</h5>
+<ul>
+<li><a href="https://conemu.github.io/">ConEmu - Handy Windows Terminal</a></li>
+</ul>
+<p>WSL上で日本語を表示するため、また、WSLのLinux環境とWindows環境でターミナルをわけるため、ConEmuをつかいましょう。ConEmuをスマートにしたCmderはWSLとの相性がわるい<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>のでおすすめしません。</p>
+<p>ConEmuの設定「Startup-Tasks」では、WSL用にパラメータ、コマンドを下記のように指定しています。</p>
+<pre><code class="language-bash"># task parameters
+/icon &quot;C:\Program Files\WindowsApps\CanonicalGroupLimited.UbuntuonWindows_1604.2017.922.0_x64__79rhkp1fndgsc\images\icon.ico&quot;
+
+# task command
+bash -c 'sudo mkdir /run/screen &amp;&amp; sudo chmod 775 $_ &amp;&amp; sudo chown root:utmp $_ &amp;&amp; SHELL=/usr/bin/zsh screen' -new_console:d:%USERPROFILE%
+</code></pre>
+<h4 id="docker-for-windowsのインストール">Docker for Windowsのインストール</h4>
+<ul>
+<li><a href="https://www.docker.com/docker-windows">Docker For Windows</a></li>
+</ul>
+<p>WSLではDockerデーモンがつかえないのでNTFS (WSLからみるとdrvfs) 側で用意します。インストールはDockerのダウンロードページから手順通りおこないます。</p>
+<p>構成は下記のようになります。</p>
+<p><img width="1739" alt="image.png (93.7 kB)" src="/assets/blog/7998642c447ebacc.png"></p>
+<p>DockerクライアントからDockerデーモンにつなぐには、セキュリティリスクはありますが、 <code>DOCKER_HOST</code> をつかうのが簡易的です。Docker for WindowsとDockerクライアント、各々設定します。
+1. Docker for WindowsよりDockerデーモンを「Expose daemon on tcp://localhost:2375 without TLS」として設定
+2. WSL上のDockerクライアントに <code>DOCKER_HOST=tcp://0.0.0.0:2375</code> を設定</p>
+<p>WSLには下記のようなaliasを用意しておくといいでしょう。</p>
+<pre><code class="language-bash">export DOCKER_HOST=tcp://0.0.0.0:2375
+alias docker=&quot;DOCKER_HOST=${DOCKER_HOST} docker&quot;
+alias docker-compose=&quot;docker-compose -H ${DOCKER_HOST}&quot;
+</code></pre>
+<h3 id="さてwslからdocker-for-windowsはどの程度つかえるのか">さて、WSLからDocker for Windowsはどの程度つかえるのか</h3>
+<p>WSLがlxfs、Docker for WindowsがNTFS (drvfs) 上で動いていることからわかるように、ファイルシステム上の制約があります。具体的には下記4点です。</p>
+<ol>
+<li>Docker for WindowsはNTFS (WSLからみるとdrvfs <code>/mnt/</code>) 上のファイルしかVolumeマウントできません</li>
+<li>WSLはLinux形式のパスしか扱えません、<code>C:\Dev</code> のようなドライブ名にコロンをつけたURIスキーマは扱えません</li>
+<li>WSL上のdocker-composeはパスを絶対参照しかできません、相対参照できません<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>WSL上のnpm/yarnによるJSビルドをNTFS (drvfs)上でおこなうとエラーになります<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+</ol>
+<p>ひとつずつ解決方法を見ていきましょう。</p>
+<h4 id="1-docker-for-windowsはntfs-wslからみるとdrvfs-mnt-上のファイルしかvolumeマウントできません">1. Docker for WindowsはNTFS (WSLからみるとdrvfs <code>/mnt/</code>) 上のファイルしかVolumeマウントできません</h4>
+<p>開発用ディレクトリをNTFS上につくりましょう。普段からWindowsで開発されている方はCドライブ直下につくっているとおもいます。</p>
+<h4 id="2-wslはlinux形式のパスしか扱えませんドライブ名にコロンをつけたuriスキーマは扱えません">2. WSLはLinux形式のパスしか扱えません、ドライブ名にコロンをつけたURIスキーマは扱えません</h4>
+<p>NTFSからのパス参照とWSLからのパス参照を共通化するために、WSLに各ドライブのシンボリックリンクをはりましょう。</p>
+<pre><code class="language-bash">$ ln -s /mnt/c /C
+
+# 開発ディレクトリはこんな感じで参照できます
+$ ls -al /C/Dev
+total 0
+drwxrwxrwx 0 root root 512 Oct 27 00:54 .
+drwxrwxrwx 0 root root 512 Dec  8 07:49 ..
+drwxrwxrwx 0 root root 512 Jul 14 03:06 app-test-1
+drwxrwxrwx 0 root root 512 Oct 25 00:38 app-test-2
+</code></pre>
+<h4 id="3-wsl上のdocker-composeはパスを絶対参照しかできません相対参照できません">3. WSL上のdocker-composeはパスを絶対参照しかできません、相対参照できません</h4>
+<p>各OS間での違いを吸収するため、プロジェクトに <code>PRJ_ROOT</code> のような環境変数を用意しましょう。</p>
+<pre><code class="language-yaml">services:
+  app-front:
+    image: 561534604247952616898.dkr.ecr.amazonaws.com/test/front
+    volumes:
+      - ${PRJ_ROOT}/front:/var/www/front
+</code></pre>
+<h4 id="4-wsl上のnpmyarnによるjsビルドをntfs-drvfs上でおこなうとエラーになります">4. WSL上のnpm/yarnによるJSビルドをNTFS (drvfs)上でおこなうとエラーになります</h4>
+<p>こちらはFall Creators Updateのデグレですが、更新プログラム (KB4051963) でこの問題が修正されました :tada:</p>
+<p>もし更新プログラムが適用できない場合は、シンボリックリンクでNTFS上のnode_modulesディレクトリをWSLに移しましょう。</p>
+<pre><code class="language-bash">$ mkdir /home/foo/tmp/app-test-1/front/node_modules
+$ ln -s /home/foo/tmp/app-test-1/front/node_modules /C/Dev/app-test-1/front/node_modules
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>まだ未検証な部分はのこっていますが、ひととおりmacOSとWindowsによるWebアプリケーション開発は共有できるところまできている、と言えそうです。</p>
+<p>随時、気になる課題が出てきたら追記します。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><a href="https://github.com/cmderdev/cmder/issues/901">https://github.com/cmderdev/cmder/issues/901</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/docker/compose/issues/4039#issuecomment-269558432">https://github.com/docker/compose/issues/4039#issuecomment-269558432</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/Microsoft/WSL/issues/2448">https://github.com/Microsoft/WSL/issues/2448</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

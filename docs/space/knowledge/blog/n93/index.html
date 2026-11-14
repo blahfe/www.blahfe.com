@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AWS CloudTrail用のコスパの良いSIEMを探す | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n93/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-08-15">15 8月, 2021</time><h1>AWS CloudTrail用のコスパの良いSIEMを探す</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#azure-sentinel">Azure Sentinel</a><ul>
+<li><a href="#料金">料金</a></li>
+<li><a href="#siemからcloudtrailへの接続方法">SIEMからCloudTrailへの接続方法</a></li>
+<li><a href="#siem機能-aws-cloudtrail">SIEM機能 (AWS CloudTrail)</a></li>
+</ul>
+</li>
+<li><a href="#sumo-logic">Sumo Logic</a><ul>
+<li><a href="#料金_1">料金</a></li>
+<li><a href="#siemからcloudtrailへの接続方法_1">SIEMからCloudTrailへの接続方法</a></li>
+<li><a href="#siem機能-aws-cloudtrail_1">SIEM機能 (AWS CloudTrail)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#総評">総評</a><ul>
+<li><a href="#使用コスト">使用コスト</a></li>
+<li><a href="#導入コスト">導入コスト</a></li>
+<li><a href="#siem機能">SIEM機能</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>IT統制において証跡管理の充実という観点から、また、ゼロトラストの強化という観点からSIEMの導入が必要になってきました。今回はAWS CloudTrail用のSIEMについてざっと調べました。</p>
+<p><img alt="thumbnail" src="/assets/blog/3ed159254d131bec.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>AWS CloudTrailのログをセキュリティアカウントに集約しているが、深く監視しきれていない<ul>
+<li>可能ならアカウントが不審な操作をした場合にアラートを飛ばしたい</li>
+<li>可能ならCloudTrail以外のIaaSリソースを監視対象にしたい<ul>
+<li>NewRelicのように人のコストをかけずに管理したい</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>と言うわけで、コスパが良いと噂のSumo LogicとAzure Sentinelを比較評価します。</p>
+<h3 id="azure-sentinel">Azure Sentinel</h3>
+<h4 id="料金">料金</h4>
+<ul>
+<li><a href="https://azure.microsoft.com/ja-jp/pricing/details/azure-sentinel/">Azure Sentinel の価格 | Microsoft Azure</a></li>
+<li><a href="https://azure.microsoft.com/ja-jp/pricing/details/monitor/">価格 - Azure Monitor | Microsoft Azure</a></li>
+</ul>
+<h4 id="siemからcloudtrailへの接続方法">SIEMからCloudTrailへの接続方法</h4>
+<ol>
+<li>下記設定でLog Analyticsワークスペースを作成<ul>
+<li>サブスクリプション <code>無料試用版</code></li>
+<li>リソース グループ <code>production</code></li>
+<li>名前 <code>prod-sentinel</code></li>
+<li>地域 <code>東日本</code></li>
+</ul>
+</li>
+<li><code>[ワークスペースprod-sentinel - データコネクタ]</code> にて <code>[アマゾンウェブサービス]</code> コネクタページを開く</li>
+<li><code>[AWSアカウント - IAM - ロール]</code> にて下記設定で <code>[別のAWSアカウント]</code> を作成<ul>
+<li>アカウントID <code>{Microsoft account ID}</code></li>
+<li>オプション<ul>
+<li><code>外部IDが必要</code> をチェック</li>
+<li>外部ID <code>{外部ID (ワークスペースID)}</code></li>
+</ul>
+</li>
+<li>パーミッションポリシーを適用 <code>AWSCloudTrailReadOnlyAccess</code></li>
+<li>ロール名 <code>AzureSentinel</code></li>
+<li>※ Cf.<ul>
+<li><a href="https://docs.microsoft.com/ja-jp/azure/sentinel/connect-aws">AWS CloudTrail を Azure Sentinel に接続する | Microsoft Docs</a></li>
+<li><a href="https://docs.microsoft.com/ja-jp/azure/architecture/reference-architectures/aws/aws-azure-security-solutions">アマゾン ウェブ サービス (AWS) のための MCAS と Azure Sentinel - Azure Solution Ideas | Microsoft Docs</a></li>
+<li><a href="https://dev.classmethod.jp/articles/security-jaws-21-report/">Security-JAWS 第21回レポート #secjaws #secjaws21 #jawsug | DevelopersIO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="siem機能-aws-cloudtrail">SIEM機能 (AWS CloudTrail)</h4>
+<ul>
+<li>デフォルト監視対象<ul>
+<li>時間経過に伴うイベントアラート</li>
+<li>悪意ある可能性があるイベント</li>
+<li>最近のインシデント</li>
+<li>データソースの異常</li>
+</ul>
+</li>
+<li>ログクエリ<ul>
+<li>Audit</li>
+<li>Network</li>
+<li>Security</li>
+</ul>
+</li>
+<li>脅威管理<ul>
+<li>インシデント</li>
+<li>ブック ... 簡易な分析情報を提供<ul>
+<li>AWSネットワークアクティビティ ... SG、ネットワークACL、IGW、ELB、VPC、サブネット、NIの作成・更新・削除など、AWS ネットワーク関連のリソースアクティビティに関する分析情報を得ます。</li>
+<li>AWSユーザーアクティビティ ... 失敗したサインイン試行、IP アドレス、リージョン、ユーザー エージェント、ID の種類、また想定されたロールを持つ悪意のある可能性があるユーザー アクティビティなど、AWS ユーザー アクティビティに関する分析情報を得ます。</li>
+</ul>
+</li>
+<li>ハンティング ... 脅威判定となるログクエリを提供<ul>
+<li>Changes made to AWS IAM policy</li>
+<li>Tracking Privileged Account Rare Activity</li>
+<li>Exploit and Pentest Framework User Agent</li>
+<li>IAM Privilege Escalation by Instance Profile attachment</li>
+<li>Privileged role attached to Instance</li>
+<li>Suspicious credential token access of valid IAM Roles</li>
+<li>Unused or Unsupported Cloud Regions</li>
+</ul>
+</li>
+<li>ノートブック ... Jupyter Notebookによる分析を提供</li>
+</ul>
+</li>
+<li>ソリューション ... 外部のエンドポイントセキュリティツールと連携することが可能<ul>
+<li>Trend Micro Apex One</li>
+<li>McAfee Network Security Platform</li>
+</ul>
+</li>
+</ul>
+<h3 id="sumo-logic">Sumo Logic</h3>
+<h4 id="料金_1">料金</h4>
+<ul>
+<li><a href="https://www.sumologic.jp/pricing/jp/">Sumo Logic 料金表</a></li>
+</ul>
+<h4 id="siemからcloudtrailへの接続方法_1">SIEMからCloudTrailへの接続方法</h4>
+<ol>
+<li><code>[AWSアカウントSecurity - S3]</code> にてバケット <code>cloudtrail-accumulativelogs-{account-id}</code> を下記設定にて作成<ul>
+<li>パブリックアクセスをすべてブロック <code>オフ</code></li>
+<li>
+<p><details><summary>バケットポリシー</summary></p>
+<p><code>json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AWSCloudTrailAclCheck20150319",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "s3:GetBucketAcl",
+            "Resource": "arn:aws:s3:::cloudtrail-accumulativelogs-{account-id}"
+        },
+        {
+            "Sid": "AWSCloudTrailWrite20150319",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws:s3:::cloudtrail-accumulativelogs-{account-id}/AWSLogs/{organization-id}/*",
+            "Condition": {
+                "StringEquals": {
+                    "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+            }
+        }
+    ]
+}</code>
+</details>
+1. <code>[親AWSアカウント - KMS]</code> にて下記設定でKSMを作成
+    - キーのタイプ <code>対称</code>
+    - キーマテリアルオリジン <code>KMS</code>
+    - リージョンごと <code>単一リージョン</code>
+    - エイリアス名 <code>cloudtrail-kms</code>
+    - <details><summary>キーポリシー</summary></p>
+<p><code>json
+{
+    "Version": "2012-10-17",
+    "Id": "Key policy created by CloudTrail",
+    "Statement": [
+        {
+            "Sid": "Enable IAM User Permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "Allow CloudTrail to encrypt logs",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "kms:GenerateDataKey*",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:{account-id}:trail/*"
+                }
+            }
+        },
+        {
+            "Sid": "Allow CloudTrail to describe key",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "kms:DescribeKey",
+            "Resource": "*"
+        },
+        {
+            "Sid": "Allow principals in the account to decrypt log files",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": [
+                "kms:Decrypt",
+                "kms:ReEncryptFrom"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "kms:CallerAccount": "{account-id}"
+                },
+                "StringLike": {
+                    "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:{account-id}:trail/*"
+                }
+            }
+        },
+        {
+            "Sid": "Allow alias creation during setup",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "kms:CreateAlias",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "kms:CallerAccount": "{account-id}",
+                    "kms:ViaService": "ec2.ap-northeast-1.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Sid": "Enable cross account log decryption",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": [
+                "kms:Decrypt",
+                "kms:ReEncryptFrom"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "kms:CallerAccount": "{account-id}"
+                },
+                "StringLike": {
+                    "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:{account-id}:trail/*"
+                }
+            }
+        }
+    ]
+}</code>
+</details>
+1. <code>[親AWSアカウント - CloudTrail]</code> にて下記設定で証跡を作成
+    - 全般的な詳細
+- 証跡名 <code>cloudtrail-logs</code>
+- 組織に証跡を適用 <code>はい</code>
+- ストレージの場所 <code>既存のS3バケットを使用する</code>
+- 証跡ログバケット名 <code>cloudtrail-accumulativelogs-{account-id}</code>
+- ログファイルのSSE-KMS暗号化 <code>有効</code>
+- カスタマー管理のAWS KMSキー <code>新規</code>
+- AWS KMSエイリアス <code>arn:aws:kms:{region}:{account-id}:key/{kms-id}</code>
+- ログファイルの検証 <code>有効</code>
+    - 管理イベント
+- APIアクティビティ <code>すべて</code>
+1. <code>[Sumo Logic - Setup Wizard - Start streaming data to Sumo Logic - CloudTrail]</code> にて下記設定でCloudTrailデータタイプを作成
+    - Source Category <code>aws/cloudtrail</code>
+    - S3 Bucket
+- S3 Bucket Name <code>cloudtrail-accumulativelogs-{account-id}</code>
+- Path Expression <code>AWSLogs/{organization-id}/*</code>
+- S3 Region <code>Asia Pacific (Tokyo)</code>
+- How do you want the user to access the S3 Bucket? <code>Role-based access</code>
+    - 指定されたCFnテンプレートでIAMロールを作成</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="siem機能-aws-cloudtrail_1">SIEM機能 (AWS CloudTrail)</h4>
+<p>デフォルト監視対象
+- Console Logins
+    - Geo Location of All Users
+    - Login Events By User
+    - Logins Over Time
+    - Logins from Multiple IP
+    - Logins from Outside the USA
+    - Outlier - Success Login
+    - Outlier - Failed Login
+    - Login Results - One Day Time Comparison
+    - Logins without MFA
+- Network and Security
+    - Authorization Failures from All Countries
+    - Network and Security Events Over Time
+    - Authorization Failures Over Time
+    - Network ACL with All Allowed Ingress/Egress
+    - Recent Authorization Failures
+    - Recent Security Group and Network ACL Changes
+    - Created and Deleted Network  and Security Events
+    - Short Lived Critical Operations
+- Operations
+    - Action Events
+    - Requested AWS Services Over Time
+    - Events by AWS Region
+    - Recent Elastic IP Address Operations
+    - Created Resources Over Time
+    - Deleted Resources Over Time
+- Overview
+    - Geo Location of All Users
+    - Created Resources
+    - Deleted Resources Over Time
+    - Top 10 Users
+    - Failed Logins
+    - Created and Deleted Network and Security Events
+- S3 Public Objects and Buckets
+    - New Public Objects
+    - New Public Object by Object-Bucket
+    - New Public Objects Table
+    - Public Buckets
+    - Public Buckets Table
+    - Modified Public Objects
+    - Modified Public Objects by Object-Buket
+    - Modified Public Objects Table
+- User Monitoring
+    - Geo Location of All Users
+    - Top 10 Users
+    - Launched and Terminated Instances by User
+    - Administrative Activities Over Time
+    - Top 10 Activities by Administrative User
+    - Recent Activity by Administrative Users</p>
+<h2 id="総評">総評</h2>
+<h3 id="使用コスト">使用コスト</h3>
+<p>初期導入の段階ではSumo LogicよりAzure Sentinelの方が倍のコストがかかります。</p>
+<table>
+<thead>
+<tr>
+<th>ログ取込量/日</th>
+<th>Azure Sentinel月額</th>
+<th>Sumo Logic月額</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100MB</td>
+<td>2,396 JPY</td>
+<td>0 USD</td>
+</tr>
+<tr>
+<td>500MB</td>
+<td>11,978 JPY</td>
+<td>0 USD</td>
+</tr>
+<tr>
+<td>3GB</td>
+<td>71,870 JPY</td>
+<td>332 USD</td>
+</tr>
+</tbody>
+</table>
+<p>※ Azure Sentinelの内訳は「 <code>((GB当たりのAzure Sentinel取込量347.20円) + (GB当たりのLog Analytics取込量451.36円) * 取込量GB</code> 」</p>
+<h3 id="導入コスト">導入コスト</h3>
+<p>一度の設定で完了するSumo Logicの方が導入コストが低いです。Azure SentinelはIAMロールのみで済むという点で導入は楽ですがAWSアカウントごとに設定する必要があるので手離れが悪いです。</p>
+<h3 id="siem機能">SIEM機能</h3>
+<p>Azure Sentinelの方が分析機能が充実しています。Sumo Logicが大まかな脅威をログクエリからしか拾えないのに対し、Azure Sentinelは細かな脅威判定をログクエリで提供しているのに加え、Jupyter Notebookや外部のエンドポイントセキュリティツールを提供しています。また、デフォルトの監視対象も時間経過に伴うイベントアラート、悪意ある可能性があるイベント、最近のインシデント等必要十分な情報を提供しています。</p>
+<p>また、対象のデータソースはAzure SentinelがAWS CloudTrail、Google Workspace、Office 365、Azure AD等と幅広く用意しているのに対し、Sumo LogicはSIEMという観点では実質AWS CloudTrail専用のツールに落ち着いています。</p>
+<h2 id="wrapup">WRAPUP</h2>
+<p>メインプロダクトがまだ2-3しかない状況でSIEMをAWSだけに限定する場合はSumo Logicで十分でしょう。使用コスト、導入コストともに低く抑えることができるので、しばらくはSumo Logicで運用し、プロダクトがスケールする段階でAzure Sentinelを移行するのが現実的だと思いました。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

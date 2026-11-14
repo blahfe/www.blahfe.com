@@ -1,0 +1,2087 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LYSE本を読む | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n65/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-04-29">29 4月, 2017</time><h1>LYSE本を読む</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#tldr">TLDR</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#1-3-erlang概要">1-3 Erlang概要</a><ul>
+<li><a href="#12-erlangって何">1.2 Erlangって何？</a></li>
+<li><a href="#13-dont-drink-too-much-kool-aid">1.3 Don't drink too much Kool-Aid</a></li>
+<li><a href="#32-変化できない変数">3.2. 変化できない変数</a></li>
+<li><a href="#33-アトム">3.3. アトム</a></li>
+<li><a href="#34-ブール代数と比較演算子">3.4. ブール代数と比較演算子</a></li>
+</ul>
+</li>
+<li><a href="#6-11-文法">6-11 文法</a><ul>
+<li><a href="#7-再帰">7. 再帰</a></li>
+<li><a href="#82-無名関数">8.2. 無名関数</a></li>
+<li><a href="#9-エラー">9. エラー</a></li>
+<li><a href="#112-レコード">11.2 レコード</a></li>
+<li><a href="#113-キーバリューストア">11.3. キーバリューストア</a></li>
+<li><a href="#115セット">11.5.セット</a></li>
+<li><a href="#116-有効グラフ">11.6. 有効グラフ</a></li>
+<li><a href="#117-キュー">11.7. キュー</a></li>
+</ul>
+</li>
+<li><a href="#12-13-並列性について">12-13 並列性について</a><ul>
+<li><a href="#1221-並列性の概念">12.2.1. 並列性の概念</a></li>
+<li><a href="#123-すべてが線形にスケールするわけではない">12.3. すべてが線形にスケールするわけではない</a></li>
+</ul>
+</li>
+<li><a href="#14-プロセス間通信">14 プロセス間通信</a><ul>
+<li><a href="#エラーとプロセス">エラーとプロセス</a></li>
+</ul>
+</li>
+<li><a href="#15-アプリケーションを作成する">15 アプリケーションを作成する</a><ul>
+<li><a href="#リマインダーアプリケーション">リマインダーアプリケーション</a></li>
+<li><a href="#tips">TIPS</a></li>
+</ul>
+</li>
+<li><a href="#16-otp">16 OTP</a><ul>
+<li><a href="#otpとはなにか">OTPとはなにか</a></li>
+</ul>
+</li>
+<li><a href="#17-gen_server">17 gen_server</a><ul>
+<li><a href="#クライアントとサーバ">クライアントとサーバ</a></li>
+</ul>
+</li>
+<li><a href="#18-gen_fsm">18 gen_fsm</a><ul>
+<li><a href="#181-有限ステートマシン">18.1. 有限ステートマシン</a></li>
+<li><a href="#182-ユーザー同士の取引システム例">18.2. ユーザー同士の取引システム例</a></li>
+</ul>
+</li>
+<li><a href="#19-gen_event">19 gen_event</a></li>
+<li><a href="#192-汎用イベントハンドラ-gen_event">19.2. 汎用イベントハンドラ gen_event</a></li>
+<li><a href="#20-supervisor">20 supervisor</a></li>
+<li><a href="#21-プロセスプールをつくる">21 プロセスプールをつくる</a></li>
+<li><a href="#要件">要件</a></li>
+<li><a href="#実装">実装</a></li>
+<li><a href="#25-ホットコードローディング">25 ホットコードローディング</a><ul>
+<li><a href="#リリースの更新">リリースの更新</a></li>
+</ul>
+</li>
+<li><a href="#28-インメモリーデータベース-ets">28 インメモリーデータベース ETS</a><ul>
+<li><a href="#etsの特徴">ETSの特徴</a></li>
+<li><a href="#etsのテーブル種類">ETSのテーブル種類</a></li>
+<li><a href="#etsの関数">ETSの関数</a></li>
+</ul>
+</li>
+<li><a href="#29-分散システム-epmd">29 分散システム EPMD</a><ul>
+<li><a href="#分散システムepmdの特徴">分散システムEPMDの特徴</a></li>
+</ul>
+</li>
+<li><a href="#30-分散otp">30 分散OTP</a><ul>
+<li><a href="#分散アプリケーションの特徴">分散アプリケーションの特徴</a></li>
+</ul>
+</li>
+<li><a href="#32-mnesia">32 Mnesia</a><ul>
+<li><a href="#mnesiaの特徴">Mnesiaの特徴</a></li>
+</ul>
+</li>
+<li><a href="#33-dialyzer">33 Dialyzer</a><ul>
+<li><a href="#dialyzerの特徴">Dialyzerの特徴</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></details><p>Elixirの存在を知ったのが<a href="https://b.hatena.ne.jp/entry/s/plataformatec.com/">2014年7月14日</a>。それからおよそ3年経つというのに一向に理解した気になれないでいます。特にSLAナイン・ナインはなぜその数値なのか腑に落ちないでいました。今回<a href="https://learnyousomeerlang.com/">『Learn You Some Erlang for Great Good!（通称LYSE本）』</a>を読むことで積年の謎を解明してみようと臨みました。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>Elixirをさわりはじめてしばらく経つけどふかく理解した気になれない</li>
+<li>Phoenixやほかのフレームワークに頼られないケースが出てきたとき自由な発想ができるようになっておきたい</li>
+<li>巷でいわれているSLAナイン・ナイン（99.9999999%）などの実際がどうなのか腹落ちしてない</li>
+</ul>
+<h2 id="tldr">TLDR</h2>
+<ul>
+<li>下記Erlang機能を中心に高いSLAを提供する素地をなしている<ul>
+<li>分散システム Erlang Port Mapper Daemon（EPMD）<ul>
+<li>他の言語・フレームワークが「分散コンピューティングの落とし穴」「CAP定理」にどのように対応している比較すると、Erlangの特徴がより見えてくる。</li>
+<li>EMPDの特徴<ul>
+<li>耐障害性（スケーリングはやや弱い）</li>
+<li>マルチプロセス</li>
+<li>ネットワークの障害監視</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ライフサイクル、再起動戦略を備えたライブラリ（分散OTP）</li>
+<li>CPシステムでNoSQLデータベース「Mnesia」</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、「LYSE本」を読むことにしました。各セクションにはElixirに関係ありそうな箇所を抜粋しています。長い長いメモになるので、TLDRだけで済ませて問題ありません。結論、輪郭は見えてきましたがまだその探求の入り口に来たに過ぎないのだということは理解しました。</p>
+<h3 id="1-3-erlang概要">1-3 Erlang概要</h3>
+<h4 id="12-erlangって何">1.2 Erlangって何？</h4>
+<ul>
+<li>関数型言語<ul>
+<li>純粋主義（参照透過性、破壊的データを避けるなど）に従いつつ、実世界で問題が発生した場合はそれを取り払う</li>
+</ul>
+</li>
+<li>アクターモデル<ul>
+<li>同時並行性</li>
+<li>高可用性</li>
+<li>Ex:<ul>
+<li>Blue-Green deployment</li>
+<li>Log management</li>
+</ul>
+</li>
+<li>Policy:<ul>
+<li>Let it crash - クラッシュするならさせておけ<ul>
+<li><a href="http://ferd.ca/the-zen-of-erlang.html">As bad as anything else</a></li>
+<li><a href="http://qiita.com/soranoba/items/fce095f25c851dd34a6b">let it crashが生んだ誤解</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>開発環境<ul>
+<li>クロスプラットフォーム<ul>
+<li>BEAM</li>
+</ul>
+</li>
+<li>開発ツール<ul>
+<li>コンパイラ</li>
+<li>デバッガ</li>
+<li>プロファイラ</li>
+<li>テストフレームワーク</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ライブラリ<ul>
+<li>OTPフレームワーク</li>
+<li>Webサーバー</li>
+<li>パーサジェネレータ</li>
+<li>Mnesiaデータベース</li>
+</ul>
+</li>
+</ul>
+<h4 id="13-dont-drink-too-much-kool-aid">1.3 Don't drink too much Kool-Aid</h4>
+<ul>
+<li>軽量プロセスによるスケール<ul>
+<li>タスクを細かく分けすぎる＝むやみに並行処理させると処理速度に影響がでる</li>
+</ul>
+</li>
+<li>CPUコア数によるスケール<ul>
+<li>すべてを同時に稼働させることができない</li>
+</ul>
+</li>
+<li>技術領域<ul>
+<li>適切でない技術領域<ul>
+<li>画像処理</li>
+<li>信号処理</li>
+<li>OSのデバイスドライバ</li>
+</ul>
+</li>
+<li>適切な技術領域<ul>
+<li>巨大なサーバソフトウェア - QMS, MapReduce</li>
+<li>多言語との接続</li>
+<li>高レベルプロトコルの実装</li>
+<li>Ex:<ul>
+<li>IANOというUNICTチームが作成したロボット</li>
+<li>Wings 3D</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="32-変化できない変数">3.2. 変化できない変数</h4>
+<ul>
+<li>パターンマッチング（= 演算子）<ul>
+<li>比較の役割も果たしている<ul>
+<li>値が違っていたらエラーを出す</li>
+<li>値が同じだったら当該の値を返す</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>```erlang:</p>
+<blockquote>
+<p>47 = 45 + 2.
+47 = 45 + 3.
+** exception error: no match of right hand side value 48</p>
+</blockquote>
+<pre><code>
+- アンダースコア変数（_）
+    - 使用はできるが値の格納はできない
+
+```erlang:
+&gt; _ = 14+3.
+17
+&gt; _.
+* 1: variable '_' is unbound
+</code></pre>
+<h4 id="33-アトム">3.3. アトム</h4>
+<ul>
+<li>アトムと予約語<ul>
+<li>いくつかのアトムは予約語<ul>
+<li><code>after and andalso band begin bnot bor bsl bsr bxor case catch cond div end fun if let not of or orelse query receive rem try when xor false true</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="34-ブール代数と比較演算子">3.4. ブール代数と比較演算子</h4>
+<ul>
+<li>false trueはアトムなので数値の代替にはならない</li>
+<li>アトムなどのほかの型も比較対象になる<ul>
+<li><code>number &lt; atom &lt; reference &lt; fun &lt; port &lt; pid &lt; tuple &lt; list &lt; bit string</code></li>
+</ul>
+</li>
+</ul>
+<p>```erlang:</p>
+<blockquote>
+<p>0 == false.
+false
+1 &lt; false.
+true</p>
+</blockquote>
+<pre><code>
+### 3.8. ビット構文!
+- Erlangはおもいデータを数値処理するにはむいてない
+- 一方、数値処理が必要ないアプリケーションの中では速い
+    - 次のような処理にむいている
+        - イベントに反応する
+            - イベントをミリ秒単位でしょりできリアルタイムアプリケーションに適している
+        - メッセージングパッシング
+            - アトムをつかうと軽く処理できる
+- 軽量なビット文字列
+    - Pros
+        - リストで表現する文字列は1文字につき1ノード
+        - ビット文字列はC言語の配列のようなもの - `&lt;&lt;&quot;this is a bit string!&quot;&gt;&gt;`
+    - Cons
+        - パターンマッチなどの捜査の際に単純さが失われる
+
+## 4-5 パターンマッチング
+4-5章からIDEがないとreplなどに時間がとられるので整備しておこう。Emacsなら[erlang.el](http://erlang.org/doc/man/erlang.el.html)がある。インデント、フィルコメント、コメントアウト、OTPなどのscafold、Eshell、コンパイル等ひととおりそろっている。
+
+### 5.5. 関数呼び出しによるパターンマッチガードはcase文よりも優れているのか？
+まず、パフォーマンス上かわらない。
+
+つぎに、引数が複数あるときは関数をつかう。
+
+```erlang
+beach(Temperature) -&gt;
+    case Temperature of
+        {celsius, N} when N &gt; 20 andalso N =&lt; 45 -&gt;
+            'favorable';
+        {kelvin, N} when N &gt;= 293 andalso N =&lt; 318 -&gt;
+            'scientifically favorable';
+        {fahrenheit, N} when N &gt;= 68 andalso N =&lt; 113 -&gt;
+            'favorable in the US';
+        _ -&gt;
+            'avoid beach'
+    end.
+</code></pre>
+<p>上記のようだと可読性がさがる、冗長的。以下のように関数でまとめる。</p>
+<pre><code class="language-erlang">beachf({celsius, N}) when N &gt;= 20 andalso N =&lt; 45 -&gt;
+    'favorable';
+beachf({kelvin, N}) when N &gt;=293 andalso N =&lt; 318 -&gt;
+    'scientifically favorable';
+beachf({fahrenheit, N}) when N &gt;= 68 andalso N =&lt; 113 -&gt;
+    'favorable in the US';
+beachf(_) -&gt;
+    'avoid beach'.
+</code></pre>
+<p>ただし、引数が評価関数の対象の場合はcase文が向いている。</p>
+<pre><code class="language-erlang">prepend(X, []) -&gt;
+    [X];
+prepend(X, Set) -&gt;
+    case lists:member(X, Set) of
+        true  -&gt; Set;
+        false -&gt; [X | Set]
+    end.
+</code></pre>
+<h3 id="6-11-文法">6-11 文法</h3>
+<ul>
+<li>今回は標準文法について<ul>
+<li>Erlangの特徴はざっと次の通り<ul>
+<li>型変換の関数が素朴<ul>
+<li><code>erlang:&lt;type&gt;_to_&lt;type&gt;</code> という形式をとっているため、型が追加されるたびに変換用関数を <code>BIF (built-in function)</code> に追加しなければいけない</li>
+</ul>
+</li>
+<li>再帰、無名関数、エラーは普通、Ruby, JSっぽい</li>
+<li>レコードによってインターフェイスを定義できる</li>
+<li>データ構造にキーバリューストア、セット、配列、有効グラフ、キューがある<ul>
+<li>ただ配列は、他の手続き型言語の配列とは逆に、一定時間での挿入や検索ができない<ul>
+<li>Erlangでなされるプログラミングスタイルでは配列や行列と結びつける必要がなく、実際にはめったに使われないため</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-再帰">7. 再帰</h4>
+<ul>
+<li><code>lists</code> モジュール<ul>
+<li><code>sort/1</code></li>
+<li><code>join/2</code></li>
+<li><code>last/1</code></li>
+<li><code>flatten/1</code></li>
+<li><code>all/1</code></li>
+<li><code>reverse/1</code></li>
+<li><code>map/2</code></li>
+<li><code>filter/2</code></li>
+</ul>
+</li>
+<li><code>gb_tree</code> モジュール<ul>
+<li><code>lookup/2</code></li>
+<li><code>map/2</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="82-無名関数">8.2. 無名関数</h4>
+<pre><code class="language-erlang">&gt; (fun() -&gt; a end)().
+a
+&gt; lists:filter(fun(X) -&gt; X rem 2 == 0 end, lists:seq(1, 10)).
+[2,4,6,8,10]
+</code></pre>
+<h4 id="9-エラー">9. エラー</h4>
+<h5 id="コンパイル時エラー">コンパイル時エラー</h5>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>error</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Module</td>
+<td>Module name 'madule' does not match file name 'module'</td>
+<td><code>-module</code> 属性内に書いたモジュール名がファイル名と一致していない</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>Warning: function somefunction/0 is unused</td>
+<td>関数を公開していない、あるいはその関数が使われている場所が間違った関数名やアリティになっている</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>function somefunction/1 undefined</td>
+<td>関数が存在していない: <code>-export</code> 属性内あるいは関数を宣言するときに間違った関数名やアリティを書いてる</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>head mismatch</td>
+<td>関数定義を他の関数での先頭の節の間に差し込んでいる</td>
+</tr>
+<tr>
+<td>Syntax</td>
+<td>syntax error before: 'SomeCharacterOrWord'</td>
+<td>Ex: 括弧の閉じ忘れやタプルやおかしな式接尾辞、予約語・おかしな文字コードにエンコードされたUnicode文字の使用</td>
+</tr>
+<tr>
+<td>Syntax</td>
+<td>syntax error before:</td>
+<td>行末がおかしい</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>Warning: this expression will fail with a 'badarith' exception</td>
+<td>Ex: <code>llama + 5</code></td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>Warning: a term is constructed, but never used</td>
+<td>関数の中に、リス作成、タプル宣言、どんな変数にも束縛されていない無名関数・自身を返す無名関数の宣言がある</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>Warning: variable 'Var' is unused</td>
+<td>使わない変数を宣言している</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>Warning: this clause cannot match because a previous clause at line 4 always matches</td>
+<td>モジュール内で定義された関数が <code>catch-all</code> 節のあとに特定の節を持っている</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>variable 'A' unsafe in 'case'</td>
+<td><code>case ... of</code> の中で宣言されている変数を、その外側で使っている</td>
+</tr>
+</tbody>
+</table>
+<h5 id="ランタイムエラー-exception-error">ランタイムエラー (exception error)</h5>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>error</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>function clause</td>
+<td>no function clause matching somefunction</td>
+<td>関数内のすべてのガード節で失敗、あるいはすべてのパターンマッチで失敗</td>
+</tr>
+<tr>
+<td>case clause</td>
+<td>no case clause matching 'value'</td>
+<td>条件の書き忘れ、誤った種類のデータ送信、 <code>catch-all</code> 節が必要な場合</td>
+</tr>
+<tr>
+<td>if clause</td>
+<td>no true branch found when evaluating an if expression</td>
+<td>条件の書き忘れ、 <code>catch-all</code> 節が必要な場合</td>
+</tr>
+<tr>
+<td>badmatch</td>
+<td>no match of right hand side value</td>
+<td>無理なパターンマッチ、変数束縛の繰り返し</td>
+</tr>
+<tr>
+<td>badarg</td>
+<td>bad argument</td>
+<td>誤った引数の呼び出し</td>
+</tr>
+<tr>
+<td>undef</td>
+<td>undefined function somefunction</td>
+<td>未定義関数の呼び出し</td>
+</tr>
+<tr>
+<td>badarith</td>
+<td>bad argument in an arithmetic expression</td>
+<td>誤った算術演算</td>
+</tr>
+<tr>
+<td>badfun</td>
+<td>bad function</td>
+<td>変数を関数として呼び出した場合</td>
+</tr>
+<tr>
+<td>badarity</td>
+<td>interpreted function with arity 1 called with two arguments</td>
+<td>誤ったアリティ</td>
+</tr>
+</tbody>
+</table>
+<h5 id="例外処理">例外処理</h5>
+<pre><code class="language-erlang">1&gt; erlang:error(badarith).
+** exception error: bad argument in an arithmetic expression
+2&gt; erlang:error(custom_error).
+** exception error: custom_error
+</code></pre>
+<h4 id="112-レコード">11.2 レコード</h4>
+<pre><code class="language-erlang">-record(robot, {name, type=industrial, hobbies, details=[]}).
+</code></pre>
+<pre><code class="language-erlang">5&gt; Crusher = #robot{name=&quot;Crusher&quot;, hobbies=[&quot;Crushing people&quot;,&quot;petting cats&quot;]}.
+#robot{name = &quot;Crusher&quot;,type = industrial,
+       hobbies = [&quot;Crushing people&quot;,&quot;petting cats&quot;],
+       details = []}
+6&gt; Crusher#robot.hobbies. %% 参照
+[&quot;Crushing people&quot;,&quot;petting cats&quot;]
+7&gt; NestedBot = #robot{details=#robot{name=&quot;erNest&quot;}}.
+#robot{name = undefined,type = industrial,
+       hobbies = undefined,
+       details = #robot{name = &quot;erNest&quot;,type = industrial,
+       hobbies = undefined,details = []}}
+8&gt; NestedBot#robot.details#robot.name. %% ネスト参照
+&quot;erNest&quot;
+</code></pre>
+<h4 id="113-キーバリューストア">11.3. キーバリューストア</h4>
+<p>キーバリューストアは4つのモジュールで提供されている。</p>
+<table>
+<thead>
+<tr>
+<th>module</th>
+<th>methods</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proplist</code></td>
+<td><code>get_value/2</code>, <code>get_all_values/2</code>, <code>lookup/2</code>, <code>lookup_all/2</code></td>
+<td>少量データ向け, 緩いデータ構造</td>
+</tr>
+<tr>
+<td><code>orddict</code></td>
+<td><code>store/3</code>, <code>find/2</code>, <code>fetch/2</code>, <code>erase/2</code></td>
+<td>少量データ向け（75要素くらい）</td>
+</tr>
+<tr>
+<td><code>dict</code></td>
+<td><code>store/3</code>, <code>find/2</code>, <code>fetch/2</code>, <code>erase/2</code>, <code>map/2</code>, <code>fold/2</code></td>
+<td>大量データ向け、<code>ordict</code> と同じインターフェイス</td>
+</tr>
+<tr>
+<td><code>gb_trees</code></td>
+<td><code>enter/2</code>, <code>lookup/2</code>, <code>delete_any/2</code>, <code>insert/3</code>, <code>get/2</code>, <code>update/3</code>, <code>delete/2</code></td>
+<td>大量データ向け、データ構造の入出力がわかるスマートモードとわからないネイティブモードがあるため状況に応じて安全性とパフォーマンスのバランスを取ることができる</td>
+</tr>
+</tbody>
+</table>
+<h4 id="115セット">11.5.セット</h4>
+<p>セット（集合）は4つのモジュールで提供されている。</p>
+<table>
+<thead>
+<tr>
+<th>module</th>
+<th>methods</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ordsets</code></td>
+<td><code>new/0</code>, <code>is_element/2</code>, <code>add_element/2</code>, <code>del_element/2</code>, <code>union/1</code>, <code>intersection/1</code></td>
+<td>少量セット向け、遅いが可読性が高い</td>
+</tr>
+<tr>
+<td><code>sets</code></td>
+<td>-</td>
+<td>大量セット向け、<code>ordsets</code> と同じインターフェイス</td>
+</tr>
+<tr>
+<td><code>gb_sets</code></td>
+<td>-</td>
+<td>大量セット向け、スマートモード・ネイティブモードがあるため状況に応じ安全性とパフォーマンスのバランスを取ることができる</td>
+</tr>
+<tr>
+<td><code>sofs</code></td>
+<td>-</td>
+<td>一意な要素の集合だけではなく、数学的な概念として集合が必要な場合</td>
+</tr>
+</tbody>
+</table>
+<h4 id="116-有効グラフ">11.6. 有効グラフ</h4>
+<p>有効グラフは2つのモジュールで提供されている。</p>
+<table>
+<thead>
+<tr>
+<th>module</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>digraph</code></td>
+<td>生成、変更、エッジ・辺の操作、経路・周の検索</td>
+</tr>
+<tr>
+<td><code>digraph_utils</code></td>
+<td>グラフの誘導、木のテスト、隣接ノードの検索</td>
+</tr>
+</tbody>
+</table>
+<h4 id="117-キュー">11.7. キュー</h4>
+<p><code>queue</code> モジュール</p>
+<table>
+<thead>
+<tr>
+<th>api</th>
+<th>methods</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original API</td>
+<td><code>new/0</code>, <code>in/2</code>, <code>out/1</code></td>
+<td>キューの作成・削除</td>
+</tr>
+<tr>
+<td>Extended API</td>
+<td><code>get/1</code>, <code>peek/1</code>, <code>drop/1</code></td>
+<td>キューの中身の確認</td>
+</tr>
+<tr>
+<td>Okasaki API</td>
+<td>-</td>
+<td>関数型データ構造にもとづく</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-13-並列性について">12-13 並列性について</h3>
+<h4 id="1221-並列性の概念">12.2.1. 並列性の概念</h4>
+<ul>
+<li>Erlangの開発の背景<ul>
+<li>大抵の人は並行ソフトウェアを書くことにうんざりしてる<ul>
+<li>並行の解決策のほとんどがロックやミューテックスと呼ばれる小さな理論を扱うことに終始する</li>
+</ul>
+</li>
+<li>通信業界では並行性・並列性をめざす文化があった<ul>
+<li>PLEX</li>
+<li>AXE</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>満たすべき要求<ul>
+<li>スケーラビリティ<ul>
+<li>リニアスケールが可能</li>
+<li>実装方針<ul>
+<li>小さなプロセス</li>
+<li>プロセスに共有メモリの使用を禁じる</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>フォールトレランス (交換機上の何千ものユーザをサポートすること)<ul>
+<li>クラッシュが可能</li>
+<li>クラッシュ後リスタートが可能</li>
+<li>実装方針<ul>
+<li>分散</li>
+<li>非同期メッセージングパッシング</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>実装<ul>
+<li>並列・並行に最適化されたVM<ul>
+<li>コア1つに対してスケジューラとして1つのスケジューラを起動</li>
+<li>実行キューにあるタスクが多すぎた場合、他スレッドのスケジューラに移される</li>
+<li>過負荷なプロセスに対して送れるメッセージ量を制御</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="123-すべてが線形にスケールするわけではない">12.3. すべてが線形にスケールするわけではない</h4>
+<ul>
+<li>アムダールの法則<ul>
+<li>50%並行にしたコードは2倍ほど速くなる</li>
+<li>95%並行にしたコードは20倍ほど速くなる</li>
+</ul>
+</li>
+</ul>
+<h3 id="14-プロセス間通信">14 プロセス間通信</h3>
+<ul>
+<li>今回は2つのプロセス間通信のプロセス管理について<ul>
+<li>片方のプロセスがエラーになっても、もう片方のプロセスが死なないようにする<ul>
+<li>プロセスがエラーになったものはクラッシュさせる<ul>
+<li>クラッシュしたプロセスをリスタートさせる</li>
+</ul>
+</li>
+<li>また、そのクラッシュ情報をもう片方にメッセージとして送る</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="エラーとプロセス">エラーとプロセス</h4>
+<p>以下、3つの関数をつかい実装する。</p>
+<ol>
+<li><code>erlang:exit(Pid, Why)</code> - <code>Pid</code> に対して自分が異常終了で死んだとつたえる。自身は死なない。</li>
+<li><code>erlang:process_flag(trap_exit, Value)</code> - <code>Value</code> が true ならシステムプロセスとなり、 false ならシステムプロセスでなくなる。デフォルトは false。この関数によりクラッシュしたプロセスをリスタートさせる</li>
+<li><code>erlang:register(Atom, Pid)</code> と <code>erlang:make_ref()</code> - <code>register/2</code> で予測不可能な <code>Pid</code> を <code>Atom</code> として登録し、<code>make_ref/0</code> で生成された <code>Reference</code> をもとにメッセージ送信をおこなう。なお、ここで生成される <code>Reference</code> は同一Erlang VM上、あるいはクラスタリングしたVM上のみでユニークになる。</li>
+</ol>
+<pre><code class="language-erlang">start_critic2() -&gt;
+    spawn(?MODULE, restarter, []).
+
+restarter() -&gt;
+    process_flag(trap_exit, true),
+    Pid = spawn_link(?MODULE, critic2, []),
+    register(critic2, Pid),
+    receive
+        {'EXIT', Pid, normal} -&gt;   % not a crash
+            ok;
+        {'EXIT', Pid, shutdown} -&gt; % manual termination, not a crash
+            ok;
+        {'EXIT', Pid, _} -&gt;
+            restarter()
+    end.
+
+judge2(Band, Album) -&gt;
+    Ref = make_ref(),
+    critic2 ! {self(), Ref, {Band, Album}},
+    receive
+        {Ref, Criticism} -&gt;
+            Criticism
+    after 2000 -&gt;
+            timeout
+    end.
+
+critic2() -&gt;
+    receive
+        {From, Ref, {&quot;Rage Against the Turing Machine&quot;, &quot;Unit Testify&quot;}} -&gt;
+            From ! {Ref, &quot;They are great!&quot;};
+        {From, Ref, {&quot;System of a Downtime&quot;, &quot;Memoize&quot;}} -&gt;
+            From ! {Ref, &quot;They're not Johnny Crash but they're good.&quot;};
+        {From, Ref, {&quot;Johnny Crash&quot;, &quot;The Token Ring of Fire&quot;}} -&gt;
+            From ! {Ref, &quot;Simply incredible.&quot;};
+        {From, Ref, {_Band, _Album}} -&gt;
+            From ! {Ref, &quot;They are terrible!&quot;}
+    end,
+    critic2().
+</code></pre>
+<pre><code class="language-erlang">27&gt; functions:start_critic2().
+&lt;0.125.0&gt;
+28&gt; functions:judge2(&quot;The Doors&quot;, &quot;Light my Firewall&quot;).
+&quot;They are terrible!&quot;
+29&gt; exit(whereis(critic2), kill).
+true
+30&gt; whereis(critic2).
+&lt;0.129.0&gt;
+31&gt; functions:judge2(&quot;The Doors&quot;, &quot;Light my Firewall&quot;).
+&quot;They are terrible!&quot;
+</code></pre>
+<h3 id="15-アプリケーションを作成する">15 アプリケーションを作成する</h3>
+<h4 id="リマインダーアプリケーション">リマインダーアプリケーション</h4>
+<ul>
+<li>仕様<ul>
+<li>イベントを追加<ul>
+<li>イベントには締切り（警告する時間）、イベント名、詳細が含まれます</li>
+</ul>
+</li>
+<li>イベントの時間が来たら警告</li>
+<li>イベント名でイベントをキャンセル</li>
+<li>永続的なディスク保存先を持たない<ul>
+<li>注<ul>
+<li>これは今回見ようとしているのアーキテクチャの概念を示すのに必要ありません</li>
+<li>これは実際のアプリケーションを作るなら全然ダメなことですが、代わりにもし実装したくなったらその機能はどこに挿入されるかを示して、ちょっとだけその実装の手助けになる関数も示します</li>
+</ul>
+</li>
+<li>永続化保存先がないとした場合、実行中にコードを更新しなければいけません</li>
+</ul>
+</li>
+<li>ソフトウェアとのやりとりはコマンドライン経由で<ul>
+<li>あとでこれは拡張できる<ul>
+<li>たとえばGUI、Webページアクセス、IMソフト、メールなど</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ユースケース<ul>
+<li>Client<ul>
+<li>イベントサーバをサブスクライブして、メッセージとして通知を受ける<ul>
+<li>こうすることで、すべてイベントサーバをサブスクライブしている多くのクライアントを設計するのが簡単になる</li>
+<li>各クライアントは潜在的に、前述した異なるゲートウェイとなる<ul>
+<li>GUI、Webページ、IMソフト、メールなど</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>サーバにイベントを詳細情報とともに追加するように依頼</li>
+<li>サーバにイベントをキャンセルするように依頼</li>
+<li>サーバを（落ちたかどうか知る為に）監視</li>
+<li>必要があればイベントサーバを終了</li>
+</ul>
+</li>
+<li>Event Server<ul>
+<li>メソッド<ul>
+<li>クライアントからのサブスクライブを受取</li>
+<li>イベントプロセスから出された通知を各サブスクライバに転送</li>
+<li>イベントを追加するためにメッセージを受取<ul>
+<li>必要なX, Y, Zプロセスを起動</li>
+</ul>
+</li>
+<li>イベントキャンセルのメッセージを受取<ul>
+<li>イベントプロセスを殺す</li>
+</ul>
+</li>
+<li>クライアントから終了できる</li>
+<li>シェルから自分自身のコードを再読込出来る</li>
+</ul>
+</li>
+<li>Process X, Y, Z<ul>
+<li>発報が待たれる通知を表す<ul>
+<li>天気にはイベントサーバにリンクされたタイマーに過ぎない</li>
+</ul>
+</li>
+<li>時間が来たらイベントサーバにメッセージを送る</li>
+<li>キャンセルのメッセージを受け取って死ぬ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>実装<ul>
+<li>ディレクトリ構成<ul>
+<li><code>ebin/</code></li>
+<li><code>include/</code></li>
+<li><code>priv/</code></li>
+<li><code>src/</code><ul>
+<li><code>event.erl</code> - event module<ul>
+<li>loop/1</li>
+<li>normalize/1</li>
+<li>start/2</li>
+<li>start_link/2</li>
+<li>cancel/1</li>
+<li>time_to_go/1</li>
+<li>init/3</li>
+</ul>
+</li>
+<li><code>evserv.erl</code> - event server<ul>
+<li>loop/1</li>
+<li>valid_datetime/1</li>
+<li>valid_time/1</li>
+<li>valid_time/3</li>
+<li>send_to_clients/2</li>
+<li>start/0</li>
+<li>start_link/0</li>
+<li>terminate/0</li>
+<li>subscribe/1</li>
+<li>add_event/3</li>
+<li>add_event2/3</li>
+<li>cancel/1</li>
+<li>listen/1</li>
+<li>init/0</li>
+</ul>
+</li>
+<li><code>sup.erl</code> - supervisor<ul>
+<li>start/2</li>
+<li>start_link/2</li>
+<li>init/1</li>
+<li>loop/1</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Emakefile</code>
+    <code>{'src/*', [debug_info,
+               {i, "src"},
+               {i, "include"},
+               {outdir, "ebin"}]}.</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-sh">$ erl -make &amp;&amp; erl -pa ebin/
+Erlang/OTP 19 [erts-8.1] [source] [64-bit] [smp:2:2] [async-threads:10] [kernel-poll:false]
+
+Eshell V8.1  (abort with ^G)
+1&gt; evserv:start().
+&lt;0.59.0&gt;
+2&gt; evserv:subscribe(self()).
+{ok,#Ref&lt;0.0.2.84&gt;}
+3&gt; evserv:add_event(&quot;Hey there3&quot;, &quot;test&quot;, { {2017, 7, 9}, {1, 23, 59} }).
+ok
+4&gt; evserv:listen(2000).
+[{done,&quot;Hey there3&quot;,&quot;test&quot;}]
+</code></pre>
+<h4 id="tips">TIPS</h4>
+<ul>
+<li>Erlangのタイムアウト値はミリ秒でおよそ50日に制限されている</li>
+</ul>
+<h3 id="16-otp">16 OTP</h3>
+<h4 id="otpとはなにか">OTPとはなにか</h4>
+<ul>
+<li>Erlangの特徴<ul>
+<li>並列・分散</li>
+<li>エラー処理</li>
+</ul>
+</li>
+<li>組込関数<ul>
+<li>リンク</li>
+<li>モニター</li>
+<li>タイムアウト</li>
+<li>終了の補足</li>
+</ul>
+</li>
+<li>OTP<ul>
+<li>下記のようなバグになりやすい箇所をモジュールとして吸収<ul>
+<li>プロセスの順番</li>
+<li>競合条件をどのように避けるか<ul>
+<li>プロセスはいつでも死ぬ可能性があること</li>
+</ul>
+</li>
+<li>ホットコードローディング</li>
+<li>名前付きプロセス</li>
+<li>Supervisor</li>
+</ul>
+</li>
+<li>Pros<ul>
+<li>バグを解決するための時間を大幅に減らせる</li>
+<li>個々のモジュールのテストが行いやすい</li>
+<li>個々のモジュールの最適化が利用者全員の恩恵となる</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="17-gen_server">17 gen_server</h3>
+<p>今回はよくつかわれるビヘイビア <code>gen_server</code> 。この汎用化によって、メンテナンス、コードの単純化、テストの簡易化へとつながる。下記に <code>gen_server</code> のコールバックの概要を記す。</p>
+<h4 id="クライアントとサーバ">クライアントとサーバ</h4>
+<ul>
+<li>gen_server<ul>
+<li>init/1<ul>
+<li>Return</li>
+<li>{ok, State}</li>
+<li>{ok, State, TimeOut}</li>
+<li>{ok, State, hibernate}</li>
+<li>{stop, Reason}</li>
+<li>ignore</li>
+</ul>
+</li>
+<li>handle_call/3<ul>
+<li>Params<ul>
+<li>Request, From, State</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{reply, Reply, NewState}</li>
+<li>{reply, Reply, NewState, Timeout}</li>
+<li>{reply, Reply, NewState, hibernate}</li>
+<li>{noreply, NewState}</li>
+<li>{noreply, NewState, Timeout}</li>
+<li>{noreply, NewState, hibernate}</li>
+<li>{stop, Reason, Reply, NewState}</li>
+<li>{stop, Reason, NewState}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>handle_cast/2<ul>
+<li>Params<ul>
+<li>Message, State</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{noreply, NewState}</li>
+<li>{noreply, NewState, Timeout}</li>
+<li>{noreply, NewState, hibernate}</li>
+<li>{stop, Reason, NewState}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>handle_info/2<ul>
+<li>Callback case<ul>
+<li>bang operator (!)</li>
+<li>TimeOut</li>
+<li>モニター通知</li>
+<li>'EXIT' シグナル</li>
+</ul>
+</li>
+<li>Params<ul>
+<li>Message, State</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{noreply, NewState}</li>
+<li>{noreply, NewState, Timeout}</li>
+<li>{noreply, NewState, hibernate}</li>
+<li>{stop, Reason, NewState}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>terminate/2<ul>
+<li>Callback case<ul>
+<li>handle_* 関数の返値<ul>
+<li>{stop, Reason, NewState}</li>
+<li>{stop, Reason, Reply, NewState}</li>
+</ul>
+</li>
+<li>親が死んで、gen_serverが終了を補足していた場合</li>
+</ul>
+</li>
+<li>Params<ul>
+<li>Reason, State</li>
+</ul>
+</li>
+<li>Return<ul>
+<li><code>init/1</code> の反対</li>
+<li>VMがETS (erlang term storage) を削除</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>code_change/3<ul>
+<li>Params<ul>
+<li>PreviousVersion<ul>
+<li>{down, Version}</li>
+</ul>
+</li>
+<li>State<ul>
+<li>{ok, NewState}</li>
+</ul>
+</li>
+<li>Extra</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="18-gen_fsm">18 gen_fsm</h3>
+<p>今回は有限ステートマシン (finite state machine)。ビヘイビア <code>gen_fsm</code> をとりあげる。このビヘイビアは <code>gen_server</code> に基本似た挙動をするが、呼び出しやメッセージ投入をあつかうのではなく同期や非同期のイベントをあつう。</p>
+<h4 id="181-有限ステートマシン">18.1. 有限ステートマシン</h4>
+<ul>
+<li>状態遷移図 (state diagram) による記述</li>
+<li>シーケンス図による記述</li>
+<li>gen_fsm<ul>
+<li>init/1<ul>
+<li>Return<ul>
+<li>{ok, StateName, Data}</li>
+<li>{ok, StateName, Data, Timeout}</li>
+<li>{ok, StateName, Data, hibernate}</li>
+<li>{stop, Reason}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>StateName/2<ul>
+<li>非同期イベント</li>
+<li>Params<ul>
+<li>Event, StateData</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{next_state, NextStateName, NewData}</li>
+<li>{next_state, NextStateName, NewData, Timeout}</li>
+<li>{next_state, NextStateName, hibernate}</li>
+<li>{stop, Reason, Data}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>StateName/3<ul>
+<li>同期イベント</li>
+<li>Params<ul>
+<li>Event, From, StateData</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{reply, Reply, NextStateName, NewStateData}</li>
+<li>{reply, Reply, NextStateName, NewStateData, Timeout}</li>
+<li>{reply, Reply, NextStateName, NewStateData, hibernate}</li>
+<li>{next_state, NextStateName, NewStateData}</li>
+<li>{next_state, NextStateName, NewStateData, Timeout}</li>
+<li>{next_state, NextStateName, NewStateData, hibernate}</li>
+<li>{stop, Reason, Reply, NewStateData}</li>
+<li>{stop, Reason, NewStateData}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>handle_event/3<ul>
+<li>非同期イベント、グローバルイベント</li>
+<li>Params<ul>
+<li>Event, StateData</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{next_state, NextStateName, NewData}</li>
+<li>{next_state, NextStateName, NewData, Timeout}</li>
+<li>{next_state, NextStateName, hibernate}</li>
+<li>{stop, Reason, Data}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>handle_sync_event/4<ul>
+<li>同期イベント、グローバルイベント</li>
+<li>Params<ul>
+<li>Event, From, StateData</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{reply, Reply, NextStateName, NewStateData}</li>
+<li>{reply, Reply, NextStateName, NewStateData, Timeout}</li>
+<li>{reply, Reply, NextStateName, NewStateData, hibernate}</li>
+<li>{next_state, NextStateName, NewStateData}</li>
+<li>{next_state, NextStateName, NewStateData, Timeout}</li>
+<li>{next_state, NextStateName, NewStateData, hibernate}</li>
+<li>{stop, Reason, Reply, NewStateData}</li>
+<li>{stop, Reason, NewStateData}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>code_change/4<ul>
+<li>Params<ul>
+<li>OldVersion, StateName, Data, Extra</li>
+</ul>
+</li>
+<li>Return<ul>
+<li>{ok, NextStateName, NewStateData}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>terminate/3<ul>
+<li>init/1 と逆の挙動をする</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>イベント送信関数<ul>
+<li>ローカル<ul>
+<li>send_event/2</li>
+<li>sync_send_event/2-3</li>
+</ul>
+</li>
+<li>グローバル<ul>
+<li>send_all_state_event/2-3</li>
+<li>sync_send_event/2-3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="182-ユーザー同士の取引システム例">18.2. ユーザー同士の取引システム例</h4>
+<ul>
+<li><img width="426" alt="thumbnail" src="/assets/blog/89149b974b8ff887.png"></li>
+<li><img width="170" alt="image.png (24.2 kB)" src="/assets/blog/e38f9248dab1dec6.png"></li>
+</ul>
+<h3 id="19-gen_event">19 gen_event</h3>
+<p>今回はイベントハンドラ。ビヘイビアは <code>gen_event</code> をつかう。</p>
+<ul>
+<li>人々（あるいは、あるプロセスやアプリケーション）にイベントが起きたことを知らせる機能の実装方法<ul>
+<li>単純出力方式<ul>
+<li>結果を出力するのみ</li>
+</ul>
+</li>
+<li>単純サブスクライバ方式<ul>
+<li>メッセージ送信前にサブスクライバのPidを取得</li>
+<li>Cons<ul>
+<li>コールバックのために待機プロセスが必要</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>イベントマネージャ方式<ul>
+<li>関数をうけとるプロセスをたて、すべてのイベントに対して当該関数をはしらせる</li>
+<li>Pros<ul>
+<li>サーバのサブスクライバがたくさんあっても稼働し続けられる</li>
+<li>すべてのコールバックは同じインスタンスで操作される</li>
+<li>短命なタスクに対して新しいプロセスを生成する必要がない</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>関数が長時間動作する必要があった場合、お互いブロックしあう<ul>
+<li>イベントマネージャをイベントフォワーダにすれば防ぐことができる</li>
+</ul>
+</li>
+<li>無限ループする関数はクラッシュするまで新規イベントをブロックする</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="192-汎用イベントハンドラ-gen_event">19.2. 汎用イベントハンドラ gen_event</h3>
+<p><img width="285" alt="image.png (19.9 kB)" src="/assets/blog/25b1f8bed21bea06.png"></p>
+<ul>
+<li>gen_event の各関数<ul>
+<li>init/1<ul>
+<li>Response<ul>
+<li>{ok, State}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>terminate/2</li>
+<li>handle_event/2<ul>
+<li>非同期<ul>
+<li>すべてのイベントマネージャは戻り値を返さないことで呼び出しプロセスをブロックする</li>
+</ul>
+</li>
+<li>Params<ul>
+<li>Event, State</li>
+</ul>
+</li>
+<li>Response<ul>
+<li>{ok, NewState}<ul>
+<li>gen_server:handle_cast/2 と似た動作</li>
+</ul>
+</li>
+<li>{ok, NewState, hibernate}</li>
+<li>{remove_handler}<ul>
+<li>イベントマネージャからハンドラを削除する</li>
+</ul>
+</li>
+<li>{swap_handler, Args1, NewState, NewHandler, Args2}<ul>
+<li>今あるイベントハンドラを削除して新しいものに置き換える</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>notify/2<ul>
+<li>すべての流入イベントを通知する (非同期)</li>
+</ul>
+</li>
+<li>sync_notify/2<ul>
+<li>すべての流入イベントを通知する (同期)</li>
+</ul>
+</li>
+<li>cast/2<ul>
+<li>非同期</li>
+</ul>
+</li>
+<li>handle_call<ul>
+<li>gen_server:handle_call コールバックに似ているがレスポンスが異なる</li>
+<li>gen_server:call/3-4 が呼び出しに使われている</li>
+<li>Response<ul>
+<li>{ok, Reply, NewState}</li>
+<li>{ok, Reply, NewState, hibernate}</li>
+<li>{remove_handler, Reply}</li>
+<li>{swap_handler, Reply, Args1, NewState, Handle_Call}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>handle_info/2<ul>
+<li>hendle_event と同じレスポンスだが、終了シグナルや ! 演算子でイベントマネージャに贈られたメッセージのみを扱う点で異なる</li>
+</ul>
+</li>
+<li>code_change/3<ul>
+<li>gen_server:code_change と同じ動作をする</li>
+<li>Params<ul>
+<li>OldVsn バージョン番号, State ハンドラの状態, Extra</li>
+</ul>
+</li>
+<li>Response<ul>
+<li>{ok, NewState}</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="20-supervisor">20 supervisor</h3>
+<p>今回のビヘイビアはスーパバイザ <code>supervisor</code>。 監視戦略の概要にふれてみる。</p>
+<ul>
+<li>init/1<ul>
+<li>レスポンス<ul>
+<li><code>{ok,
+     {
+       {RestartStrategy, MaxRestart, MaxTime},
+       [{ChildId, StartFunc, Restart, Shutdown, Type, Modules}]
+     }
+   }.</code><ul>
+<li>例<ul>
+<li><code>{ok,
+     {
+       {one_for_all, 5, 60},
+       [
+         {fake_id, {fake_mod, start_link, [SomeArg]}, permanent, 5000, worker, [fake_mod]},
+         {other_id, {event_manager_mod, start_link, []}, transient, infinity, worker, dynamic}
+       ]
+     }
+   }</code>.</li>
+</ul>
+</li>
+<li>再起動戦略<ul>
+<li><code>one_for_one</code><ul>
+<li>1つのワーカがクラッシュしたら当該ワーカを再起動する</li>
+<li>各々のワーカが独立している、互いが関係していない、あるいは、ワーカが再起動して状態が消えても隣のワーカに影響を与えない場合につかう</li>
+</ul>
+</li>
+<li><code>one_for_all</code><ul>
+<li>1つのワーカがクラッシュしたらすべてのワーカをクラッシュさせて再起動する</li>
+<li>各々のワーカが互いに強く依存している場合につかう</li>
+</ul>
+</li>
+<li><code>rest_for_one</code><ul>
+<li>1つのワーカがクラッシュした当該ワーカのら子ワーカたちをクラッシュさせて再起動する</li>
+<li>各々のワーカがチェーン状態に依存している場合につかう</li>
+</ul>
+</li>
+<li><code>simple_one_for_one</code><ul>
+<li><code>one_for_one</code> はワーカのリストを起動した順で保持している一方 、<code>simple_one_for_one</code> はワーカへの定義を <code>dict</code> で保持している</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>再起動制限<ul>
+<li>MaxTime 秒以内に MaxRestart 回起動したら、スーパバイザは再起動をやめて自身をシャットダウンする</li>
+</ul>
+</li>
+<li>ワーカ (子プロセス)<ul>
+<li>構成要素<ul>
+<li>ChildId</li>
+<li>StartFunc<ul>
+<li>スーパバイザの起動方法をつたえるためのタプル {M, F, A}</li>
+</ul>
+</li>
+<li>Restart<ul>
+<li>再起動戦略<ul>
+<li>permanent<ul>
+<li>常に再起動</li>
+</ul>
+</li>
+<li>temporary<ul>
+<li>再起動しない</li>
+</ul>
+</li>
+<li>transient<ul>
+<li>正常終了の場合は再起動しない</li>
+<li>異常終了の場合は再起動する</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Shutdown<ul>
+<li>終了期限</li>
+</ul>
+</li>
+<li>Type<ul>
+<li>子プロセスの種類<ul>
+<li>ワーカ</li>
+<li>スーパバイザ</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Modules<ul>
+<li>コールバックモジュールのリスト</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="21-プロセスプールをつくる">21 プロセスプールをつくる</h3>
+<p>今回はプロセスプール管理アプリケーションをOTPを使ってつくる。</p>
+<h3 id="要件">要件</h3>
+<ul>
+<li>サーバを最大でN個の並列接続に制限</li>
+<li>アプリケーションによって開かれるファイルの数を制限</li>
+<li>サブシステムに優先順位を与える</li>
+<li>不定期なアクセス負荷に対してキューにタスクを貯めることで、可用性を高める</li>
+</ul>
+<h3 id="実装">実装</h3>
+<p><strong>機能</strong>
+- アプリケーション
+    - 起動
+    - 停止
+- 特定のプロセスプール
+    - 起動
+    - 停止
+- プール内のタスク
+    - プールに余裕がある場合
+        - 実行
+        - タスクが実行されたら呼び出し元は解放
+        - できる限りタスクを非同期に実行
+    - プールに余裕がない場合
+        - 起動できないと告げる
+        - タスクがキューの中にある間は呼び出し元のプロセスを待たせておく
+        - タスクをキューに貯める</p>
+<p><strong>状態</strong>
+- 静的な状態
+    - 下記から容易に取得
+        - 設定ファイル
+        - 他のプロセス
+        - アプリケーションを再起動しているスーパーバイザ
+- 動的な状態
+    - 再計算できるデータから取得
+    - 状態の種類
+        - 初期からの状態
+        - 現在までの状態
+        - 変換すべき状態
+- 再計算できない動的なデータ
+    - 下記から取得
+        - ユーザの入力
+        - 生のデータ
+        - 逐次的な外部イベント
+        - など
+    - 保存方法
+        - データベースに登録</p>
+<p><img width="395" alt="image.png (20.1 kB)" src="/assets/blog/0e186669b869b956.png"></p>
+<h3 id="25-ホットコードローディング">25 ホットコードローディング</h3>
+<ul>
+<li>今回はホットコードローディング（更新）についてかんがえる。</li>
+<li>ホットコードローディングはホットスワップの1種でElixir/Erlangの信頼性につながっている。</li>
+<li>ホットコードローディングは <code>systools</code> により複数の <code>appup</code> から <code>relup</code> として構成されている。</li>
+</ul>
+<h4 id="リリースの更新">リリースの更新</h4>
+<p>バージョンがあがるほどリリースの更新は煩雑になっていく。</p>
+<ul>
+<li>OTPアプリケーションを書く (ver. 1.0.0)<ul>
+<li>それらをリリースにする</li>
+</ul>
+</li>
+<li>1つ以上のOTPアプリケーションのバージョンを更新する (ver. 1.1.0)<ul>
+<li>そのアプリケーションの古いバージョンから新しいバージョンへの遷移を行うために、何を変更すべきかを説明した <code>appup</code> ファイルを作成する</li>
+</ul>
+</li>
+<li>新しいアプリケーションで新しいリリースを作る (ver. 1.2.0)<ul>
+<li><code>appup</code> ファイルをこれらのリリースから生成する</li>
+<li>新しいアプリケーションを稼働しているErlangシェルにインストールする</li>
+</ul>
+</li>
+</ul>
+<p>リリース作業として以下の通り。<code>relup</code> 構成ツールとして、Erlangは <code>relx</code> 、Elixirは <code>distillery</code> がある。</p>
+<ul>
+<li>巻き戻しできるようアップグレードとダウングレード双方を <code>appup</code> ファイルに記述</li>
+<li>モジュールによるリリース構成を <code>config</code> ファイルに記述</li>
+<li><code>systools:make_relup</code> で <code>relup</code> を作成</li>
+<li><code>release_hanlder</code> によって更新</li>
+</ul>
+<p>```erlang:appup
+%% {NewVersion,
+%%  [{VersionUpgradingFrom, [Instructions]}]
+%%  [{VersionDownGradingTo, [Instructions]}]}.
+{"1.1.0",
+ [{"1.0.0", [{add_module, pq_quest},
+             {load_module, pq_enemy},
+             {load_module, pq_events},
+             {update, pq_player, {advanced, []}, [pq_quest, pq_events]}]}],
+ [{"1.0.0", [{update, pq_player, {advanced, []}},
+             {delete_module, pq_quest},
+             {load_module, pq_enemy},
+             {load_module, pq_events}]}]}.
+{"1.0.1",
+ [{"1.0.0", [{load_module, sockserv_serv}]}],
+ [{"1.0.0", [{load_module, sockserv_serv}]}]}.</p>
+<pre><code>
+## 27 EUnit
+
+- 今回は単体テストEUnitについてかんがえる。
+
+## EUnitの特徴
+- `eunit:test(モジュール名, [verbose])` で実行
+- postfixがtestの関数 `_test()` に対してテストをおこなう
+- モジュールの内外ともにテストコードをかける
+- モジュール外に書いた場合プライベート関数に対するテストはできなくなる
+- テスト用モジュールはpostfixがtestsとなる `_tests.erl`
+
+### EUnitの関数
+- 表現系
+    - テスト
+        - `foo_test -&gt; ?assert(is_number(ops:add(1, 2))), ?assertEqual(4, ops:add(2, 2)).`
+    - テストジェネレータ
+        - `foo_test_ -&gt; [test_them_1(), test_them_2, ?_assertError(badarith, 1/0)].`
+    - フィクスチャー
+        - setup
+            - `{setup, Setup, Instantiator}`
+            - `{setup, Setup, Cleanup, Instantiator}`
+            - `{setup, Where, Setup, Instantiator}`
+            - `{setup, Where, Setup, Cleanup, Instantiator}`
+        - foreach
+            - `{foreach, Setup, [Instantiator]}`
+            - `{foreach, Setup, Cleanup, [Instantiator]}`
+            - `{foreach, Where, Setup, [Instantiator]}`
+            - `{foreach, Where, Setup, Cleanup, [Instantiator]}`
+        - instantiator制御
+            - `{spawn, TestSet}` - 並行処理
+            - `{timeout, (時間 秒), TestSet}` - 時間指定処理
+            - `{inorder, TestSet}` - 逐次処理
+            - `{inparallel, TestSet}` - 並列処理
+        - コメント
+            - `{Comment, Fixture}`
+- アサーション系
+    - `?assert(expression)`
+    - `?assertNot(expression)`
+    - `?assertEqual(A, B)`
+    - `?assertMatch(Pattern, Expression)`
+    - `?assertError(Pattern, Expression)`
+    - `?assertThrow(Pattern, Expression)`
+    - `?assertExit(Pattern, Expression)`
+    - `?assertException(Class, Pattern, Expression)`
+
+**フィクスチャー (foreach) をつかったテストジェネレータ**
+```erlang
+-define(setup(F), {setup, fun start/0, fun stop/1, F}).
+
+%% 関数some2について
+some2_test_() -&gt;
+    [{&quot;SetupData1を適切に評価できること&quot;,
+      {foreach,
+       ?setup(fun (SetupData1) -&gt;
+           [some_instantiator1(SetupData1),
+            some_instantiator2(SetupData1),
+            ...
+            some_instantiatorN(SetupData1)]
+       end}},
+     {&quot;SetupData2を並列処理で適切に評価できること&quot;,
+      {foreach,
+       ?setup(fun (SetupData2) -&gt;
+           {inparallel,
+            [some_instantiator1(SetupData2),
+             some_instantiator2(SetupData2),
+             ...
+             some_instantiatorN(SetupData2)]}
+       end)}}].
+</code></pre>
+<p><strong>並列・並行でテストする際の注意点</strong>
+- 名前をa、b、cのようにハードコードすると、並列で走らせている際、名前の衝突が起きる可能性がある。可能な限り名前はハードコードせずに <code>make_ref()</code> によって一意の値をつかうこと。</p>
+<h3 id="28-インメモリーデータベース-ets">28 インメモリーデータベース ETS</h3>
+<h4 id="etsの特徴">ETSの特徴</h4>
+<ul>
+<li>データへの並列平行なアクセスが可能<ul>
+<li>ただし、安全性と並行性が低下する可能性がある</li>
+<li>ETSのデフォルト使用数は1400<ul>
+<li><code>erl -env ERL_MAX_ETS_TABLES Number</code> で設定</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="etsのテーブル種類">ETSのテーブル種類</h4>
+<ul>
+<li><code>set</code><ul>
+<li>標準</li>
+</ul>
+</li>
+<li><code>ordered_set</code><ul>
+<li>テーブルデータのソート機能あり</li>
+<li>ユースケース: 範囲指定してデータ取得する (ただし、アクセス時間が遅くなる <code>O(log N)</code>)</li>
+</ul>
+</li>
+<li><code>bag</code><ul>
+<li>同一キーのタプル（レコード）を保持可能</li>
+</ul>
+</li>
+<li><code>duplicate_bag</code><ul>
+<li>同一内容のタプル（レコード）を保持可能</li>
+</ul>
+</li>
+<li>共通機能<ul>
+<li>テーブル所有権<ul>
+<li>ETSテーブル起動関数であらたにコールしたプロセスがそのテーブルの所有者</li>
+<li>権限<ul>
+<li>protected level<ul>
+<li>所有者 read, write</li>
+<li>その他 read</li>
+</ul>
+</li>
+<li>public level<ul>
+<li>所有者 read, write</li>
+<li>その他 read, write</li>
+</ul>
+</li>
+<li>private level<ul>
+<li>所有者 read, write</li>
+<li>その他 n/a</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>テーブルの移譲<ul>
+<li>ETSテーブルはプロセスが死ぬと消滅する</li>
+<li>移譲の種類<ul>
+<li>都度指定する移譲</li>
+<li>プロセスが死んだ場合の自動移譲</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="etsの関数">ETSの関数</h4>
+<ul>
+<li>テーブル作成・削除<ul>
+<li><code>ets:new/2</code></li>
+</ul>
+</li>
+<li>データ挿入・参照<ul>
+<li><code>ets:insert(Table, ObjectOrObjects)</code></li>
+<li><code>ets:lookup(Table, Key)</code></li>
+</ul>
+</li>
+<li>その他<ul>
+<li><code>ets:delete(Table, Key)</code></li>
+<li><code>ets:match(Table, MatchClause)</code></li>
+<li><code>ets:match_object(Table, MatchClause)</code></li>
+<li><code>ets:fun2ms(MatchSpecClause)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>setテーブルでnamed_tableオプションをつける場合</strong></p>
+<pre><code class="language-erlang">21&gt; ets:new(ingredients, [set, named_table]).
+ingredients
+22&gt; ets:insert(ingredients, {bacon, great}).
+true
+23&gt; ets:lookup(ingredients, bacon).
+[{bacon,great}]
+24&gt; ets:insert(ingredients, [{bacon, awesome}, {cabbage, alright}]).
+true
+25&gt; ets:lookup(ingredients, bacon).
+[{bacon,awesome}]
+26&gt; ets:lookup(ingredients, cabbage).
+[{cabbage,alright}]
+27&gt; ets:delete(ingredients, cabbage).
+true
+28&gt; ets:delete(ingredients, cabbage).
+true
+29&gt; ets:lookup(ingredients, cabbage).
+[]
+32&gt; ets:insert_new(ingredients, {tomato, hey}).
+true
+33&gt; ets:insert_new(ingredients, {tomato, hey}).
+false
+</code></pre>
+<p><strong>bagテーブルでnamed_tableオプションをつけない場合</strong></p>
+<pre><code class="language-erlang">34&gt; TabId = ets:new(ingredients, [bag]).
+16401
+35&gt; ets:insert(TabId, {bacon, delicious}).
+true
+36&gt; ets:insert(TabId, {bacon, fat}).
+true
+37&gt; ets:insert(TabId, {bacon, fat}).
+true
+38&gt; ets:lookup(TabId, bacon).
+[{bacon,delicious},{bacon,fat}]
+</code></pre>
+<p><strong>ordered_setターブルで、named_tableオプションをつける場合</strong></p>
+<pre><code class="language-erlang">42&gt; ets:new(ingredients, [ordered_set, named_table]).
+ingredients
+43&gt; ets:insert(ingredients, [{ketchup, &quot;not much&quot;}, {mustard, &quot;a lot&quot;}, {cheese, &quot;yes&quot;, &quot;goat&quot;}, {patty, &quot;moose&quot;}, {onions, &quot;a lot&quot;, &quot;caramelized&quot;}]).
+true
+44&gt; Res1 = ets:first(ingredients).
+cheese
+45&gt; Res2 = ets:next(ingredients, Res1).
+ketchup
+46&gt; Res3 = ets:next(ingredients, Res2).
+mustard
+47&gt; ets:last(ingredients).
+patty
+48&gt; ets:prev(ingredients, ets:last(ingredients)).
+onions
+</code></pre>
+<p><strong>named_tableオプションつきbagテーブルでパターンマッチをする</strong></p>
+<pre><code class="language-erlang">53&gt; ets:new(table, [named_table, bag]).
+table
+54&gt; ets:insert(table, [{items, a, b, c, d}, {items, a, b, c, a}, {cat, brown, soft, loveable, selfish}, {friends, [jem, jeff, etc]}, {items, 1, 2, 3, 1}]).
+true
+55&gt; ets:match(table, {items, '$1', '$2', '_', '$1'}).
+[[a,b],[1,2]]
+56&gt; ets:match(table, {items, '$114', '$212', '_', '$6'}).
+[[d,a,b],[a,a,b],[1,1,2]]
+57&gt; ets:match_object(table, {items, '$1', '$2', '_', '$1'}).
+[{items,a,b,c,a},{items,1,2,3,1}]
+58&gt; ets:delete(table).
+true
+</code></pre>
+<h3 id="29-分散システム-epmd">29 分散システム EPMD</h3>
+<ul>
+<li>今回は分散システム Erlang Port Mapper Daemon (EPMD) についてかんがえる。今回の章がSLAにもっとも関係しているといえそうである。ほかの言語・フレームワークが「分散コンピューティングの落とし穴」「CAP定理」にどのように対応している比較すると、Erlangの特徴がより見えてくるだろう。</li>
+</ul>
+<h4 id="分散システムepmdの特徴">分散システムEPMDの特徴</h4>
+<p><strong>前提</strong>
+- 分散システムによるFault toleranceについて
+    - ソフトウェアの稼働状況と対ハードウェア障害リスク
+        - マシン1台
+            - リスク対策できない
+        - マシン複数台
+            - アプリケーションが正しく構築されない場合、リスク対策できない
+- 「分散コンピューティングの落とし穴」へのErlangの対応
+    - ネットワークは信頼できる
+        - Erlangの対応
+            - 非同期通信モード（リンクやモニタ）により、メッセージを送信に正常な場合に必ず返信するように設計
+            - ただし、ノード間でリンクやモニタを張った際にネットワーク障害起きた場合、リンクやモニタが一斉にトリガーされシステムに予期しない負荷をかけることになる
+    - レイテンシはゼロである
+        - Erlangの対応
+            - タイムアウト、リンク、モニタ、非同期パターンにより遅延を想定し設計
+    - 帯域幅は無限である
+        - Erlangの対応
+            - 大きなメッセージを送らない
+    - ネットワークはセキュアである
+        - Erlangの対応
+            - Erlangはネットワークの安全性を確認しないため
+                - 異なるデータセンター間で自動的にクラスタ化しない
+                - あるいは、SSLに切り替える
+                - 安全なチャンネル越しにトンネルする
+                - ノード間の通信プロトコルを再実装する
+    - ネットワーク構成は変化せず一定である
+        - Erlangの対応
+            - アプリケーションでネットワーク構成（トポロジー）を管理しない
+    - 管理者は1人である
+        - Erlangの対応
+            - デバッグツールによる個別障害対応
+            - ノード監視ツールによるシステム運用状況の共有
+            - 実装プロトコルやAPIのバージョン管理
+    - 転送コストはゼロである
+        - Erlangの対応
+            - Erlangはほかのノードに渡されるメッセージを圧縮しないため
+                - 送るメッセージを小さくする
+                - あるいは、独自の通信レイヤを実装する
+    - ネットワークは均質である
+        - Erlangの対応
+            - Erlangノードと同じプロトコル形式にして通信
+                - Cノード
+                - BERT
+                - BERT-RPC
+- 障害（ノードの応答不能）への対応
+    - 下記の中から原因を特定するが確実には対応できない
+        - ハードウェア障害
+        - アプリケーションクラッシュ
+        - ネットワーク分断
+            - 輻輳
+            - 遮断
+    - ゾンビ化するということ
+        - ネットワーク分断が起きている間アプリケーションが生きていた場合
+            - 当該ノードで保持していたデータがクラスタ間で保持していたデータと整合性がとれず、欠損扱いになる（一貫性の欠如）
+            - 当該ノードからレスポンスが返ってこないため生きているか死んでいるかわからない（可用性の欠如）
+    - CAP（Consistency, Availability, Partition Tolerance）定理
+        - ノード間において、同時に下記3つの要素を保証することはできない
+            - 一貫性 Consistency
+                - すべてのデータ読み込みにおいて、最新の書き込みデータもしくはエラーのどちらかを受け取れること
+            - 可用性 Availability
+                - システム要求に応答できること（SPOFがない）
+            - 分断耐性 Partition tolerance
+                - ネットワーク分断時でもシステムを継続して運用できること
+        - 組合せ、採用条件、採用ケース
+            - CA
+                - 採用条件
+                    - ネットワークが絶対に落ちない場合
+                    - ネットワークが1つの塊として動作している場合
+                    - データの読み書きが多い場合
+                - 採用ケース
+                    - RDBMS
+                    - NFS
+            - AP
+                - 採用条件
+                    - ネットワーク分断が起きやすい場合
+                    - SPOFがない場合
+                    - ネットワーク分断時データ変更不可だと問題がある場合
+                    - 結果整合性を適用可能な場合
+                        - 時間ベース
+                        - 個別にコンフリクト解消
+                        - 全ノードによる合意
+                            - 合意割合による調整
+                            - 問い合わせ対象による調整
+                - 採用ケース
+                    - Amazon SimpleDB
+                    - Apache Cassandra
+                    - DNS
+                    - HTTPキャッシュ
+            - CP
+                - 採用条件
+                    - ネットワーク分断が起きやすい場合
+                    - SPOFがある場合
+                    - ネットワーク分断時データ変更不可でも問題ない場合
+                - 採用ケース
+                    - Mnesia
+                    - Apache HBase</p>
+<p><strong>Erlangが提供する道具</strong>
+- ノードとEPMD
+    - 特徴
+        - ノードとはErlang VMのインスタンスのこと
+        - 各ノードはEPMDに接続されている
+            - 新しいノードは自動的にErlangクラスタに接続され、各ノードに接続される
+        - 接続されているノードでも完全に独立している
+            - 各ノードが固有に保持しているもの
+                - プロセスレジストリ
+                - ETSテーブル
+                - 読み込んだモジュール
+        - EPMDはErlangクラスタの一部として、各コンピューター上で稼働する
+        - EPMDは名前サーバとして機能する
+    - Pros
+        - Fault tolerance
+    - Cons
+        - 1ノードにつき1エフェメラルポートが必要になるため、Scalingに制限がある
+            - 対処として、ノードのグループを小さなクラスタに分割
+- シリアライズ、デシリアライズ
+- マルチプロセス
+- ネットワークの障害監視</p>
+<p><strong>Erlangクラスタを設定する</strong>
+- ノードの名前解決
+    - 長い名前
+        - aaa.bbb.cccのような完全修飾ドメイン名
+        - DNSリゾルバによって解決
+        - <code>erl -name LongName</code>
+    - 短い名前
+        - ピリオドがないホスト名
+        - ホストファイルやDNSエントリによって解決
+        - <code>erl -sname ShortName</code>
+    - 注意点
+        - 1台のコンピューター上でErlangノードを設定する際は通常短い名前をつかう
+        - 長い名前と短い名前、双方でのやり取りはできない
+- 関数
+    - <code>net_kernel:connect_node/1</code> - ノード接続
+    - ノード名参照
+        - <code>node/0</code> - 現在のノード名を参照
+        - <code>nodes/0</code> - 接続ノード参照
+    - リンクとモニタ
+        - <code>link</code> - ノードをまたいだリンク
+        - <code>erlang:monitor/2</code> - ノードをまたいだモニタ（ネットワーク分断時に一斉に活性化し負荷が増加する可能性あり）
+        - <code>erlang:monitor_node/2</code> - ノードを指定したモニタ
+    - 遠隔操作
+        - <code>spawn/2</code>
+        - <code>spawn/4</code>
+        - <code>spawn_link/2</code>
+        - <code>spawn_link/4</code>
+- クラスタのUIDトークンとしてのCookie
+    - 関数
+        - <code>erl -sname ShortName -setcookie CookieName</code>
+        - <code>erlang:get_cookei/0</code>
+        - <code>erlang:set_cookei/2</code>
+- 隠しノード
+    - クラスタを介してノード接続すると、クラスタ間で予期しないメッセージ通信がおこなわれる可能性があるため、それを防止する策としてクラスタを介さず接続可能な隠しノード機能がある
+    - 関数
+        - <code>erlang:send(Dest, Message, [noconnect])</code> - クラスタを介さずにノードに接続
+        - <code>erl -sname ShortName -hidden</code> - クラスタを介さずに隠しノードに接続
+        - <code>nodes(hidden)</code> - 隠しノードを参照
+- ポート範囲指定
+    - EPMDのポート番号は <code>4369</code>
+    - 設定方法
+        - <code>erl -name LongName -kernel inet_dist_listen_min 9100 -kernel inet_dist_listen_max 9115</code>
+        - <code>erl -name LongName -config ports</code>
+            - ports.config: <code>[{kernel, [{inet_dist_listen_min, 9100}, {inet_dist_listen_max, 9115}]}].</code>
+- 分散用モジュール
+    - <code>net_kernel</code>
+        - <code>start([Name, Type, HeartbeatInMilliseconds])</code> - インスタンスを一時的にノード化
+        - <code>set_net_ticktime(Milliseconds)</code> - Ticktime（ハートビートを4倍した時間、ノードの死亡判定時間）を設定変更
+    - <code>global</code> - プロセスレジストリの代替
+        - <code>register_name(Name, Pid)</code> - gloabl登録し名前変更
+        - <code>unregister_name(Name, Pid)</code> - globalから名前解除
+        - <code>re_register_name(Name, Pid)</code> - 参照先の喪失を防ぎながらglobal登録し名前変更
+        - <code>whereis_name(Name)</code> - PID探索
+        - <code>send(Name, Message)</code> - メッセージ送信
+        - <code>random_exit_name/3</code> - ランダムにプロセスをkillする
+        - <code>random_notify_name/3</code> - 2つのプロセスのうちいかすプロセスをランダムに1つ選び、globalから解除されるプロセスに <code>{global_name_conflict, Name}</code> というメッセージを送信
+        - <code>notify_all_name/3</code> - 指定したPIDプロセスをglobalから解除し、 <code>{global_name_conflict, Name, OtherPid}</code> というメッセージを送信、コンフリクト解消を促す
+    - <code>rpc</code>
+        - <code>call(Node, Module, Function, Args[, Timout])</code>
+        - <code>async_call(Node, Mod, Fun, Args[, Timout])</code>
+        - <code>yield(AsyncPid)</code>
+        - <code>nb_yield(AsyncPid[, Timeout])</code> - ポーリング、ロングポーリング
+        - <code>cast(Node, Mod, Fun, Args)</code> - 返値なしのコール
+        - <code>multicall(Nodes, Mod, Fun, Args)</code> - 複数ノードへのコール
+        - <code>eval_everywhere(Nodes, Mod, Fun, Args)</code> - 複数ノードへの命令（コールとほぼ同じ）</p>
+<h3 id="30-分散otp">30 分散OTP</h3>
+<ul>
+<li>前回の分散の章でnine ninesのなぞが見えてきた。今回はそれを補完する分散OTPについてかんがえる。</li>
+</ul>
+<h4 id="分散アプリケーションの特徴">分散アプリケーションの特徴</h4>
+<p><strong>構成</strong>
+- 標準アプリケーション
+    - アプリケーションコントローラ（ノード）
+        - アプリケーションマスタ
+            - スーパーバイザ
+- 分散アプリケーション
+    - アプリケーションコントローラ（ノード）
+        - アプリケーションマスタ
+            - スーパーバイザ</p>
+<p><strong>ライフサイクル</strong>
+- 標準アプリケーション
+    1. 読込中
+    2. 起動中
+    3. 停止中
+    4. 解放中
+- 分散アプリケーション
+    1. 読込中
+    2. 起動中
+        - 稼働中の分散ノードが死んだら稼働中ステータスに移行
+    3. 稼働中
+        - 稼働中ステータスは1つのノードのみ
+    4. 停止中
+    5. 解放中</p>
+<p><strong>再起動戦略</strong>
+- 特徴
+    - ハードウェア障害を前提にしたCAシステムでよくとられます
+    - ネットワーク分断を前提にしたCPシステムの場合は採用を熟慮すること
+- 2つの戦略
+    - フェイルオーバー
+        - アプリケーション停止後、別の場所で再起動する戦略
+            - メインとバックアップを入れ替える方法
+            - 複数台サーバを立ち上げて相互に負荷を補完しあう方法
+    - テイクオーバー
+        - アプリケーション復活後、バックアップからメインに移行する戦略</p>
+<h3 id="32-mnesia">32 Mnesia</h3>
+<h4 id="mnesiaの特徴">Mnesiaの特徴</h4>
+<ul>
+<li>Pros<ul>
+<li>CPシステム（NoSQL）<ul>
+<li>トランザクション機能 (ACID)</li>
+<li>ネットワーク分断につよい<ul>
+<li>ただし、10ノード前後が実用上の限界と考えられている</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>各テーブルにつき2Gの容量制限<ul>
+<li>Table Frangmentation機能で回避可能</li>
+</ul>
+</li>
+<li>厳密なシステム要求に応答することはむずかしい</li>
+<li>数テラバイトの大きなデータをあつかうのに向いていない</li>
+<li>組込型制限がない</li>
+</ul>
+</li>
+</ul>
+<p><strong>適切なユースケース</strong>
+- 下記条件をみたした場合
+    - ノード数、データ量双方を見積もることが可能
+    - ETS/DETS（タプル）形式でアクセス可能</p>
+<p><strong>テーブルオプション</strong>
+- 保存方法
+    - <code>ram_copies</code> - データをETS（メモリ）にのみ保存、32ビットマシンで4Gの容量制限
+    - <code>disc_only_copies</code> - データをDETSにのみ保存、2Gの容量制限
+    - <code>disc_copies</code> - データをETSとDETS双方に保存、DETSの2G容量制限はない、通常はこちらはつかう
+- テーブル種類
+    - <code>set</code>
+    - <code>bag</code>
+    - <code>ordered_set</code></p>
+<p><strong>CLI</strong>
+- <code>erl -name LongName -mnesia dir path/to/db</code> - <code>dir</code> 変数でスキーマ保存場所を指定</p>
+<p><strong>関数</strong>
+- <code>mnesia</code>
+    - <code>create_schema(ListOfNodes)</code>
+    - <code>create_table(TableName, Option)</code>
+        - オプション
+            - <code>{attributes, List}</code> - テーブルのカラム名
+            - <code>{disc_copies, NodeList}</code> <code>{disc_only_copies, NodeList}</code> <code>{ram_copies, NodeList}</code> - テーブルの保存場所
+            - <code>{index, ListOfIntegers}</code> - インデックスをはる
+            - <code>{record_name, Atom}</code> - テーブルの別名（非推奨）
+            - <code>{type, Type}</code> - テーブル種類 (<code>set</code>, <code>ordered_set</code>, <code>bag</code>)
+            - <code>{local_content, Boolean}</code> - デフォルト <code>false</code>。<code>true</code> にすると、多数のノード上に共有されない固有のローカルテーブルを作成する
+    - <code>wait_for_tables</code> - テーブル読込完了まで待機
+    - <code>activity(AccessContext, Fun[, Args])</code> - クエリの実行方法を指定
+        - AccessContextの種類
+            - <code>transaction</code> - 非同期トランザクション、トランザクションの完了を待つわけではないので正確ではない
+            - <code>sync_transaction</code> - 同期トランザクション
+            - <code>async_dirty</code> - 非同期のロックなし処理
+            - <code>sync_dirty</code> - 同期のロックなし処理
+            - <code>ets</code> - MnesiaをつかわずETSテーブルで処理
+    - <code>write</code>
+    - <code>delete</code>
+    - <code>read</code>
+    - <code>match_object</code>
+    - <code>select</code>
+- <code>application</code>
+    - <code>set_env(mnesia, dir, "path/to/db")</code> - スキーマ保存場所を指定</p>
+<p><strong>クエリリスト内包表記</strong>
+- <code>qlc</code>
+    - <code>q(Fun, Generator)</code> - クエリハンドル
+    - <code>eval(QueryHandle)</code> - 評価
+    - <code>fold(Fun, Dict, QueryHandle)</code></p>
+<h3 id="33-dialyzer">33 Dialyzer</h3>
+<p>今回は静的型チェッカーDialyzerについてかんがえる。</p>
+<h4 id="dialyzerの特徴">Dialyzerの特徴</h4>
+<p><strong>CLI</strong>
+- PLT (Persistent Lookup Table 永続的探索表)
+    - <code>dialyzer --build_plt --apps erts kernel stdlib mnesia sasl common_test eunit</code> - PLT作成
+    - <code>dialyzer --add_to_plt --apps reltool</code> - PLT追加
+- 型チェック
+    - <code>dialyzer foo/src/bar.erl</code> - ファイルを解析
+    - <code>dialyzer -r foo/src bar/src --src</code> - ディレクトリ指定してerlファイルを解析</p>
+<p><strong>Erlangの型</strong>
+- シングルトン型 - それ自体が型を示すオブジェクト
+    - <code>'some atom</code> - アトム
+    - <code>42</code> - 整数
+    - <code>[]</code> - 空リスト
+    - <code>{}</code> - 空タプル
+    - <code>&lt;&lt;&gt;&gt;</code> - 空バイナリ
+- BIF型
+    - <code>any()</code>
+    - <code>none()</code>
+    - <code>pid()</code>
+    - <code>port()</code>
+    - <code>reference()</code>
+    - <code>atom()</code>
+    - <code>atom()</code>
+    - <code>binary()</code>
+    - <code>&lt;&lt;_:Integer&gt;&gt;</code> - 特定サイズのバイナリ
+    - <code>&lt;&lt;_:*Integer&gt;&gt;</code> - 特定のユニットサイズで長さは指定されていないバイナリ
+    - <code>&lt;&lt;_:Integer, _:_*OtherInteger&gt;&gt;</code> - 上記2つの組み合わせ、バイナリの最小の長さを指定する形式
+    - <code>integer()</code>
+    - <code>N..M</code> - 整数の範囲
+    - <code>non_neg_integer()</code>
+    - <code>pos_integer()</code> - ゼロより大きい自然数
+    - <code>neg_integer()</code> - 負の整数
+    - <code>float()</code>
+    - <code>fun()</code> - あらゆる種類の関数
+    - <code>fun((...) -&gt; Type)</code> - 引数のアリティが決まっていない、特定の肩を返す無名関数
+    - <code>fun(() -&gt; Type)</code>
+    - <code>fun((Type1, Type2, ..., TypeN) -&gt; Type)</code>
+    - <code>[Type()]</code> - 特定の型を持つリスト
+    - <code>[Type(), ...]</code> - 特定の型を持つリスト、またリストが空でないことを示す
+    - <code>tuple()</code>
+    - <code>{Type1, Type2, ..., TypeN}</code> - 全要素の型とサイズがわかっているタプル
+- エイリアス型
+    - <code>term()</code>
+    - <code>boolean()</code> - <code>'true' | 'false'</code>
+    - <code>byte()</code> - <code>0..255</code>
+    - <code>char()</code> - <code>0..16#10ffff</code>
+    - <code>number()</code> - <code>integer() | float()</code>
+    - <code>maybe_improper_list()</code> - <code>maybe_improper_list(any(), any())</code>
+    - <code>maybe_improper_list(T)</code> - <code>maybe_improper_list(T, any())</code>
+    - <code>string()</code> - <code>[char()]</code>
+    - <code>iolist()</code> - <code>maybe_improper_list(char() | binary() | iolist(), binary() | [])</code>
+    - <code>module()</code> - <code>atom()</code>
+    - <code>timeout()</code> - <code>non_neg_integer()</code>
+    - <code>node()</code> - アトム
+    - <code>no_return()</code> - <code>none()</code></p>
+<p><strong>判定できない例と対策</strong></p>
+<pre><code class="language-erlang">-module(cards).
+-export([kind/1, main/0]).
+
+-type suit() :: spades | clubs | hearts | diamonds.
+-type value() :: 1..10 | j | q | k.
+-type card() :: {suit(), value()}.
+
+-spec kind(card()) -&gt; 'face' | 'number'. % 注釈をくわえることでdialyzerに警告させる
+kind({_, A}) when A &gt;= 1, A =&lt; 10 -&gt;
+    number;
+kind(_) -&gt;
+    face.
+
+main() -&gt;
+    number = kind({spades, 7}),
+    face = kind({hearts, k}),
+    number = kind({rubies, 4}), % タプルの中の型が違う
+    face = kind({clubs, q}).
+</code></pre>
+<pre><code class="language-erlang">-module(convert).
+-export([main/0]).
+
+%% 注釈をつけないとdialyzerは下記のように判定する
+% -spec convert(list() | tuple()) -&gt; list() | tuple().
+-spec convert(tuple()) -&gt; list();
+             (list()) -&gt; tuple().
+main() -&gt;
+    [_, _] = convert({a, b}),
+    {_, _} = convert([a, b]),
+    [_, _] = convert([a, b]),
+    {_, _} = convert({a, b}).
+
+%% private
+convert(Tup) when is_tuple(Tup) -&gt;
+    tuple_to_list(Tup);
+convert(L=[_|_]) -&gt;
+    list_to_tuple(L).
+</code></pre></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

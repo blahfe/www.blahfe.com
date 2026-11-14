@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDKで管理する今どきのJenkins | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n75/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-02-24">24 2月, 2021</time><h1>CDKで管理する今どきのJenkins</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#1-構成">1. 構成</a></li>
+<li><a href="#2-cdkによるjenkinsの敷設">2. CDKによるJenkinsの敷設</a><ul>
+<li><a href="#2-a-cdkの注意点リソース名を明示する">2-a. CDKの注意点：リソース名を明示する</a></li>
+<li><a href="#2-b-cdkの注意点cdkremovablepolicyretainをつける">2-b. CDKの注意点：cdk.RemovablePolicy.RETAINをつける</a></li>
+</ul>
+</li>
+<li><a href="#3-jenkinsの設定を行う">3. Jenkinsの設定を行う</a><ul>
+<li><a href="#3-a-jenkinsでつかっているプラグイン">3-a. Jenkinsでつかっているプラグイン</a></li>
+<li><a href="#3-b-jenkinsジョブをgithubで管理する">3-b. JenkinsジョブをGitHubで管理する</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="1280" alt="thumbnail" src="/assets/blog/59d95281eb8f5e48.jpg"></p>
+<p>先日のAWS障害で管理していたECSに多少の影響が出たので、そのタイミングで敷設していたJenkinsの構成を改めて整理しました。今回は課題解決というより、既に稼働していたシステム構成の振り返りを行いました。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>インフラ系タスクがコード管理されていないので属人化しやすい<ul>
+<li>可能なら当該タスクはインフラ担当から手離れして欲しい</li>
+<li>当該タスクは通常のCIワークフローとは異なるので管理する場所がない<ul>
+<li>そういう意味でJenkinsの出番だけどこれはこれで管理が手間<ul>
+<li>ヘルスチェックエラーにひっかかったら自動で再起動してほしい</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、モダンなJenkins2系をAWS CDKで敷設してみました。</p>
+<h3 id="1-構成">1. 構成</h3>
+<p>大方の構成は「<a href="https://github.com/nabinno/jenkins-cdk-on-ec2">nabinno/jenkins-cdk-on-ec2</a>」のシステム構成図をご覧下さい。元ネタはaws-sampleになりますが、今回はAWS FargateではなくAmazon ECSを採用し、CDKはTypeScriptで実装しています。</p>
+<p>使用技術スタック
+- Jenkins
+- Amazon ECS（Amazon EC2）
+- Application Load Balancer
+- Amazon EFS</p>
+<p><img width="1640" alt="" src="/assets/blog/a287fe6fc3ea20aa.png"></p>
+<h3 id="2-cdkによるjenkinsの敷設">2. CDKによるJenkinsの敷設</h3>
+<p>CDKによるJenkinsの敷設はGitHubレポジトリーを見ていただくとして、ここではCDKのコード上の注意点を2点ほど共有しておきます。</p>
+<h4 id="2-a-cdkの注意点リソース名を明示する">2-a. CDKの注意点：リソース名を明示する</h4>
+<p>CDKで各リソース名を明示しないとCloudFormation（CFn）独特の命名規則でリソースが敷設されます。インフラ担当が自分一人の場合は良いですが、インフラ担当を増員する際は、他のIaCツールの運用方針とバッティングする等、後で足かせになるので命名規則にのっとりリソース名を付けていくようにしましょう。</p>
+<p>命名規則は「<a href="https://dev.classmethod.jp/articles/aws-name-rule/">クラスメソッドさんの記事</a>」を参考に決めるのが定番のようです。下記例になります。</p>
+<table>
+<thead>
+<tr>
+<th>AWSリソース</th>
+<th>命名規則</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ELB</td>
+<td>{sysname}-{env}-alb/clb</td>
+</tr>
+<tr>
+<td>TargetGroup</td>
+<td>{sysname}-{env}-tg</td>
+</tr>
+<tr>
+<td>EC2</td>
+<td>{sysname}-{env}-{type}</td>
+</tr>
+<tr>
+<td>SecurityGroup</td>
+<td>{sysname}-{env}-{type}-sg</td>
+</tr>
+</tbody>
+</table>
+<p>CDKでリソース名を明示するには次のいずれかの方法で対応します。
+- 各クラスのコンストラクトプロパティにある名前を記述する
+- 暗黙的生成されるリソースを明示的に作成する</p>
+<p>下記コードでは暗黙的に生成されていたSecurity Groupを明示的に作成している様子等が見て取れます。</p>
+<pre><code class="language-ts">// ECS: Service
+const serviceSecGrp = new ec2.SecurityGroup(this, &quot;JenkinsMasterServiceSecGrp&quot;, {
+  securityGroupName: &quot;jenkins-production-master-sg&quot;,
+  vpc: network.vpc,
+  allowAllOutbound: true,
+});
+serviceSecGrp.addIngressRule(worker.workerSecurityGroup, ec2.Port.tcp(50000), &quot;from JenkinsWorkerSecurityGroup 50000&quot;);
+serviceSecGrp.addIngressRule(worker.workerSecurityGroup, ec2.Port.tcp(8080), &quot;from JenkinsWorkerSecurityGroup 8080&quot;);
+
+const jenkinsMasterService = new ecs.Ec2Service(this, &quot;EC2MasterService&quot;, {
+  serviceName: 'jenkins-production-master-svc',
+  taskDefinition: jenkinsMasterTask,
+  cloudMapOptions: { name: &quot;master&quot;, dnsRecordType: sd.DnsRecordType.A },
+  desiredCount: 1,
+  minHealthyPercent: 0,
+  maxHealthyPercent: 100,
+  enableECSManagedTags: true,
+  cluster: ecsCluster.cluster,
+  securityGroups: [serviceSecGrp]
+});
+</code></pre>
+<p>なお、リソース名の明示化について、もちろんCDKのクラスによっては暗黙的なリソースを含んでおり当該リソースに名前を付けることが出来ないケースはあります。今回のケースで言うと、例えば、ECSクラスター（EC2）のIAM RoleやSecurity Group。その場合は、インフラのCDK運用方針としてドキュメントに残しておく等しておくと良いでしょう。</p>
+<h4 id="2-b-cdkの注意点cdkremovablepolicyretainをつける">2-b. CDKの注意点：cdk.RemovablePolicy.RETAINをつける</h4>
+<p>ネットワーク、ストレージ関連のリソースを扱う場合、削除されるとリソース構成が破綻する可能性があるので<code>cdk.RemovablePolicy.RETAIN</code>、CFnの言うところの <code>"DeletionPolicy": "Retain"</code> をつけましょう。今回はEFSがその対象になります。</p>
+<pre><code class="language-ts">const efsFilesystem = new efs.CfnFileSystem(this, &quot;EFSBackend&quot;);
+efsFilesystem.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+</code></pre>
+<p>個人的には<code>RETAIN</code>をつけると<code>cdk destroy</code> <code>cdk deploy</code>を気軽に行えなくなるので、<code>RETAIN</code>をつけるならCDK/CFnからはARNで参照する程度に抑えた方が良いと思っています。</p>
+<h3 id="3-jenkinsの設定を行う">3. Jenkinsの設定を行う</h3>
+<p>CDKでJenkinsを敷設した終わったらJenkinsの設定を行いましょう。</p>
+<h4 id="3-a-jenkinsでつかっているプラグイン">3-a. Jenkinsでつかっているプラグイン</h4>
+<p>昔と違って今のJenkinsは下記プラグインがあれば十分運用できます。</p>
+<ul>
+<li>github-oauth</li>
+<li>role-strategy</li>
+<li>configuration-as-code</li>
+<li>blueocean</li>
+</ul>
+<p>ざっと説明すると<code>github-oauth</code>でGitHub認証させ、<code>role-strategy</code>でロールごとの権限付与を行い、<code>configuration-as-code</code>でそれらの管理設定をコード化します。<code>configuration-as-code</code>は素晴らしく設定情報をコード化することでdockerイメージに当該設定情報を反映させることが出来ます。また、<code>blueocean</code>はモダンなインターフェイスでジョブ実行します。こちらは次のセクションで詳細を説明します。</p>
+<p>なお、プラグイン管理はIaC化でき下記のようにdockerイメージに反映できます。</p>
+<pre><code class="language-sh">$ cat plugins.txt
+role-strategy:3.1
+github-oauth:0.33
+thinBackup:1.10
+git:4.6.0
+authorize-project:1.3.0
+configuration-as-code:1.47
+blueocean:1.24.4
+
+$ cat Dockerfile
+[...]
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN /usr/local/bin/install-plugins.sh &lt; /usr/share/jenkins/ref/plugins.txt
+[...]
+</code></pre>
+<h4 id="3-b-jenkinsジョブをgithubで管理する">3-b. JenkinsジョブをGitHubで管理する</h4>
+<p>いよいよJenkinsでジョブの管理設定を行います。具体的には下記手順で実施します。手順が完了すると作ったブランチ分だけJenkinsにジョブが追加されます、とても簡単です。</p>
+<ol>
+<li>ジョブを管理させたいGitHubレポジトリでジョブ管理用のブランチを作成し、<code>Jenkinsfile</code> を配置</li>
+<li>「Jenkins - Blue Ocean - New Pipeline」にて下記設定をおこなう<ul>
+<li>Where do you store your code? - GitHub</li>
+<li>Which organization does the repository belong to? - 任意のuserあるいはorganization</li>
+<li>Choose a repository - 任意のレポジトリ（1で作成したレポジトリ）</li>
+</ul>
+</li>
+</ol>
+<p><code>Jenkinsfile</code> の作成方法は「<a href="https://www.jenkins.io/doc/book/pipeline/jenkinsfile/">ユーザーハンドブック</a>」にありますが、下記例のように直感的に記述することが出来ます。環境変数は「Jenkins - {{レポジトリ}} - 認証情報 - Stores scoped to {{レポジトリ}} - global - Add credential」から追加します。</p>
+<pre><code class="language-Jenkinsfile">
+pipeline {
+  agent any
+  stages {
+    stage('Show env') {
+      steps {
+        sh '''mysql --version
+ls -al bin
+env  | sort'''
+      }
+    }
+
+    stage('Run script') {
+      steps {
+        git(url: 'https://github.com/nabinno/jenkins-jobs', branch: 'master', credentialsId: 'github')
+        sh '''git diff sync-db-from-staging-to-integration | patch -p1 -R -f
+bin/sync_db_from_staging_to_integration'''
+      }
+    }
+
+  }
+  environment {
+    STAG_DB_DATABASE = credentials('STAG_DB_DATABASE')
+    STAG_DB_HOSTNAME = credentials('STAG_DB_HOSTNAME')
+    STAG_DB_PASSWORD = credentials('STAG_DB_PASSWORD')
+    STAG_DB_USERNAME = credentials('STAG_DB_USERNAME')
+    INTEG_DB_HOSTNAME = credentials('INTEG_DB_HOSTNAME')
+    INTEG_DB_PASSWORD = credentials('INTEG_DB_PASSWORD')
+    INTEG_DB_USERNAME = credentials('INTEG_DB_USERNAME')
+    INTEG_DB_DATABASE = credentials('INTEG_DB_USERNAME')
+  }
+}
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>今回の振り返りで、2点気づきを得られました。CDKのリソース名の扱いに困っていたのですが、どうにか制御できそうなのでまたしばらくは付き合っていくことになりそうです。</p>
+<ol>
+<li>CDKは意外とかゆいところに手が届く。ただ、暗黙的に生成され、CDK側で制御できないリソース名があるので、そういう前提で運用ポリシーを作ると各IaC使いの平穏に繋がる。</li>
+<li>Jenkins2は思った以上に手離れが良い。CDK、ECS、EFS、configuration-as-code、Jenkinsfileの組み合わせは保守性、可用性に大きな貢献をしている。</li>
+</ol></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WSL2時代のDocker開発スタイル | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n64/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2019-07-06">6 7月, 2019</time><h1>WSL2時代のDocker開発スタイル</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#対象環境">対象環境</a></li>
+<li><a href="#windowsの開発環境を構築する">Windowsの開発環境を構築する</a><ul>
+<li><a href="#wslのインストール">WSLのインストール</a></li>
+<li><a href="#ターミナルのインストール">ターミナルのインストール</a></li>
+<li><a href="#dockerのインストール">Dockerのインストール</a></li>
+</ul>
+</li>
+<li><a href="#さてwsl2からdockerはどの程度つかえるのか">さて、WSL2からDockerはどの程度つかえるのか</a><ul>
+<li><a href="#1-wsl1と違いlocalhostにwsl2がバインドできません">1. WSL1と違いlocalhostにWSL2がバインドできません</a></li>
+<li><a href="#2-wsl1と同様にwin32wsl間でのファイルの読み書きにパフォーマンスの差が大きく出ています">2. WSL1と同様にWin32・WSL間でのファイルの読み書きにパフォーマンスの差が大きく出ています</a></li>
+</ul>
+</li>
+<li><a href="#docker以外でwslの課題はないのか">Docker以外でWSLの課題はないのか</a><ul>
+<li><a href="#デバイスへのアクセス">デバイスへのアクセス</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="1130" alt="thumbnail" src="/assets/blog/f37369988f731485.png" />
+6月13日は狂喜乱舞しました、久しぶりに徹夜するくらい興奮しました。そう、WSL2が出たのですよね。先日やっと私の手元に届いたので早々に検証しました。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>あたらしくでたWSL2によって<a href="/space/knowledge/blog/n58/">以前書いた記事</a>からだいぶ状況が変わった<ul>
+<li>主な変更点<ul>
+<li>WSLのアーキテクチャが2種類になり、WSLはその2つのアーキテクチャを管理する機能に変わった<ul>
+<li>WSL1 Windows Subsystem for Linux上のLinux (LXCore/Lxss)</li>
+<li>WSL2 軽量Hyper-V上のLinux (Linux Kernel)</li>
+</ul>
+</li>
+<li>/procや/sysなどの特殊ファイルもふくめた共有プロトコル「9P」が実装された<ul>
+<li>Win32側の9Pクライアント <code>9prdr.sys</code></li>
+<li>WSL側の9Pクライアント <code>/init</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、前記事で掲げていた目標「WSLでDockerをつかったWebアプリケーション開発ができるかどうか」について再確認します。</p>
+<h3 id="対象環境">対象環境</h3>
+<ul>
+<li>Windows 10 Pro Version 1903 OS Build 18922.1000<ul>
+<li>Windows Terminal (Preview) Version 0.2.1715.0</li>
+<li>WSL2<ul>
+<li>Ubuntu Version 1804.2019.5210 (Linux 4.19.43-microsoft-standard)</li>
+<li>Docker version 19.03.0-rc3, build 27fcb77</li>
+</ul>
+</li>
+<li>WSL1<ul>
+<li>Ubuntu 18.04 LTS Version 1804.2019.522.0 (Linux 4.4.0-18922-Microsoft)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="windowsの開発環境を構築する">Windowsの開発環境を構築する</h3>
+<p>まず、Windowsの開発環境の構築ですが、既知の情報をふまえつつTIPSを順次紹介します。</p>
+<h4 id="wslのインストール">WSLのインストール</h4>
+<ul>
+<li><a href="https://qiita.com/namoshika/items/53a9ac2df7eace656870">WSL2を使ってみる (InsiderPreview)</a></li>
+</ul>
+<p>WSLのパッケージ管理は下記2つを押さえておけば問題ないでしょう。
+1. <a href="https://github.com/asdf-vm/asdf">asdf</a>/<a href="https://github.com/riywo/anyenv">anyenv</a>
+    - プログラミング言語をバージョンごとにわけて使いたい場合はこちらをつかいましょう
+    - 関数言語界隈ではasdfが主流になってきてるようです。
+2. <a href="https://nixos.org/nix/">nix</a>
+    - Haskellのようにasdf/anyenvでインストールできない、あるいは、扱われいないパッケージはnixをつかいましょう
+    - また、aptのバージョンが古すぎるパッケージもnixが最適です</p>
+<h4 id="ターミナルのインストール">ターミナルのインストール</h4>
+<p>WSLttyはWSL2に対応しておらずConEmuは描画がくずれやすいため、デフォルトのターミナルか<a href="https://www.microsoft.com/en-us/p/windows-terminal-preview/9n0dx20hk701?WT.mc_id=-blog-scottha&amp;wa=wsignin1.0&amp;activetab=pivot:overviewtab">Windows Terminal</a>が選択肢となります。</p>
+<p><strong>Windows TerminalとConEmuとの比較</strong></p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>Windows Terminal</th>
+<th>ConEmu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>透過対象</td>
+<td>backgroundImage</td>
+<td>ConEmu自体</td>
+</tr>
+<tr>
+<td>キーバインド制約</td>
+<td>Alt+Shiftが効かない</td>
+<td>特になし</td>
+</tr>
+<tr>
+<td>WSL2の描画</td>
+<td>特になし</td>
+<td>くずれる</td>
+</tr>
+<tr>
+<td>管理者権限で実行</td>
+<td>初回のみ</td>
+<td>タスク実行ごと</td>
+</tr>
+</tbody>
+</table>
+<h4 id="dockerのインストール">Dockerのインストール</h4>
+<p>WSL1ではDockerデーモンがつかえないのでWSL2でDockerをつかうようにしましょう。<a href="https://docs.docker.com/install/linux/docker-ce/ubuntu/">Docker CE</a>をインストールします。</p>
+<p>どうしてもWSL1でということであれば、Win32 (WSL1からみるとdrvfs) 側で<a href="https://www.docker.com/docker-windows">Docker For Windows</a>を用意します。インストールはDockerのダウンロードページから手順通りおこないます。
+構成等は<a href="/space/knowledge/blog/n58/#docker-for-windowsのインストール">前回の記事</a>を参照ください。</p>
+<h3 id="さてwsl2からdockerはどの程度つかえるのか">さて、WSL2からDockerはどの程度つかえるのか</h3>
+<p>WSL2は軽量Hyper-V上にLinuxコンテナを動かしているので、基本Hyper-Vと同様にDockerをつかうことができます。</p>
+<p>ただし、~~WSL1と違いlocalhostにWSL2がバインドできません~~ (2019-07-27追記: <a href="https://devblogs.microsoft.com/commandline/whats-new-for-wsl-in-insiders-preview-build-18945/">Build Version 18945で解決しました</a> :tada:)。
+また、WSL1と同様にWin32・WSL間でのファイルの読み書きにパフォーマンスの差が大きく出ています。</p>
+<p>ひとつずつ解決方法を見ていきましょう。</p>
+<h4 id="1-wsl1と違いlocalhostにwsl2がバインドできません">1. WSL1と違いlocalhostにWSL2がバインドできません</h4>
+<p>WSL2がつかっているVirtual Switchはinternal onlyのため、Win32側からlocalhostをつかってWSL2にアクセスすることができません。<a href="https://docs.microsoft.com/en-us/windows/wsl/wsl2-faq#will-wsl-2-be-able-to-use-networking-applications">現在対応中のようです</a> (2019-07-27追記: <a href="https://devblogs.microsoft.com/commandline/whats-new-for-wsl-in-insiders-preview-build-18945/">Build Version 18945で解決しました</a> :tada:)。</p>
+<p>対処方法は2つあります。</p>
+<p><strong>a. WSL1をつかう</strong></p>
+<p>これが一番楽ですが、WSL1は次項であげるパフォーマンス上の欠点があるので、Web系フロントエンド開発におけるライブリローディング機能をつかうケースに限定するといいでしょう。</p>
+<p><strong>b. Hostsファイルをつかう</strong></p>
+<p>Win32のHostsファイルでWSL2のeth0インターフェイスのIPアドレスに適当なホスト名を割り当てます（ポートごとにホストを振り分けたい場合はWSL2側にProxyを用意するといいでしょう）。</p>
+<pre><code class="language-shell"># C:\Windows\System32\drivers\etc\hosts
+
+172.17.72.217 dashboard.local.me
+</code></pre>
+<p>WSL2のIPアドレスはコンテナを立ち上げるごとに変わるので、下記のようなコマンドレットをWin32側のPowerShell $PROFILEに用意しておくといいでしょう。WSL2だけで完結したい方はシェル上から <code>powershell.exe -Command 'Sync-HostsToWslIp'</code> と打つだけです。</p>
+<pre><code class="language-powershell"># $PROFILE
+
+function Sync-HostsToWslIp {
+  $hosts = &quot;$env:SystemRoot\System32\drivers\etc\hosts&quot;;
+  $pattern = &quot;\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}&quot;;
+  $wslip = bash.exe -c &quot;ifconfig eth0 | grep 'inet '&quot;;
+  if ($wslip -match $pattern) {
+    $wslip = $matches[0];
+  } else {
+    echo &quot;The Script Exited, the ip address of WSL 2 cannot be found&quot;;
+    exit;
+  }
+  cat $hosts | %{ $_ -match $pattern }
+  $rc = cat $hosts | %{ $_ -replace $matches[0], $wslip }
+  $rc | Out-File $hosts;
+}
+</code></pre>
+<h4 id="2-wsl1と同様にwin32wsl間でのファイルの読み書きにパフォーマンスの差が大きく出ています">2. WSL1と同様にWin32・WSL間でのファイルの読み書きにパフォーマンスの差が大きく出ています</h4>
+<p>いろんな方がベンチマークを公開してるのでそれを参考にするといいでしょう。</p>
+<p><strong>Cf.</strong></p>
+<ul>
+<li><a href="https://twitter.com/ZahmbieND/status/1139921840351170560?s=20">Pythonでファイル操作のベンチマーク</a></li>
+<li><a href="https://qiita.com/kunit/items/051196022763e64e91f6">dd、git cloneのベンチマーク</a></li>
+</ul>
+<p>わたしは <code>git status -sb</code> をよくつかうので、そのコマンドで簡単なベンチマークとりました。</p>
+<pre><code class="language-shell"># WSLx
+$ cd ~/nabinno.github.io
+$ \time -f %e git status -sb
+
+# Win32/WSLx
+$ cd ~/nabinno.github.io
+$ \time -f %e powershell.exe -Command 'git status -sb'
+
+# Win32
+PS&gt; cd ~/nabinno.github.io
+PS&gt; (Measure-Command { git status -sb }).TotalMilliseconds / 1000 | %{ [math]::Round($_, 2) }
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>WSL</th>
+<th>Win32</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WSL1</td>
+<td>0.47</td>
+<td>0.09</td>
+</tr>
+<tr>
+<td>WSL2</td>
+<td>0.00</td>
+<td>0.61</td>
+</tr>
+<tr>
+<td>Win32/WSL1</td>
+<td>2.66</td>
+<td>1.91</td>
+</tr>
+<tr>
+<td>Win32/WSL2</td>
+<td>2.81</td>
+<td>1.79</td>
+</tr>
+<tr>
+<td>Win32</td>
+<td>0.51</td>
+<td>0.12</td>
+</tr>
+</tbody>
+</table>
+<h3 id="docker以外でwslの課題はないのか">Docker以外でWSLの課題はないのか</h3>
+<h4 id="デバイスへのアクセス">デバイスへのアクセス</h4>
+<p>以前から要望があったものだと「デバイスアクセスができない」件があります。</p>
+<p>9P導入前だとこれはElixirのIoTフレームワークNervesのように、<a href="https://github.com/wslutilities/wslu">WSL Utilities</a>でWSLパスをWin32パスに変換してからWin32にあるデバイス関連ツールをつかうのが簡単な解決策でした。</p>
+<pre><code class="language-sh">$ fwup.exe -a -i $(wslpath -w -a _build/rpi0_dev/nerves/images/hello_nerves.fw) -t complete -d $(fwup.exe -D | sed 's/,.*//')
+</code></pre>
+<p>ただし9Pを導入したWindows 10 Version 1903以降は、WSL1もWSL2もともにWSLパスを変換せずにWin32にあるデバイス関連ツールをつかうことができます。</p>
+<pre><code class="language-sh">$ fwup.exe -a -i _build/rpi0_dev/nerves/images/hello_nerves.fw -t complete -d $(fwup.exe -D | sed 's/,.*//')
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>わたしの観測範囲では課題はほぼ問題ない状態になっていました。</p>
+<p><strong>おすすめ開発環境は下記のとおり</strong></p>
+<table>
+<thead>
+<tr>
+<th>item</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDE</td>
+<td>WSLx上のエディタ</td>
+</tr>
+<tr>
+<td>Webフロントエンド開発</td>
+<td>WSL1</td>
+</tr>
+<tr>
+<td>Docker関連開発</td>
+<td>WSL2</td>
+</tr>
+<tr>
+<td>dotfiles</td>
+<td>WSLx、Win32を共有管理</td>
+</tr>
+</tbody>
+</table>
+<p>Win32側のIDEをつかっているユーザーはパフォーマンス上の不満がまだあるかもしれませんが、WSLでDockerをつかったWebアプリケーション開発は十分できる、と言えそうです。つまり、Linux・macOS・WindowsによるWebアプリケーション開発は十分共有できる、と。</p>
+<p>いい時代になりました。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

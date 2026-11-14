@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>連載 Rails2Phoenix 2 認証機能を実装する | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n60/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2018-05-20">20 5月, 2018</time><h1>連載 Rails2Phoenix 2 認証機能を実装する</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#guardianを実装する">Guardianを実装する</a><ul>
+<li><a href="#シリアライザとエラーハンドラの設定">シリアライザとエラーハンドラの設定</a></li>
+<li><a href="#ルーターの設定">ルーターの設定</a></li>
+<li><a href="#登録">登録</a></li>
+<li><a href="#ログインログアウト">ログイン・ログアウト</a></li>
+</ul>
+</li>
+<li><a href="#その他">その他</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="728" alt="thumbnail" src="/assets/blog/c9b0d4e5e73c4a8f.png"></p>
+<p>連載「Rails2Phoenix」になります、前回は<a href="https://blahfe.esa.io/space/knowledge/blog/n59/">「UmbrellaプロジェクトをHerokuにデプロイする 」</a>でした。今回は前回課題としてあがった認証機能の実装を試みたいと思います。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>サービスについて<ul>
+<li>拡張にともない技術スタックがふえるのを抑えたい</li>
+<li>スケーラビリティのためのコストを抑えたい</li>
+<li>パフォーマンスをあげたい</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、現在つかっているRailsをPhoenixに変更することにしました。方針は以下の通りで、今回はRails/Deviseの認証機能をPhoenixで実装する流れを取り上げます。</p>
+<p><strong>方針</strong>
+- Railsから徐々にPhoenixに移行できるように
+  - いままでとおなじPaaS（Heroku）
+  - いままでとおなじレポジトリ
+      - ブランチ戦略は <code>phoenix/base</code> をベースに
+      - 気軽に参照できるようにRails関連ファイルは可能な限りのこしておく
+  - いままでとおなじDB
+      - 移行完了までDBマイグレーションをしない
+- Phoenixは今後の拡張性をかんがえてUmbrellaプロジェクトで</p>
+<h3 id="guardianを実装する">Guardianを実装する</h3>
+<p>まず、参考にしたのはBlackodeの<a href="https://github.com/blackode/guardian_auth">guardian_auth</a>です。ただ、Guardianのバージョンがふるいので<a href="https://github.com/ueberauth/guardian/blob/master/upgrade_guides/0.14.to.1.0.md">1.0へのマイグレーション記事</a>をもとにアレンジしてあります。認証に関係しそうな構成は下記の通り。</p>
+<p>ロジック
+- MyApp.Account
+- MyApp.Account.Registration
+- MyApp.Account.User
+- MyApp.Auth.Guardian
+- MyApp.Auth.ErrorHandler
+- MyApp.Auth.Pipeline
+- MyApp.Auth.AfterPipeline
+- MyApp.Auth.Session</p>
+<p>コントローラ
+- MyAppWeb.RegistrationController
+- MyAppWeb.SessionController</p>
+<h4 id="シリアライザとエラーハンドラの設定">シリアライザとエラーハンドラの設定</h4>
+<p>Guardian1.0から直接ではなくモジュールを介して参照するようになりました。下記のように各モジュールを用意してコンフィグに割り当てます。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/guardian.ex
+
+defmodule MyApp.Auth.Guardian do
+  use Guardian, otp_app: :my_app
+  alias MyApp.Account
+
+  def subject_for_token(resource, _claims), do: {:ok, to_string(resource.id)}
+  def subject_for_token(_, _), do: {:error, :reason_for_error}
+
+  def resource_from_claims(claims), do: {:ok, Account.get_user!(claims[&quot;sub&quot;])}
+  def resource_from_claims(_claims), do: {:error, :reason_for_error}
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/error_handler.ex
+
+defmodule MyApp.Auth.ErrorHandler do
+  import Plug.Conn
+
+  def auth_error(conn, {type, _reason}, _opts) do
+    body = Poison.encode!(%{message: to_string(type)})
+    send_resp(conn, 401, body)
+  end
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/config/config.exs
+
+config :my_app, MyApp.Auth.Guardian,
+  issuer: &quot;MyApp&quot;,
+  ttl: {30, :days},
+  allowed_drift: 2000,
+  # optionals
+  allowed_algos: [&quot;HS512&quot;],
+  verify_module: MyApp.Auth.Guardian.JWT,
+  verify_issuer: true,
+  secret_key:
+    System.get_env(&quot;GUARDIAN_SECRET&quot;) ||
+      &quot;secret_key&quot;
+</code></pre>
+<h4 id="ルーターの設定">ルーターの設定</h4>
+<p>認証のパイプラインは、認証中と認証後のものを用意しコンフィグとルーターに割り当てます。</p>
+<p>ルータースコープ内のパイプラインくみあわせについて、ここでは未ログインスコープには認証前・認証中パイプライン、ログイン済スコープには認証前・認証中・認証後パイプラインを適用しています。こうすることでどのスコープにも認証リソースをロードすることができ、かつ、認証も担保することができるようになります。具体的にいうと、ルート <code>/</code> などの同一URLで未ログインスコープとログイン済スコープの切り替えができるようになります。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/pipeline.ex
+
+defmodule MyApp.Auth.Pipeline do
+  use Guardian.Plug.Pipeline, otp_app: :my_app
+
+  plug(Guardian.Plug.VerifySession, claims: %{&quot;typ&quot; =&gt; &quot;access&quot;})
+  plug(Guardian.Plug.VerifyHeader, claims: %{&quot;typ&quot; =&gt; &quot;access&quot;})
+  plug(Guardian.Plug.LoadResource, allow_blank: true)
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/after_pipeline.ex
+
+defmodule MyApp.Auth.AfterPipeline do
+  use Guardian.Plug.Pipeline, otp_app: :my_app
+
+  plug(Guardian.Plug.EnsureAuthenticated)
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web/router.ex
+
+defmodule MyAppWeb.Router do
+  use MyAppWeb, :router
+
+  pipeline :browser do
+    plug(:accepts, [&quot;html&quot;])
+    plug(:fetch_session)
+    plug(:fetch_flash)
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+  end
+
+  pipeline :browser_auth do
+    plug(MyApp.Auth.Pipeline)
+  end
+
+  pipeline :browser_auth_after do
+    plug(MyApp.Auth.AfterPipeline)
+  end
+
+  scope &quot;/&quot;, MyAppWeb do
+    pipe_through([:browser, :browser_auth])
+
+    post(&quot;/registration&quot;, RegistrationController, :create)
+    get(&quot;/login&quot;, SessionController, :new)
+    post(&quot;/login&quot;, SessionController, :create)
+    get(&quot;/logout&quot;, SessionController, :delete)
+  end
+
+  scope &quot;/&quot;, MyAppWeb do
+    pipe_through([:browser, :browser_auth, :browser_auth_after])
+
+    get(&quot;/edit&quot;, RegistrationController, :edit)
+    put(&quot;/edit&quot;, RegistrationController, :update)
+    get(&quot;/users&quot;, UserController, :index)
+    resources &quot;/&quot;, UserController, only: [:show, :delete], param: &quot;username&quot;
+  end
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/config/config.exs
+
+config :MyApp, MyApp.Auth.Pipeline,
+  module: MyApp.Auth.Guardian,
+  error_handler: MyApp.Auth.ErrorHandler
+
+config :MyApp, MyApp.Auth.AferPipeline,
+  module: MyApp.Auth.Guardian,
+  error_handler: MyApp.Auth.ErrorHandler
+</code></pre>
+<h4 id="登録">登録</h4>
+<p>登録は登録用のロジック（ユーザーモデルと登録サービス）とコントローラを用意します。</p>
+<p>このあたりはDevise/Railsとあまり変わりません。他のアクション「新規パスワード発行」「メールアドレス確認」等も同様の構成をとろうと思っています。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web/controller/registration_controller.ex
+
+def create(conn, user_params) do
+  changeset = User.registration_changeset(%User{}, user_params)
+
+  case Registration.create(changeset, Repo) do
+    {:ok, user} -&gt;
+      conn
+      |&gt; MyApp.Auth.login(user)
+      |&gt; put_flash(:info, &quot;Your account was created successfully&quot;)
+      |&gt; redirect(to: page_path(conn, :home))
+
+   {:error, changeset} -&gt;
+      conn
+      |&gt; put_flash(:error, &quot;Unable to create account: Try again&quot;)
+      |&gt; render(MyAppWeb.PageView, &quot;home.html&quot;, changeset: changeset)
+  end
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/auth.ex
+
+def login(conn, %User{} = user) do
+  conn
+  |&gt; Guardian.Plug.sign_in(user)
+  |&gt; assign(:current_user, user)
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/account/registration.ex
+
+def create(changeset, repo) do
+  changeset
+  |&gt; repo.insert()
+end
+</code></pre>
+<h4 id="ログインログアウト">ログイン・ログアウト</h4>
+<p>ログイン・ログアウトはセッション用のサービスとコントローラで実装します。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web/controller/session_controller.ex
+
+@doc &quot;Logged in [POST /login]&quot;
+def create(conn, %{&quot;email&quot; =&gt; email, &quot;password&quot; =&gt; password}) do
+  case Session.authenticate_user(email, password) do
+    {:ok, user} -&gt;
+      conn
+      |&gt; Session.login(user)
+      |&gt; put_flash(:info, &quot;Logged in successfully&quot;)
+      |&gt; redirect(to: page_path(conn, :home))
+
+    {:error, _reason} -&gt;
+      conn
+      |&gt; put_flash(:error, &quot;Wrong username/password&quot;)
+      |&gt; render(&quot;new.html&quot;)
+  end
+end
+
+@doc &quot;Logged out [DELETE /logout]&quot;
+def delete(conn, _params) do
+  conn
+  |&gt; Session.logout()
+  |&gt; put_flash(:info, &quot;Logged out successfully.&quot;)
+  |&gt; redirect(to: &quot;/&quot;)
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/session.ex
+
+defmodule MyApp.Auth.Session do
+  import Ecto.Query
+  import Plug.Conn
+  import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
+  alias MyApp.Repo
+  alias MyApp.Auth.Guardian
+  alias MyApp.Account.User
+
+  def login(conn, %User{} = user) do
+    conn
+    |&gt; Guardian.Plug.sign_in(user)
+    |&gt; assign(:current_user, user)
+  end
+
+  def logout(conn), do: Guardian.Plug.sign_out(conn)
+
+  def authenticate_user(email, given_password) do
+    query = Ecto.Query.from(u in User, where: u.email == ^email)
+
+    Repo.one(query)
+    |&gt; check_password(given_password)
+  end
+
+  def current_user(conn), do: Guardian.Plug.current_resource(conn, [])
+
+  def logged_in?(conn), do: Guardian.Plug.authenticated?(conn, [])
+
+  defp check_password(nil, _), do: {:error, &quot;Incorrect username or password&quot;}
+
+  defp check_password(user, given_password) do
+    case Comeonin.Bcrypt.checkpw(given_password, user.encrypted_password) do
+      true -&gt; {:ok, user}
+      false -&gt; {:error, &quot;Incorrect email or password&quot;}
+    end
+  end
+end
+</code></pre>
+<p>Devise/Railsのビューヘルパーはビューマクロで適用します。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web.ex
+
+def view do
+  quote do
+    # ..
+    import Okuribi.Auth.Session, only: [current_user: 1, logged_in?: 1]
+  end
+end
+</code></pre>
+<p>あるいは、<code>put_assigns</code>関数をはやしてコントローラマクロに適用します。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app/auth/session.ex
+
+def put_assigns(%{private: %{phoenix_action: action}} = conn, settings) do
+  current_resource = Guardian.Plug.current_resource(conn)
+
+  settings =
+    if current_resource,
+      do: settings[:sign_in][action] || [],
+      else: settings[:sign_out][action] || []
+
+  conn
+  |&gt; assign(:current_user, current_resource)
+  |&gt; assign(:page_title, settings[:page_title])
+  |&gt; assign(:page_description, settings[:page_description])
+end
+</code></pre>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web.ex
+
+def controller do
+  quote do
+    # ..
+    import Okuribi.Auth, only: [put_assigns: 2]
+  end
+end
+</code></pre>
+<p><code>assigns</code>ひとつでアクセスできるので、下記のようにコントローラでまとめて指定することでRailsの<code>ActionView::Helpers::CaptureHelper#provide</code>の代わりに使えます。</p>
+<pre><code class="language-elixir"># apps/my_app/lib/my_app_web/controller/*_controller.ex
+
+@page %{
+  sign_in: %{
+    new: %{
+      page_title: dgettext(&quot;views&quot;, &quot;pages.home.signed_in.page_title&quot;),
+      page_description: &quot;&quot;
+    }
+  },
+  sign_out: %{
+    new: %{
+      page_title: dgettext(&quot;views&quot;, &quot;pages.home.signed_out.page_title&quot;),
+      page_description: &quot;&quot;
+    }
+  }
+}
+plug(:put_assigns, @page when action in [:home])
+</code></pre>
+<h3 id="その他">その他</h3>
+<p>RailsのビューをPhoenixのテンプレートに移植するには下記の変換を地道に行っていきます。</p>
+<ul>
+<li>Rails<ul>
+<li><code>ActionView::Helpers::FormHelper#form_for(record, options={}, &amp;block)</code></li>
+<li><code>ActionView::Helpers::FormHelper#text_field(object_name, method, options={})</code></li>
+<li><code>ActionView::Helpers::FormHelper#file_field(object_name, method, options={})</code></li>
+<li><code>ActionView::Helpers::FormHelper#hidden_field(object_name, method, options={})</code></li>
+<li><code>ActionView::Helpers::FormHelper#password_field(object_name, method, options={})</code></li>
+<li><code>ActionView::Helpers::FormHelper#radio_button(object_name, method, tag_value, options={})</code></li>
+<li><code>ActionView::Helpers::FormBuilder#submit(value=nil, options={})</code></li>
+<li><code>ActionView::Helpers::TranslationHelper#t</code></li>
+</ul>
+</li>
+<li>Phoenix<ul>
+<li><code>Phoenix.HTML.Form.form_for(form_data, action, options \\ [], fun)</code></li>
+<li><code>Phoenix.HTML.Form.text_input(form, field, opts \\ [])</code></li>
+<li><code>Phoenix.HTML.Form.file_input(form, field, opts \\ [])</code></li>
+<li><code>Phoenix.HTML.Form.hidden_input(form, field, opts \\ [])</code></li>
+<li><code>Phoenix.HTML.Form.password_input(form, field, opts \\ [])</code></li>
+<li><code>Phoenix.HTML.Form.radio_button(form, field, value, opts \\ [])</code></li>
+<li><code>Phoenix.HTML.Form.submit(opts, opts \\ [])</code></li>
+<li><code>Gettext.dgettext(backend, domain, msgid, bindings \\ %{})</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="wrapup">WRAPUP</h2>
+<p>前回もそうですが、コードのマイグレーションはまあ地味な作業ですよね。とまれ、認証機能を実装できたので良しとしましょう。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HydeをつかってEmacsをJekyllクライアントにする | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n49/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-02-01">1 2月, 2017</time><h1>HydeをつかってEmacsをJekyllクライアントにする</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#hydeの設定">Hydeの設定</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="824" alt="thumbnail" src="/assets/blog/63ece6649b1629c7.png"></p>
+<p>Emacianとしてその殻の中に閉じこもっていたいです。だけど、世間がそれを許さず次々と無理難題を押しつけてくるのです。今回はタスク等から出てきた備忘禄をGitHub Pages（Jekyll）で管理しようと重い腰を上げました。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>タスクメモがAsanaなどのタスク管理ツールに散在している</li>
+<li>ブラウザをつかって文章を書くのがつらい</li>
+<li>Gist/Yagist等でもいいのだけど編集がめんどうとか個人だとオーバースペックとか</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、<a href="https://pages.github.com/">GitHub Pages</a>（<a href="https://jekyllrb.com/">Jekyll</a>）をEmacsで楽に管理できないかと以前から考えていたのですが、いい塩梅のライブラリを発見しました。Jekyllだから<a href="https://github.com/nibrahim/Hyde">Hyde</a>と言います。名前が <code>jekyll doctor (hyde)</code>とかぶっていますがここでは気にしません。</p>
+<p>HydeのPros/Consは以下の通りです。</p>
+<p><strong>Pros</strong></p>
+<ul>
+<li><code>git</code>の自動コメント</li>
+<li><code>jekyll build</code>、<code>jekyll serve</code>のショートカット</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>キーバインドが既存のものとかぶる</li>
+<li><code>hyde-home</code>がカスタム変数ではない</li>
+<li><code>add-hook</code>が効かない</li>
+</ul>
+<h3 id="hydeの設定">Hydeの設定</h3>
+<p>Hydeの設定は基本いじることもなくJekyllを使うことが出来ます。下記記載するのはConsつぶしですが、ここはお好みです。</p>
+<p>まず、キーバインド操作。Hyde本体がキーバインドを<code>defvar</code>で割り当てているので、<code>init.el</code>の設定で<code>require</code>前に割り込みevalして、<code>hyde</code>関数に<code>hyde-home</code>引数をわたすことで解決します。あと、折り返し回りは別設定になっているので<code>adaptive-wrap</code>や<code>truncate-lines</code>を設定しています。</p>
+<pre><code class="language-emacs-lisp">;;; Hyde (Jekyll client)
+(require-package 'adaptive-wrap)
+(defun hyde/open-post-maybe-into-other-window (pos)
+  &quot;Opens the post under cursor in the editor (POS).&quot;
+  (interactive &quot;d&quot;)
+  (let ((post-file-name (nth
+                         1
+                         (split-string (strip-string (thing-at-point 'line)) &quot; : &quot;)))
+        (dir (get-text-property pos 'dir)))
+    (let ((hyde-buffer (current-buffer)))
+      (find-file-other-window
+       (strip-string (concat hyde-home &quot;/&quot; dir &quot;/&quot; post-file-name)))
+      (hyde-markdown-activate-mode hyde-buffer)
+      (adaptive-wrap-prefix-mode t)
+      (set-default 'truncate-lines nil))))
+(defun hyde/quit-wrap ()
+  &quot;Quits hyde.&quot;
+  (interactive)
+  (progn
+    (delete-other-windows)
+    (kill-buffer (current-buffer))))
+(defun create-markdown-scratch ()
+  &quot;Create a markdown scratch buffer.&quot;
+  (interactive)
+  (switch-to-buffer (get-buffer-create &quot;*markdown*&quot;))
+  (markdown-mode))
+(defun hyde/nabinno ()
+  &quot;Run hyde-wrap with home parameter.&quot;
+  (interactive)
+  (progn
+    (delete-other-windows)
+    (create-markdown-scratch)
+    (split-window-horizontally)
+    (other-window 1)
+    (hyde &quot;~/nabinno.github.io/&quot;)))
+(defvar hyde-mode-map
+  (let
+      ((hyde-mode-map (make-sparse-keymap)))
+    (define-key hyde-mode-map (kbd &quot;N&quot;) 'hyde/new-post)
+    (define-key hyde-mode-map (kbd &quot;G&quot;) 'hyde/load-posts)
+    (define-key hyde-mode-map (kbd &quot;C&quot;) 'hyde/hyde-commit-post)
+    (define-key hyde-mode-map (kbd &quot;P&quot;) 'hyde/hyde-push)
+    (define-key hyde-mode-map (kbd &quot;J&quot;) 'hyde/run-jekyll)
+    (define-key hyde-mode-map (kbd &quot;S&quot;) 'hyde/serve)
+    (define-key hyde-mode-map (kbd &quot;K&quot;) 'hyde/stop-serve)
+    (define-key hyde-mode-map (kbd &quot;d&quot;) 'hyde/deploy)
+    (define-key hyde-mode-map (kbd &quot;D&quot;) 'hyde/delete-post)
+    (define-key hyde-mode-map (kbd &quot;U&quot;) 'hyde/promote-to-post)
+    (define-key hyde-mode-map (kbd &quot;X&quot;) 'hyde/quit-wrap)
+    (define-key hyde-mode-map (kbd &quot;O&quot;) 'hyde/open-post-maybe-into-other-window)
+    hyde-mode-map)
+  &quot;Keymap for Hyde&quot;)
+(global-set-key (kbd &quot;C-c ; j&quot;) 'hyde/nabinno)
+(require-package 'hyde)
+(require 'hyde)
+</code></pre>
+<p>次に、ホストIPの操作。Jekyllのルートにおく<code>.hyde.el</code>の中身です。JekyllはWebrickを使っているので、VMなどでホストをいじっている場合は<code>hyde/serve-command</code>にホストIPを0.0.0.0（<code>jekyll s -H 0.0.0.0</code>）に変更する必要があります。</p>
+<pre><code class="language-emacs-lisp">(setq hyde-deploy-dir &quot;_site&quot;
+      hyde-posts-dir  &quot;_posts&quot;
+      hyde-drafts-dir &quot;_drafts&quot;
+      hyde-images-dir &quot;images&quot;
+      hyde/git/remote &quot;upstream&quot; ; The name of the remote to which we should push
+      hyde/git/branch &quot;master&quot;   ; The name of the branch on which your blog resides
+      hyde/jekyll-command &quot;jekyll b&quot;    ; Command to build
+      hyde/serve-command  &quot;jekyll s -H 0.0.0.0 --force_polling&quot;    ; Command to serve
+      hyde-custom-params '((&quot;category&quot; &quot;personal&quot;)
+                           (&quot;tags&quot; &quot;&quot;)
+                           (&quot;cover&quot; &quot;false&quot;)
+                           (&quot;cover-image&quot; &quot;&quot;)))
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>Hydeを介してEmacsでJekyllを操作できるのは、やはり快適です。特にorg-modeとMarkdownの相性が良く。org-modeで管理していた備忘をMarkdownに変換し、Jekyll（GitHub Pages）にパブリッシュというワークフローが引けたのが良かったです。数年間はお世話になると思います。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

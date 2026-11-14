@@ -31,6 +31,7 @@ python3 -m http.server 8000 --directory docs
 
 https://www.blahfe.com/ の匿名公開Markdown出力から取得。
 公開ナレッジは移管時の公開インデックスで確認できた19ページ・3ブログ。
+nabinno.github.io の公開記事38本は `content/space/knowledge/blog/n*.md`、画像は `assets/blog/` に置いた。外部インタビュー3件はナレッジのBlog欄から元URLへつなぐ。
 Confluence固有の画像参照は添付ファイルに置換する。
 旧URLのID付きパスは404ページで移管先へ案内する。
 

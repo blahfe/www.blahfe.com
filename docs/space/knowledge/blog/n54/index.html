@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xamarin開発環境をととのえる | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n54/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2017-03-31">31 3月, 2017</time><h1>Xamarin開発環境をととのえる</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#開発フロー">開発フロー</a></li>
+<li><a href="#開発環境">開発環境</a></li>
+<li><a href="#キーバインド">キーバインド</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img width="484" alt="thumbnail" src="/assets/blog/7ed829ab3068a566.png"></p>
+<p>Xamarinに手を出し始めたのは良いのですが、その開発環境がどうにも手になじまず試行錯誤しています。今回の記事で解決できるかというと微妙ではありますが、やれるだけのことはやってみようと思います。</p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>Xamarin開発環境がサーバー側のそれとかい離している</li>
+<li>Visual Studio Community 2015の動作がもっさりしている</li>
+<li>適切な開発フローがわからない</li>
+<li>適切なアプリケーションフレームワークがわからない</li>
+<li>適切なXAMLプレビュワーがわからない</li>
+<li>適切なAndroidエミュレーターがわからない</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、動作が快適になったといわれるVisual Studio 2017がでたのでそちらを中心に開発環境を暫定で整理します、永遠のWIPです。</p>
+<h3 id="開発フロー">開発フロー</h3>
+<p>まず、想定している開発フローは下記の通り。</p>
+<ul>
+<li>テスト駆動開発</li>
+<li>デバッグ<ul>
+<li>エミュレーター画面の動作確認 - ビルドスピード等考慮してUWPでおこなう</li>
+<li>アウトプット - Debug.WriteLineなどの確認</li>
+<li>イミディエイト - 変数の追跡</li>
+<li>C# REPL - C#やパッケージの動作確認</li>
+<li>XAMLのプレビュー - いらない子</li>
+</ul>
+</li>
+<li>テスト<ul>
+<li>単体テスト - NUnit</li>
+<li>UIテスト - 保留</li>
+</ul>
+</li>
+<li><a href="http://qiita.com/tbpgr/items/4ff76ef35c4ff0ec8314">Github Flow</a>にそったデプロイ</li>
+<li><code>feature</code>ブランチをきってプルリクエストをたてる</li>
+<li>当該ブランチに対してCIツールでビルド・テスト・配布を自動化 - ビルド・テスト後にレビュアーにメールにて配布しスマホで確認してもらう流れ。<ul>
+<li>CIツール</li>
+<li><a href="https://mobile.azure.com/apps">Visual Studio Mobile Center</a> - HockeyApp（クラッシュレポート）とXamarin Test Cloud（UIテスト）を統合したCIサービス。Xamarin.Formsは2017年3月18日現在iOS対応、Android非対応という状況。UWPは知らない。</li>
+<li><a href="https://app.wercker.com/">Wercker</a> - <code>master</code>マージ後にいらなくなった<code>feature</code>ブランチを消すなどの後片付け役。</li>
+</ul>
+</li>
+<li>Appストアへデプロイ<ul>
+<li>Android</li>
+<li>iOS</li>
+<li>UWP</li>
+</ul>
+</li>
+</ul>
+<p>ちなみにWerckerでの<code>feature</code>ブランチなどの後片付けはこんな感じです。<code>master</code>マージのタイミングで走らせます。</p>
+<pre><code class="language-yaml">box: ruby:2.4.0
+build:
+  steps:
+    - add-ssh-key:
+        host: github.com
+        keyname: GITHUB
+    - add-to-known_hosts:
+        hostname: github.com
+        fingerprint: 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48
+    - script:
+        name: Add git-tag
+        code: |
+          _tag=$(date -u -d '9 hours' +%Y-%m-%d-%H-%M-%S)
+          git remote add origin git@github.com:nabinno/utagaki.git
+          git config --global user.email 'wercker@blahfe.com'
+          git config --global user.name 'Wercker Bot'
+          git tag -a $_tag master -m 'wercker deploy'
+          git push origin $_tag
+  after-steps:
+    - wantedly/pretty-slack-notify:
+        webhook_url: ${SLACK_WEBHOOK_URL}
+        channel: general
+</code></pre>
+<h3 id="開発環境">開発環境</h3>
+<p>その上で開発環境は下記の通りに設定します。Visual Studio 2017版Xamarinは現時点でHypervisorがHyper-Vを考慮していない、Intel HAXMやVirtualBoxなどのホスト型を前提としています。ただ私見としては、VirtualBoxなどのホスト型はWindowsアップデート時に動作検証対象となっておらずクラッシュが起きやすいです。Hyper-Vを開発環境とすることをお薦めします。いずれにせよ、デバッグはビルドスピード等がHypervisorに左右されるAndroidではなくUWPで行うと良いでしょう。</p>
+<ul>
+<li>IDE</li>
+<li>Visual Studio Community 2017<ul>
+<li>Basic extentions</li>
+<li>Microsoft Visual Studio Community 2017 Version 15.0.26228.9 D15RTWSVC</li>
+<li>Microsoft .NET Framework Version 4.6.01586</li>
+<li>Visual C# 2017</li>
+<li>JavaScript Language Service   2.0</li>
+<li>JavaScript Project System   2.0</li>
+<li>JavaScript UWP Project System   2.0</li>
+<li>TypeScript   2.1.5.0</li>
+<li>Microsoft Visual Studio VC Package   1.0</li>
+<li>Xamarin   4.3.0.784 (73f58d6)</li>
+<li>Xamarin.Android SDK   7.1.0.41 (9578cdc)</li>
+<li>Xamarin.iOS and Xamarin.Mac SDK   10.4.0.123 (35d1ccd)</li>
+<li>Visual Studio Tools for Unity   3.0.0.1</li>
+<li>Visual Studio Tools for Universal Windows Apps   15.0.26228.00</li>
+<li>Mono Debugging for Visual Studio   Mono.Debugging.VisualStudio</li>
+<li>ASP.NET and Web Tools 2017   15.0.30223.0</li>
+<li>NuGet Package Manager   4.0.0</li>
+<li>Common Azure Tools   1.9</li>
+<li>NpgsqlVSPackage Extension   1.0</li>
+<li>Merq   1.1.13-alpha (2f64b6d)</li>
+<li>VSPackage Extension   1.2</li>
+<li>Other extentions</li>
+<li>JetBrains ReSharper Ultimate 2016.3.2 - なにはともあれ入れておく。</li>
+<li>CodeMaid   10.2.7 - 気軽にコード整形してくれる。</li>
+<li>.ignore   1.2.71</li>
+<li>Markdown Editor   1.11.201</li>
+<li>File Nesting   2.6.67</li>
+<li>GitHub.VisualStudio   2.2.0.8</li>
+<li>VSColorOutput   2.5</li>
+<li>HideMenu   1.0 - MinimaliticViewとの組み合わせでEmacsっぽい画面になる。</li>
+<li>MinimaliticView Extension   1.0</li>
+<li>Debug用エミュレーター</li>
+<li>XAML Previewer for Xamarin.Forms - Gorilla PlayerはVS2017未対応の上、Data Bindingを参照できないため機能的にXAML Previewer for Xamarin.Formsとほぼかわらない様子。</li>
+<li>Android Emulator Manager/Android SDK Manager - VS2017ではHyper-VベースのVisual Studio Emulator for Xamarinがなくなり、Intel HAXMベースのAndroid Emulator Manager/Android SDK Manager (Google)のみとなった。</li>
+</ul>
+</li>
+<li>DevStack</li>
+<li>Prism<ul>
+<li>Prism template - スキャフォールド、スニペット便利</li>
+<li>Profile78 - Profile259になっているがWindows 8必要ないので</li>
+<li>Newtonsoft.Json</li>
+<li>FubarCoder.RestSharp.Portable.HttpClient</li>
+<li>NUnit</li>
+<li>Moq</li>
+</ul>
+</li>
+</ul>
+<h3 id="キーバインド">キーバインド</h3>
+<p>おまけのEmacs風キーバインド。Edit.Emacsメソッドは1級市民ではないのでその周辺で代替します。Edit.LineCut、Edit.Outline、ReSharpeのいらないキーバインドは削除しています。</p>
+<table>
+<thead>
+<tr>
+<th>category</th>
+<th>command</th>
+<th>keybind</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Navigation</td>
+<td>CodeMaid.SwitchFile</td>
+<td><code>C-c,:</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.CharLeft</td>
+<td><code>C-b</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.CharRight</td>
+<td><code>C-f</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.DocumentBottom</td>
+<td><code>M-&gt;</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.DocumentTop</td>
+<td><code>M-&lt;</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.GoTo</td>
+<td><code>M-g</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.IncrementalSearch</td>
+<td><code>C-s</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.LineDown</td>
+<td><code>C-n</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.LineEnd</td>
+<td><code>C-e</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.LineStart</td>
+<td><code>C-a</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.LineUp</td>
+<td><code>C-p</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.NextMethod</td>
+<td><code>M-}</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.PageDown</td>
+<td><code>C-v</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.PageUp</td>
+<td><code>M-v</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.PreviousMethod</td>
+<td><code>M-{</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.ScrollLineCenter</td>
+<td><code>C-l</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.ToggleAllOutling</td>
+<td><code>C-u,M-c</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.ToggleOutlingExpansion</td>
+<td><code>C-i</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.WordNext</td>
+<td><code>M-f</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Edit.WordPrevious</td>
+<td><code>M-b</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>ReSharper.ReSharper_GotoRecentFiles</td>
+<td><code>M-x,b</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Team.TeamExplorerSearch</td>
+<td><code>C-x,g</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>View.C#Interactive</td>
+<td><code>C-c,i</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Window.NewVerticalTabGroup</td>
+<td><code>C-x,&amp;#124;</code></td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Window.PreviousTabGroup</td>
+<td><code>C-x,1</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Build.BuildSolution</td>
+<td><code>C-c,b</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Build.RebuildSolution</td>
+<td><code>C-c,r</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>CodeMaid.JoinLine</td>
+<td><code>C-c,j</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>CodeMaid.SortLines</td>
+<td><code>M-x,s</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Debug.Start</td>
+<td><code>C-c,d</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.BackwardDelete</td>
+<td><code>C-h</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.BackwardDelete</td>
+<td><code>M-h</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.BreakLine</td>
+<td><code>C-m</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.Capitalize</td>
+<td><code>M-c</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.CommentSelection</td>
+<td><code>M-;</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.Delete</td>
+<td><code>C-d</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.InsertSnippet</td>
+<td><code>C-,</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.LineCut</td>
+<td><code>C-k</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.LineDownExtendColumn</td>
+<td><code>M-.</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.LineUpExtendColumn</td>
+<td><code>M-,</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.MakeLowercase</td>
+<td><code>M-l</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.MakeUppercase</td>
+<td><code>M-u</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.Paste</td>
+<td><code>C-y</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.SelectCurrentWord</td>
+<td><code>C-SPC</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.UncommentSelection</td>
+<td><code>M-:</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Edit.Undo</td>
+<td><code>M-/</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>File.Close</td>
+<td><code>C-x,k</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>File.SaveSelection</td>
+<td><code>C-x,C-s</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Project.AddNewItem</td>
+<td><code>C-c,s</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>ReSharpe._ReSharper_DuplicateText</td>
+<td><code>C-c,p</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>ReSharper.ReSharper_GotoRelatedFile</td>
+<td><code>C-c,;</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>ReSharper.ReSharper_GotoText</td>
+<td><code>C-c,g</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Tools.ManageNuGetPackagesforSolution</td>
+<td><code>C-c,n</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>Tools.Options</td>
+<td><code>M-0</code></td>
+</tr>
+<tr>
+<td>Edit</td>
+<td>View.PackageManagerConsole</td>
+<td><code>C-q,1</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="wrapup">WRAPUP</h2>
+<p>途中途中心の声が漏れていますが、なんとか触れる状態になってきました。ただ、モチベーションとしては下がり気味なのでこのままXamarinをさわり続けるかは分かりません。やはり文化が違いますね。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

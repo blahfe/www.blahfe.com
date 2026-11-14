@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AWS Organizationsを別のAWSアカウントに移行する | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n80/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-05-09">9 5月, 2021</time><h1>AWS Organizationsを別のAWSアカウントに移行する</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#organizationsを別アカウントに移行する方法">Organizationsを別アカウントに移行する方法</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>最近のAWSはCDKの発表に代表されるようにインフラ以外の開発者が触りやすい環境が整ってきています。ただ、こうした機能やリソースを存分に享受するにはIAM管理だけでは不足しており、AWSアカウントの管理方針を大枠で整理する必要が出てきました。今回は深く考えずに使っていたOrganizationsを整理する際にはまったポイントを記していきます。</p>
+<p><img width="1721" alt="thumbnail" src="/assets/blog/6f9d2ede839cf6a8.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>初期の頃につくったAWSアカウントにコンソリ請求の便利さからとりあえずOrganizations機能をつけてみた<ul>
+<li>その後、当該アカウントに異なるワークロードのリソースを加えすぎてスケールしづらい構成になってきた<ul>
+<li>例えば<ul>
+<li>開発環境をAWSアカウント単位で分けられないためIAMや開発サイクルが複雑になり開発スピードに支障が出てきた</li>
+<li>セキュリティ上望ましくないシステム構成について改修のハードルが上がってきた</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>というわけで、一旦Organizations機能を解除して新しく作成したAWS管理アカウントに移行していくことにしました。一つ一つの作業は単純なのですが意外と時間がかかることが分かったので備忘として残しておきます。</p>
+<p>OrganizationsのOU構成はサムネイル画像のBEFORE/AFTERの通りです。</p>
+<p><strong>BEFORE</strong>：Organization Unitの構成は全然考えずとりあえず追加していました。
+- Foo - AWS Organizationsのオーナーアカウントであり、異なるワークロードや環境が混在しているアカウント
+- Bar - お試し用アカウント1
+- Buzz - お試し用アカウント2</p>
+<p><strong>AFTER</strong>：こちらの記事「<a href="https://aws.amazon.com/jp/blogs/mt/best-practices-for-organizational-units-with-aws-organizations/">Best Practices for Organizational Units with AWS Organizations | AWS Management &amp; Governance Blog</a>」を参考に構成しました。
+- Foundation
+    - Management - AWS Organizationsのオーナーアカウント
+    - Security
+    - Infrastructure
+- Workload
+    - Prod
+        - Foo
+    - Stg
+        - FooStg
+    - Integ
+        - FooInteg
+- Sandbox
+    - BarSandbox
+    - BuzzSandbox</p>
+<h3 id="organizationsを別アカウントに移行する方法">Organizationsを別アカウントに移行する方法</h3>
+<p>やったことはこちらの記事「<a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/organizations-move-accounts/">2 つの AWS Organizations 間でアカウントを移動する</a>」の通りですが、いくつかはまるポイントが書かれていないのでそちらも合わせて記します。まず注意点として3つあります。</p>
+<p>一つ目は、Organizationsの移行期間中は請求の種類が3種類になる可能性があります。具体的には「古いOrganizationsによるコンソリ請求」「スタンドアロンのAWSアカウントによる請求」「新しいOrganizationsによるコンソリ請求」です。会社組織としてAWSを利用している場合は経理側との連携が必要になってくるでしょう。</p>
+<p>二つ目は、古いOrganizationsから追加作成されたメンバーアカウントには請求情報の追加と電話番号の認証を行う必要があります。前者の請求情報の追加はそれほど手間ではないのですが、後者の電話番号の認証はAWSサポートを介すため1アカウントごとに3日から1週間ほど時間がかかります。詳細の対応方法はこちらの記事「<a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/error-unlink-account-organization/">組織からのメンバーアカウントのリンク解除のエラーを解決する</a>」を参照下さい。</p>
+<p>三つ目は、新しいOrganizationsでは先に制限緩和を行っておきましょう。新しいOrganizationsを作成する際はおそらく古いOrganizationsの時よりもにメンバーアカウントが増えることと思います。特にベストプラクティスのOrganization Unitでアカウントを分けていくとあっという間にデフォルト制限の10を超える可能性が高いです。</p>
+<p>次に移行手順ですが、上記の注意点をクリアしたらほぼ単純作業になります。</p>
+<ol>
+<li>古いOrganizationからメンバーアカウントを削除</li>
+<li>新しいOrganizationからメンバーアカウントに招待を送信</li>
+<li>メンバーアカウントで新しいOrganizationへの招待を受け入れる</li>
+<li>（全てのメンバーアカウントを削除し終わった後に）古いOrganizationsを削除</li>
+<li>古いOrganizationsの管理アカウントをメンバーアカウントとして新しい Organization に招待</li>
+</ol>
+<h2 id="wrapup">WRAPUP</h2>
+<p>昨今のAWSの動きを見ると、インフラ以外の開発者にもAWSを気軽に使えるようになってきており、Organizations機能を使うこと前提にサービスが展開されているようです。なのでこうした恩恵をうけるためにもOrganizationsのベストプラクティスに則ったアカウント構成にする必要があります。</p>
+<p>一応の注意点としては、Organizationsが便利だからといってOrganizationsからメンバーアカウントを追加することは止めた方がいいです。Organizations移行の注意点から分かる通り、Organizationsから追加されたメンバーアカウントには請求情報追加も電話番号認証も行われません。いざ別のOrganizationsに移行する際に想定外の手間と時間をかけないよう、常にスタンドアロンでAWSアカウントを作成するようにしましょう。</p>
+<p>さて、Organizationsの勘所が見えてきたら次はAWS SSOという便利な機能が待っています。AWSを楽しみましょう。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

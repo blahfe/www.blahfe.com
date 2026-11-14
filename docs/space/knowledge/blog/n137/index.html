@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G Suite無償版停止に伴い、MXレコード等のドメイン管理を整理した | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n137/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2022-04-12">12 4月, 2022</time><h1>G Suite無償版停止に伴い、MXレコード等のドメイン管理を整理した</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#構成">構成</a><ul>
+<li><a href="#before">before</a></li>
+<li><a href="#after">after</a></li>
+</ul>
+</li>
+<li><a href="#手順">手順</a><ul>
+<li><a href="#1-ドメイン管理を整理する">1. ドメイン管理を整理する</a></li>
+<li><a href="#2-smtpを設定する">2. SMTPを設定する</a></li>
+</ul>
+</li>
+<li><a href="#3-g-suiteを退会する">3. G Suiteを退会する</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a><ul>
+<li><a href="#後日談">後日談</a><ul>
+<li><a href="#before_1">before</a></li>
+</ul>
+</li>
+<li><a href="#after_1">after</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></details><p>今回は10年以上利用していた<a href="https://support.google.com/a/answer/60217">G Suite無償版が2022年8月に停止される</a>とのことで、メールアドレスの管理をどうするか検討しました。メール管理は別のGMailアカウントを使っていたので、転送できれば良いのですが、これを機にドメイン管理をAWSにまとめていくことを思いつきました。</p>
+<p><img alt="thumbnail" src="/assets/blog/2bf5ba27829d492c.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>10年以上利用していたG Suite無償版が2022年8月に停止され、メールアドレスの管理をどうしようか<ul>
+<li>Google Workspaceにアップグレードしても良いけどBusiness Starterプランにしても面白みがないので別の方法を探したい<ul>
+<li>G Suiteはメールしか利用しておらず、メール管理は別のGMailアカウントを使っていたのでメール転送機能で代替できそう</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>と言うわけで、今回はG Suiteアカウントの利用を止めて、MXレコード周りを整理することにしました。個人利用なのでドメイン管理は既存のままで良かったのですが、証跡管理のない状況に耐えられずAWSに移管。メール転送機能はPOBOX以外はサブアドレス対応していなかったのですが、キャッチオール対応できるのでまずは良しとしています。現時点での構成は下記の通り。</p>
+<p>なお、複数人数で必要になった場合は、サブアドレスとグループアドレスが対応可能なAmazon Workmailに移管する予定ですが、これでもGoogle Workspaceを利用するよりコストは半分程で済みます。</p>
+<h3 id="構成">構成</h3>
+<h4 id="before">before</h4>
+<ul>
+<li>ドメイン管理 バリュードメイン</li>
+<li>NSレコード Cloudflare DNS</li>
+<li>MXレコード G Suite</li>
+<li>SMTP G Suite</li>
+</ul>
+<h4 id="after">after</h4>
+<ul>
+<li>ドメイン管理 Amazon Route 53</li>
+<li>NSレコード Amazon Route 53</li>
+<li>MXレコード Cloudflare Email Routing</li>
+<li>SMTP Amazon SES</li>
+</ul>
+<h3 id="手順">手順</h3>
+<p>方針が決まるまでいくつかメールサービスを検討したのですが、決まってしまえばやることは単純です。</p>
+<h4 id="1-ドメイン管理を整理する">1. ドメイン管理を整理する</h4>
+<p>基本はドメイン移管申請ですが、G Suiteを後ほど削除することを考慮してMXレコードをCloudflare Email Routingに変更。本来はこの処理の前にG Suiteに紐付いている各サービスの設定変更が必要になります。</p>
+<ol>
+<li>移管元にてWHOIS情報公開代行の解除</li>
+<li>移管元にてドメインロックの解除</li>
+<li>移管元にて認証鍵 (Auth-Code) を確認</li>
+<li>移管先にてホストゾーンの作成、各レコードの内容を移管元に合わせる</li>
+<li>Cloudflare Email Routingにて転送先メールアドレスを検証する</li>
+<li>移管先にてMXレコードをCloudflare Email Routingのものを設定する</li>
+<li>移管元のNSレコードを移管先に変更</li>
+<li>移管先にて認証鍵をつかい移管申請を行う</li>
+<li>移管元に対して移管申請を行った旨をメールにて連携する</li>
+</ol>
+<p>Cf.
+- <a href="https://www.value-domain.com/userguide/manual/transferother">ドメインの他社への移管 | バリュードメイン ユーザーガイド</a>
+- <a href="https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/domain-transfer-to-route-53.html#domain-transfer-to-route-53-request-transfer">ドメイン登録の Amazon Route 53 への移管 - Amazon Route 53</a>
+- <a href="https://blog.cloudflare.com/introducing-email-routing/">Easily creating and routing email addresses with Cloudflare Email Routing</a></p>
+<h4 id="2-smtpを設定する">2. SMTPを設定する</h4>
+<p>最近はセキュリティ対策のためGMailのSMTPが使いづらくなっているので、今回はAmazon SESを利用しました。サンドボックス解除のため下記の通りサポートに依頼しました。</p>
+<pre><code class="language-txt"># メールタイプ
+通例の取引がメインとなる予定です
+
+# ユースケース
+## メールを送信する頻度
+週に1-2回
+
+## 受信者リストのメンテナンス方法
+四半期に一度の棚卸し
+
+## バウンス対応
+当該メールアドレスの削除
+
+## 申し立て対応
+当該メールアドレスへのフラグ管理
+
+## 解除申請の管理方法
+メールでの受付
+
+## 送信予定のメールサンプル
+{{宛先名}}様
+お世話になっております。
+表題の件につきまして1点問い合わせします。
+{{問い合わせ内容}}
+ご不明な点等ございましたらお気軽にお問い合わせ下さい。
+どうぞ、よろしくお願い致します。
+</code></pre>
+<h3 id="3-g-suiteを退会する">3. G Suiteを退会する</h3>
+<p>G Suiteに依存しているサービスがないか確認し、退会します。</p>
+<h2 id="wrapup">WRAPUP</h2>
+<p>以前からドメイン管理をAWSに移管したかったのですが、積極的な理由がないためなおざりになっていました。今回のG Suite無償版の期限切れに伴い整理できすっきりしたので、これを機にいろいろ整理していきたいですね。</p>
+<h3 id="後日談">後日談</h3>
+<p>Cloudflare DNSからAmazon Route 53に設定を変更した数日後、Cloudflare Email Routingが使用できなくなりました。転送機能としてドメイン管理から切り離されていると思ったのですがそうではなかったようです。ドメイン管理は厳しめに証跡を取っていきたいところなので、Amazon Route 53による管理は譲れません。</p>
+<p>また、Amazon SESによる転送機能も検討したのですが、送信元すべてに対してドメイン検証が必要なため現実的ではありませんでした。AWSにはメール転送の種類が2つあって、送信元を転送者に置き換える「転送」と送信元をそのまま利用する「リダイレクト」があります。「転送」だと元の送信元とコミュニケーションが取りづらくなる一方、「リダイレクト」だとすべての送信元のドメイン検証が必要となります。ここでは融通が利かないと判断するのではなく、セキュリティを考慮された実装と捉え、AWSが提供しているWorkMailを素直に使うことにしました。慣れればたいしたことはありません。下記が結果になります。</p>
+<h4 id="before_1">before</h4>
+<ul>
+<li>ドメイン管理 Amazon Route 53</li>
+<li>NSレコード Amazon Route 53</li>
+<li>MXレコード Cloudflare Email Routing</li>
+<li>SMTP Amazon SES</li>
+</ul>
+<h3 id="after_1">after</h3>
+<ul>
+<li>ドメイン管理 Amazon Route 53</li>
+<li>NSレコード Amazon Route 53</li>
+<li>MXレコード Amazon WorkMail</li>
+<li>SMTP Amazon WorkMail</li>
+</ul></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>

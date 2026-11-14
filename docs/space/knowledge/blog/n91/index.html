@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hardware-Accelerated GPU Scheduling機能を使ったWSL2はどのくらいパフォーマンスが向上するか | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/n91/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=53239f992b91">
+<script src="/assets/site.js?v=8e404c97f2f6" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <nav class="site-navigation" aria-label="メインメニュー">
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
+    </nav>
+  </div>
+</header>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><time class="article-date" datetime="2021-08-01">1 8月, 2021</time><h1>Hardware-Accelerated GPU Scheduling機能を使ったWSL2はどのくらいパフォーマンスが向上するか</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#検証端末の環境">検証端末の環境</a></li>
+<li><a href="#phoronix-test-suiteをインストールする">Phoronix Test Suiteをインストールする</a></li>
+<li><a href="#実行するベンチマークテストを選定する">実行するベンチマークテストを選定する</a></li>
+<li><a href="#ベンチマーク結果">ベンチマーク結果</a></li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p>新しいPC端末を購入したところ「Hardware-Accerlarated GPU Scheduling」機能があることに気づきました。使用したところ気持ち速くなったように感じたのでどのくらいパフォーマンスが向上したか調べてみました。</p>
+<p><img width="1272" alt="thumbnail" src="/assets/blog/39172e5bc3696216.png"></p>
+<h2 id="problem">PROBLEM</h2>
+<ul>
+<li>システム設定で「<a href="https://devblogs.microsoft.com/directx/hardware-accelerated-gpu-scheduling/">Hardware-Accerlarated GPU Scheduling（HAGS）</a>」機能を使ったところWSL2のパフォーマンスが体感的に速くなったように感じた<ul>
+<li>他の端末にもHAGSを展開していきたいので実際にどのらくらいパフォーマンスが向上するか検証したい</li>
+</ul>
+</li>
+</ul>
+<h2 id="solution">SOLUTION</h2>
+<p>と言うわけで、以前Phoronixによって書かれた「<a href="https://www.phoronix.com/scan.php?page=article&amp;item=windows-10-wsl2&amp;num=1">WSLとWSL2とのベンチマーク比較の記事</a>」を参考に<a href="https://www.phoronix-test-suite.com/">Phoronix Test Suite</a>でHAGSのオン・オフのベンチマーク比較を行います。</p>
+<h3 id="検証端末の環境">検証端末の環境</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Processor</td>
+<td>AMD Ryzen 9 5900X 12-Core (12 Cores / 24 Threads)</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>52 GB</td>
+</tr>
+<tr>
+<td>Disk</td>
+<td>2 x 275GB Virtual Disk</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>Ubuntu 20.04</td>
+</tr>
+<tr>
+<td>Kernel</td>
+<td>5.4.72-microsoft-standard-WSL2 (x86_64)</td>
+</tr>
+<tr>
+<td>Display Server</td>
+<td>X Server</td>
+</tr>
+<tr>
+<td>Compiler</td>
+<td>GCC 9.3.0</td>
+</tr>
+<tr>
+<td>File System</td>
+<td>ext4</td>
+</tr>
+<tr>
+<td>System Layer</td>
+<td>wsl</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phoronix-test-suiteをインストールする">Phoronix Test Suiteをインストールする</h3>
+<pre><code class="language-sh">brew install phoronix-test-suite
+sudo apt install php php-gd php-xml php-curl
+</code></pre>
+<h3 id="実行するベンチマークテストを選定する">実行するベンチマークテストを選定する</h3>
+<p>まず実行可能なテストとテストスーツを確認します、テストスーツは関連テストのグループになります。</p>
+<pre><code class="language-sh">phoronix-test-suite list-available-tests
+phoronix-test-suite list-available-suite
+</code></pre>
+<p>今回は開発する際に関係がある下記のテストを選定しました。テストスーツは数時間では完了しないケースがあったので今回の対象から外しています。
+- pts/build-gcc
+- pts/compress-gzip
+- pts/system-decompress-gzip
+- pts/gnupg
+- pts/mutex
+- pts/openssl
+- pts/git
+- pts/pybench
+- pts/nginx
+- pts/node-web-tooling</p>
+<h3 id="ベンチマーク結果">ベンチマーク結果</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>HAGSオン</th>
+<th>HAGSオフ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pts/build-gcc</td>
+<td><a href="https://openbenchmarking.org/result/2107255-IB-TESTBUILD18">717.39 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107251-IB-TESTBUILD70">715.56 sec</a></td>
+</tr>
+<tr>
+<td>pts/compress-gzip</td>
+<td><a href="https://openbenchmarking.org/result/2107257-IB-TESTCOMPR09">29.10 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107257-IB-TESTCOMPR68">29.36 sec</a></td>
+</tr>
+<tr>
+<td>pts/system-decompress-gzip</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTSYSTE11">2.397 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107252-IB-TESTSYSTE54">2.427 sec</a></td>
+</tr>
+<tr>
+<td>pts/mutex Lock Shared</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTMUTEX77">15.2 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTMUTEX56">15.2 sec</a></td>
+</tr>
+<tr>
+<td>pts/mutex Unlock spinlock</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTMUTEX77">33.1 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTMUTEX56">33.4 sec</a></td>
+</tr>
+<tr>
+<td>pts/mutex Unlock std::mutex</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTMUTEX77">14.8 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTMUTEX56">14.7 sec</a></td>
+</tr>
+<tr>
+<td>pts/mutex Semaphore Release And Acquire</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTMUTEX77">8.44 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTMUTEX56">8.36 sec</a></td>
+</tr>
+<tr>
+<td>pts/mutex Unlock pthread_mutex</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTMUTEX77">8.45 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTMUTEX56">8.34 sec</a></td>
+</tr>
+<tr>
+<td>pts/openssl</td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTOPENS77">3704.3 sign/sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107253-IB-TESTOPENS59">3694 sign/sec</a></td>
+</tr>
+<tr>
+<td>pts/git</td>
+<td><a href="https://openbenchmarking.org/result/2107251-IB-TESTGITHA63">39.01 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTGITHA82">38.85 sec</a></td>
+</tr>
+<tr>
+<td>pts/pybench</td>
+<td><a href="https://openbenchmarking.org/result/2107257-IB-TESTPYBEN90">869 msec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107250-IB-TESTPYBEN63">877 msec</a></td>
+</tr>
+<tr>
+<td>pts/nginx</td>
+<td><a href="https://openbenchmarking.org/result/2107258-IB-TESTNGINX84">70124.29 req/sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107255-IB-TESTNGINX60">71919.70 req/sec</a></td>
+</tr>
+<tr>
+<td>pts/node-web-tooling</td>
+<td><a href="https://openbenchmarking.org/result/2107257-IB-TESTNODEW03">16.71 sec</a></td>
+<td><a href="https://openbenchmarking.org/result/2107259-IB-TESTNODEW92">17.01 sec</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="wrapup">WRAPUP</h2>
+<p>残念ながらベンチマーク結果からHAGSのオンとオフの間に大きなパフォーマンスの変化は見られませんでした。通常の開発の場合はほぼ恩恵を受けられないと言って問題ないでしょう。</p>
+<p>結論として、他の端末へのHAGSの展開はお薦めしません。不具合等の口コミも散見されるので使用端末との相性を見ながら導入するのが良さそうです。個人的にはChromeのハードウェアアクセラレーション機能との相性を見つつしばらく運用しようと思います。</p></article></main></div></div><footer aria-busy="false" aria-live="polite" class="footer" data-v-6b503e4a="" data-v-c819b962="" id="footer_layout" style="position: relative;"><div class="footer_wrapper" data-v-04dbce04="" data-v-6b503e4a=""><div aria-busy="false" aria-live="polite" class="" data-v-04dbce04="" data-v-7f42c21d="" data-v-app="" id="ld_render" style="position: relative;"><div class="render_desktop" id="rw_layout_app"><div class="le_layout"><div class="le_sections"><div class="le_entity le_section" style="background-color: rgb(219, 224, 218);"><div class="le_entity_content le_entity_width_inherit le_section_spacing_tight" style="--element-text-colour: #707070; --element-title-colour: #111111;"><div class="le_rows"><div class="le_entity le_row" style="--v5c4b44f6: ;"><div class="le_entity_content le_entity_spacing_tight le_content_alignment_start le_entity_height_fit-module"><div class="le_columns le_entity_spacing_custom le_entity_height_fit-module"><div class="le_entity le_column render_desktop" style="flex-basis: 100%; width: 100%;"><div class="le_entity_content le_entity_spacing_tight le_entity_height_fit-module"><div class="le_modules le_entity_spacing_tight le_entity_height_fit-module"><div class="le_entity le_module" style="background-color: transparent;" tabindex="-1"><div class="le_entity_content le_entity_spacing_tight le_element_spacing_default le_entity_height_fit-module le_entity_element_alignment_left le_entity_element_alignment_vertical_center le_module_render_class text Paragraph" tabindex="-1"><div class="le_module_contents"><div class="le_module_column" style="flex-basis: 100%;"><div class="le_element le_element_type_text"><div class="element-text-preview" style="text-align: left;"><p style="text-align: center;"><span style="color: rgba(0, 0, 0, 0.7);"><span>© Blhafe &amp; Grpr. All rights reserved.</span></span></p></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="more_menu" data-v-04dbce04=""></div></div></footer>
+</div></div></body></html>
