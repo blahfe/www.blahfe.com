@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://www.blahfe.com/sitemap.xml
+Sitemap: https://blahfe.github.io/sitemap.xml

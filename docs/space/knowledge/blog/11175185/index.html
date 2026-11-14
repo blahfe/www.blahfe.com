@@ -1,20 +1,35 @@
 <!doctype html>
 <html lang="ja" nighteye="disabled"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Elixirではてなブックマーク | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
-<link rel="icon" href="/www.blahfe.com/assets/design/favicon.png"><link rel="canonical" href="https://www.blahfe.com/space/knowledge/blog/11175185/"><link rel="stylesheet" href="/www.blahfe.com/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/www.blahfe.com/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/www.blahfe.com/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/www.blahfe.com/assets/site.css?v=0f3dd7a16fac">
-<script src="/www.blahfe.com/assets/site.js?v=549ec9fbfe72" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/www.blahfe.com/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
-  <img class="header-background" src="/www.blahfe.com/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+<link rel="icon" href="/assets/design/favicon.png"><link rel="canonical" href="https://blahfe.github.io/space/knowledge/blog/11175185/"><link rel="stylesheet" href="/assets/design/refined.css?v=04e46e482591"><link rel="stylesheet" href="/assets/design/theme.css?v=c49b7396db3b"><link rel="stylesheet" href="/assets/design/components.css?v=fe7287a3b7da"><link rel="stylesheet" href="/assets/site.css?v=7101a3a15f71">
+<script src="/assets/site.js?v=6fbce7aa9bd2" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a><div id="rw_wrapper" data-v-c819b962="" class="rw_background_partial rw_effects_popup_shadow rw_round_corners rw_header_spacious rw_theme_27164 rw_portal_styling"><div class="rw_structure" data-v-c819b962=""><div class="rw_banner" data-v-c819b962=""><img class="static-background static-banner-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async"></div><div class="rw_full" data-v-c819b962=""></div><header id="rw_header" class="site-header">
+  <img class="header-background" src="/assets/design/b6c3eab67b26eab3.png" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
   <div class="site-header-inner">
-    <a class="site-brand" href="/www.blahfe.com/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
+    <a class="site-brand" href="/" title="Blahfe &amp; Grpr">Blahfe &amp; Grpr</a>
     <nav class="site-navigation" aria-label="メインメニュー">
-      <a href="/www.blahfe.com/page/vision/">ビジョン</a>
-      <a href="/www.blahfe.com/page/member/">メンバー</a>
-      <a href="/www.blahfe.com/space/knowledge/">ナレッジ</a>
-      <a href="/www.blahfe.com/page/contact/">コンタクト</a>
+      <a href="/page/vision/">ビジョン</a>
+      <a href="/page/member/">メンバー</a>
+      <a href="/space/knowledge/">ナレッジ</a>
+      <a href="/page/contact/">コンタクト</a>
     </nav>
   </div>
 </header>
-<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/www.blahfe.com/space/knowledge/">ナレッジ</a><h1>Elixirではてなブックマーク</h1><p><img alt="image" src="/www.blahfe.com/assets/attachments/att11862830.png" /></p>
+<div id="rw_main" data-v-c819b962=""><div class="rw_bg_shadow" data-v-c819b962=""><div class="rw_shadow_container" data-v-c819b962="" style="width:85%"><div class="rw_shadow_left" data-v-c819b962=""></div><div class="rw_shadow_top" data-v-c819b962=""></div><div class="rw_shadow_right" data-v-c819b962=""></div></div></div><div id="rw_content" data-v-c819b962="" style="width:85%"><main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a><h1>Elixirではてなブックマーク</h1><details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次"><div class="toc">
+<ul>
+<li><a href="#problem">PROBLEM</a></li>
+<li><a href="#solution">SOLUTION</a><ul>
+<li><a href="#ブクマの管理方法">ブクマの管理方法</a></li>
+<li><a href="#elixirによる非同期処理">Elixirによる非同期処理</a><ul>
+<li><a href="#監視機構-supervisor">監視機構 Supervisor</a></li>
+<li><a href="#非同期処理-taskasync_stream">非同期処理 Task.async_stream</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#wrapup">WRAPUP</a></li>
+</ul>
+</div>
+</nav></details><p><img alt="image" src="/assets/attachments/att11862830.png" /></p>
 <p>紆余曲折合ってはてなブックマークの運用を見直す必要が出てきました。人の興味というのは尽きないもので知りたいことが次々出てきます。にも拘わらず人の時間は有限でそれにあがなうための手段を考えたわけです。</p>
 <h2 id="problem">PROBLEM</h2>
 <blockquote>
@@ -35,7 +50,7 @@
 <li>上記設定はYAMLファイルで簡単に管理できるようにする</li>
 <li>フィード読込とブクマを非同期処理できるようElixirで実装する</li>
 </ul>
-<h3 id="_1">ブクマの管理方法</h3>
+<h3 id="ブクマの管理方法">ブクマの管理方法</h3>
 <p>まずブクマの管理ですが、下記5つのYAMLファイルで構成しています、構造はマップとリストのみ。ブクマしたいと思う記事を読みすすめる中で気になるキーワードが出てきたら都度 <code>feed.yaml</code> を更新します。また、記事にノイズが多いようだったら傾向を分析して除外ファイル <code>feed_excluded_link.yaml</code> <code>feed_excluded_title.yaml</code> を更新します。</p>
 <table>
 <thead>
@@ -94,9 +109,9 @@ amazon.com:
 ski-status.example.com:
   - Floki.find(fst, &quot;.post__body a&quot;)
 </code></pre>
-<h3 id="elixir">Elixirによる非同期処理</h3>
+<h3 id="elixirによる非同期処理">Elixirによる非同期処理</h3>
 <p>Elixirで非同期処理を行っているのですが、大きく分けて監視機構のSupervisorと非同期処理のTask.async_streamを使っています。</p>
-<h4 id="supervisor">監視機構 Supervisor</h4>
+<h4 id="監視機構-supervisor">監視機構 Supervisor</h4>
 <p>まず、Supervisor。Elixirには監視機構Supervisorがあり、それが各ワーカーを子プロセスとして管理しています。ここではフィード読込とブクマは別々のワーカーで処理しますが、キャッシュが暖気処理を別ワーカーで行っているため再起動戦略は「失敗したイベントの中にあるすべての子プロセスを再起動」（ <code>one_for_all</code> ）にしてあります。再起動戦略の詳細は「<a href="https://elixirschool.com/ja/lessons/advanced/otp-supervisors/">OTPスーパバイザ · Elixir School</a>」を参照下さい。</p>
 <p>下記のように <code>Supervisor.start_link</code> を <code>Keshikimi2.Application.start</code> に適用すると、アプリケーション開始（ <code>mix run</code> ）した時点で監視機構が起動されます。</p>
 <pre><code class="language-ex">Supervisor.start_link(
@@ -120,7 +135,7 @@ ski-status.example.com:
   name: name(prefix)
 )
 </code></pre>
-<h4 id="taskasync_stream">非同期処理 Task.async_stream</h4>
+<h4 id="非同期処理-taskasync_stream">非同期処理 Task.async_stream</h4>
 <p>次に、Task.async_stream。配列を引き回すリクエスト処理は <code>Task.async_stream</code> がうってつけです。下記ではキャッシュからブクマ対象になるフィードリンクを取り出し、除外処理、校正処理を加えて、ブクマのリクエストを出すという流れを組んでいます。Elixirでは、流れをひとまとめにして視覚的にわかりやすく非同期処理してくことができます。</p>
 <pre><code class="language-ex">Cachex.keys!(:feed)
 |&gt; Enum.reject(fn key -&gt;
