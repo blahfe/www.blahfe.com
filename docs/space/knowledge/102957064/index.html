@@ -1,0 +1,1549 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AWS DEAまとめ | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="canonical" href="https://www.blahfe.com/space/knowledge/102957064/"><link rel="stylesheet" href="/www.blahfe.com/assets/site.css">
+</head><body><a class="skip" href="#main">本文へ</a><header><a class="brand" href="/www.blahfe.com/">Blahfe &amp; Grpr</a><nav aria-label="メイン"><a href="/www.blahfe.com/page/vision/">ビジョン</a><a href="/www.blahfe.com/page/member/">メンバー</a><a href="/www.blahfe.com/space/knowledge/">ナレッジ</a><a href="/www.blahfe.com/page/contact/">コンタクト</a></nav></header>
+<main id="main"><article><h1>AWS DEAまとめ</h1><p>目次</p>
+<blockquote>
+<p>Macro (toc)</p>
+</blockquote>
+<h2 id="_1">概要</h2>
+<p>AWS DEA (AWS Certified Data Engineer - Associate) は、パイプラインを実装し、ベストプラクティスに従ってコストとパフォーマンスの問題をモニタリング、トラブルシューティング、最適化する能力を検証します。また、次のタスクについての能力も検証します。</p>
+<ul>
+<li>プログラミングの概念を適用しながら、データを取り込んで変換し、データパイプラインをオーケストレーションする。</li>
+<li>最適なデータストアの選択、データモデルの設計、データスキーマのカタログ化、データライフサイクルの管理を行う。</li>
+<li>データパイプラインの運用、保守、モニタリングを行う。データを分析し、データ品質を確保する。</li>
+<li>適切な認証、認可、データ暗号化、プライバシー、ガバナンスを実装する。ログ記録を有効にする。</li>
+</ul>
+<h3 id="it">推奨される IT 全般の知識</h3>
+<p>受験対象者は、以下のような IT 全般の知識を有している必要があります。</p>
+<ul>
+<li>取り込みからデスティネーションまでの抽出、変換、ロード (ETL) パイプラインのセットアップとメンテナンス</li>
+<li>パイプラインの要求に応じた、高水準だが言語に依存しないプログラミングの概念の適用</li>
+<li>ソース管理に Git コマンドを使用する方法</li>
+<li>データレイクを使用してデータを保存する方法</li>
+<li>ネットワーク、ストレージ、コンピューティングの一般的な概念推奨される AWS の知識 ... 受験対象者は、以下の AWS の知識を有している必要があります</li>
+<li>AWS サービスを使用して、この試験ガイドの「はじめに」セクションに記載されているタスクを実行する方法</li>
+<li>データパイプラインの一部であるすべてのデータの暗号化、ガバナンス、保護、ログ記録のための AWS サービスについての理解</li>
+<li>AWS のサービスを比較して、サービス間における、コスト、パフォーマンス、機能の違いを理解する能力</li>
+<li>SQL クエリを構造化する方法と AWS サービスで SQL クエリを実行する方法</li>
+<li>AWS サービスを使用してデータを分析し、データ品質を検証し、データの一貫性を確保する方法についての理解</li>
+<li>受験対象者にとって対象範囲外のジョブタスクとみなされるもの ... 受験対象者が実施できることが想定されていないジョブタスクは、以下のリストのとおりです。このリストはすべてを網羅しているわけではありません。以下のタスクは、本試験の範囲外です</li>
+<li>人工知能と機械学習 (AI/ML) のタスクを実行する</li>
+<li>プログラミング言語固有の構文に関する知識を実証する</li>
+<li>データに基づいてビジネス上の結論を導き出す</li>
+</ul>
+<h3 id="_2">試験内容の概要と重み設定</h3>
+<table>
+<thead>
+<tr>
+<th><strong>分野</strong></th>
+<th><strong>重み設定</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第 1 分野: データの取り込みと変換</td>
+<td>34％</td>
+</tr>
+<tr>
+<td>第 2 分野: データストア管理</td>
+<td>26％</td>
+</tr>
+<tr>
+<td>第 3 分野: データ運用とサポート</td>
+<td>22％</td>
+</tr>
+<tr>
+<td>第 4 分野: データセキュリティとガバナンス</td>
+<td>18%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-11">第 1 分野: データの取り込みと変換1.1: データの取り込みを行う</h2>
+<h4 id="111">1.1.1 対象知識</h4>
+<ul>
+<li>データを取り込む AWS サービスのスループットとレイテンシーの特性</li>
+<li>データ取り込みパターン (頻度やデータ履歴など)</li>
+<li>ストリーミングデータの取り込み</li>
+<li>バッチデータ取り込み (スケジュールされた取り込み、イベント駆動型の取り込みなど)<br>
+データ取り込みパイプラインの再現性</li>
+<li>ステートフルデータトランザクションとステートレスデータ</li>
+<li>トランザクション</li>
+</ul>
+<h4 id="112">1.1.2 対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ストリーミングソースからのデータの読み取り</td>
+<td>Amazon Kinesis、Amazon Managed Streaming for Apache Kafka [Amazon MSK]、Amazon DynamoDB Streams、AWS DMS、AWS Glue、Amazon Redshift など</td>
+</tr>
+<tr>
+<td>バッチソースからのデータの読み取り</td>
+<td>Amazon S3、AWS Glue、Amazon EMR、AWS DMS、Amazon Redshift、AWS Lambda、Amazon AppFlow など</td>
+</tr>
+<tr>
+<td>バッチ取り込み用の適切な設定オプションの実装</td>
+<td></td>
+</tr>
+<tr>
+<td>データ API の利用</td>
+<td>Amazon EventBridge、Apache Airflow、またはジョブとクローラの時間ベースのスケジュールを使用してスケジューラをセットアップ</td>
+</tr>
+<tr>
+<td>イベントトリガーの設定</td>
+<td>Amazon S3 イベント通知、EventBridge など</td>
+</tr>
+<tr>
+<td>Amazon Kinesis からの Lambda 関数の呼び出し</td>
+<td></td>
+</tr>
+<tr>
+<td>データソースへの接続を許可する IP アドレスの許可リストの作成</td>
+<td></td>
+</tr>
+<tr>
+<td>スロットリングの実装とレート制限の克服</td>
+<td>DynamoDB、Amazon RDS、Kinesis など</td>
+</tr>
+<tr>
+<td>ストリーミングデータ配信のファンイン / ファンアウトの管理</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="113-amazon-kinesis-sqs-kds-kdf-msk">1.1.3 Amazon Kinesis： SQS, KDS, KDF, MSKの違い</h4>
+<table>
+<thead>
+<tr>
+<th><strong>特徴</strong></th>
+<th><strong>SQS</strong></th>
+<th><strong>KDS</strong></th>
+<th><strong>KDF</strong></th>
+<th><strong>MSK</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>メッセージ配信</strong></td>
+<td>メッセージはデフォルトで<strong>4日 (最大14日)</strong> 保持／　各メッセージは1つのコンシューマに配信 (FIFOキューでは正確に一度だけ配信が保証される)</td>
+<td>データはデフォルトで<strong>24時間</strong> (最大365日) ストリーム内に保持／　各レコードは特定シャードに格納されシャード単位で読み取りが行われる／　同じデータを複数のコンシューマで処理することが可能</td>
+<td>組込データストレージはない／　メッセージ用シャードはスケーリング制御により自動調整</td>
+<td>メッセージの最大保持期間は<strong>7日</strong>／　コンシューマグループによる分散消費</td>
+</tr>
+<tr>
+<td><strong>データ消費</strong></td>
+<td>メッセージはコンシューマが利用可能な状態で受信する必要がある</td>
+<td>ストリームがデータをプルすることで、複数のコンシューマが同時に異なるレートでデータを消費できる</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>レイテンシ</strong></td>
+<td>半リアルタイム／　ミリ秒単位のレイテンシ</td>
+<td>リアルタイム／　秒単位以下のリアルタイムレイテンシを提供 - クラシック-200ミリ秒、拡張ファンアウト-70ミリ秒</td>
+<td>半リアルタイム／　最小バッファ時間は1分</td>
+<td>リアルタイム</td>
+</tr>
+<tr>
+<td><strong>スループット</strong></td>
+<td>メッセージはキューに追加され、コンシューマが利用可能になったときに配信</td>
+<td>スループットはストリームのシャード数によって制限され、必要に応じてシャードを追加・削除してスループットを調整することが可能</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>用途</strong></td>
+<td>マイクロサービス間のメッセージキューイングと分散型アプリケーションの<strong>デカップリング</strong></td>
+<td>ビッグデータをリアルタイムにストリーミング、処理および<strong>分析</strong>／　カスタムコードを用いたフロー／　リアルタイムなデータ分析、ダッシュボード、メトリクスなど</td>
+<td>ビッグデータを半リアルタイムにストリーミング、処理および<strong>分析</strong>／　S3、Splunk、Redshift、OpenSearchなどの自動化されたフロー／　半リアルタイムなデータ分析、ダッシュボード、メトリクスなど</td>
+<td>ビッグデータをリアルタイムにストリーミングおよび処理</td>
+</tr>
+<tr>
+<td><strong>管理</strong></td>
+<td>フルマネージド型のサービス／　スケーリングやキャンパシティプロビジョニングは自動</td>
+<td>セミマネージド型サービス／　カスタムコードはプロデューサ・コンシューマ双方に必要、スケーリングはシャードの分割・統合を含め手動</td>
+<td>フルマネージド型サービス／　カスタムコード不要、スケーリングは自動</td>
+<td>セミマネージド型サービス／　クラスタのセットアップ、運用、スケーリングはAWS</td>
+</tr>
+<tr>
+<td><strong>統合</strong></td>
+<td>各AWSサービスと緊密に統合</td>
+<td>各AWSサービスと緊密に統合／　LambdaによりリアルタイムデータをOpenSearchに供給</td>
+<td>各AWSサービスと緊密に統合／　Lambdaによる変換</td>
+<td>各AWSサービスと緩く統合／　統合にはKafka APIとプロトコルが必要</td>
+</tr>
+</tbody>
+</table>
+<h4 id="114-aws-gluelambda">1.1.4 AWS Glue、Lambdaの違い</h4>
+<p>AWS Glueはフルマネージド型ETLサービスで、特徴は以下の通り：</p>
+<ul>
+<li>データソース： S3、RDS、DynamoDB、KDS、DocumentDB</li>
+<li>データソースへのマッピング定義： Glue Data CatalogとしてPythonコードで生成される</li>
+<li>データセット： S3、RDS、DocumentDB</li>
+<li>ジョブ： Apache SparkあるいはPythonで定義</li>
+<li>ジョブの計算： DPU (Data Processing Unit)、1DPU = 4 vCPU, 16GBメモリ</li>
+<li>ジョブのチェックポイント管理： ジョブのチェックポイントをブックマーク機能で管理</li>
+<li>ジョブの起動： スケジュール起動、あるいは、イベントトリガー</li>
+<li>データ品質： Glue Data Quality</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Lambda</strong></th>
+<th><strong>Glue with Python</strong></th>
+<th><strong>Glue with Spark</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>規模</strong></td>
+<td>小規模</td>
+<td>中規模</td>
+<td>大規模</td>
+</tr>
+<tr>
+<td><strong>説明</strong></td>
+<td>軽量で高速なETLタスク</td>
+<td>中規模なETLタスク／　Sparkの管理オーバーヘッドを必要としない</td>
+<td>大規模なデータを扱う重量ETLタスク／　Apache Sparkの分散処理を利用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12">1.2: データを変換して処理する</h3>
+<h4 id="_3">対象知識:</h4>
+<ul>
+<li>ビジネス要件に基づく ETL パイプラインの作成</li>
+<li>データの量、速度、多様性 (構造化データ、非構造化データなど)</li>
+<li>クラウドコンピューティングと分散コンピューティング</li>
+<li>Apache Spark を使用してデータを処理する方法</li>
+<li>中間データステージングの場所</li>
+</ul>
+<h4 id="_4">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>パフォーマンスニーズに合わせてコンテナの使用を最適化</td>
+<td>Amazon EKS、Amazon ECS など</td>
+</tr>
+<tr>
+<td>さまざまなデータソースへの接続</td>
+<td>JDBC、ODBC など</td>
+</tr>
+<tr>
+<td>複数のソースからのデータの統合</td>
+<td></td>
+</tr>
+<tr>
+<td>データ処理時のコストの最適化</td>
+<td></td>
+</tr>
+<tr>
+<td>要件に基づくデータ変換サービスの実装</td>
+<td>Amazon EMR、AWS Glue、Lambda、Amazon Redshift など</td>
+</tr>
+<tr>
+<td>フォーマット間のデータ変換</td>
+<td>例えば、.csv から Apache Parquet へ</td>
+</tr>
+<tr>
+<td>一般的な変換エラーとパフォーマンス問題のトラブルシューティングとデバッグ</td>
+<td></td>
+</tr>
+<tr>
+<td>AWS サービスを使用して他のシステムからデータを使用できるようにするデータ API の作成</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="13">1.3: データパイプラインをオーケストレーションする</h3>
+<h4 id="_5">対象知識:</h4>
+<ul>
+<li>さまざまな AWS サービスを統合して ETL パイプラインを作成する方法</li>
+<li>イベント駆動型アーキテクチャ</li>
+<li>スケジュールや依存関係に基づいてデータパイプライン用に AWS サービスを設定する方法</li>
+<li>サーバーレスワークフロー</li>
+</ul>
+<h4 id="_6">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>オーケストレーションサービスを使用してデータ ETL パイプラインのワークフローを構築</td>
+<td>Lambda、EventBridge、Amazon Managed Workflows for Apache Airflow [Amazon MWAA]、AWS Step Functions、AWS Glue ワークフローなど</td>
+</tr>
+<tr>
+<td>パフォーマンス、可用性、スケーラビリティ、回復性、耐障害性を実現するデータパイプラインの構築</td>
+<td></td>
+</tr>
+<tr>
+<td>サーバーレスワークフローの実装と保守</td>
+<td></td>
+</tr>
+<tr>
+<td>通知サービスを使用したアラートの送信</td>
+<td>Amazon SNS、Amazon SQS など</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14">1.4: プログラミングの概念を応用する</h3>
+<h4 id="_7">対象知識:</h4>
+<ul>
+<li>継続的インテグレーションと継続的デリバリー (CI/CD) (データパイプラインの実装、テスト、デプロイ)</li>
+<li>SQL クエリ (データソースクエリとデータ変換用)</li>
+<li>反復可能なデプロイのための IaC (AWS CDK、AWS CloudFormation など)</li>
+<li>分散コンピューティング</li>
+<li>データ構造とアルゴリズム (グラフデータ構造やツリーデータ構造など)</li>
+<li>SQL クエリの最適化</li>
+</ul>
+<h4 id="_8">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コードの最適化によるデータ取り込みと変換のランタイム短縮</td>
+<td></td>
+</tr>
+<tr>
+<td>同時実行性とパフォーマンスのニーズを満たすための Lambda 関数の設定</td>
+<td></td>
+</tr>
+<tr>
+<td>SQL クエリを実行したデータの変換</td>
+<td>Amazon Redshift ストアドプロシージャなど</td>
+</tr>
+<tr>
+<td>データパイプラインの要件を満たすための SQL クエリの構造化</td>
+<td></td>
+</tr>
+<tr>
+<td>Git コマンドを使用した、リポジトリの作成、更新、複製、分岐などのアクションの実行</td>
+<td></td>
+</tr>
+<tr>
+<td>AWS SAM を使用したサーバーレスデータパイプラインのパッケージ化およびデプロイ</td>
+<td>Lambda 関数、Step Functions、DynamoDB テーブルなど</td>
+</tr>
+<tr>
+<td>Lambda 関数内からのストレージボリュームの使用とマウント</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2">第 2 分野: データストア管理</h2>
+<h3 id="21">2.1: データストアを選択する</h3>
+<h4 id="211">2.1.1 対象知識</h4>
+<ul>
+<li>ストレージプラットフォームと特性</li>
+<li>特定のパフォーマンス要求に対応するストレージサービスと設定</li>
+<li>データストレージ形式 (.csv、.txt、Parquet など)</li>
+<li>データストレージをデータ移行要件に合わせて調整する方法</li>
+<li>特定のアクセスパターンに適したストレージソリューションを決定する方法</li>
+<li>ロックを管理してデータへのアクセスを防ぐ方法 (Amazon Redshift、<br>
+Amazon RDS など)</li>
+</ul>
+<h4 id="212">2.1.2 対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>特定のコストとパフォーマンスの要件に適したストレージサービスの実装</td>
+<td>Amazon Redshift、Amazon EMR、AWS Lake Formation、Amazon RDS、DynamoDB、Amazon Kinesis Data Streams、Amazon MSK など</td>
+</tr>
+<tr>
+<td>特定のアクセスパターンと要件に適したストレージサービスの設定</td>
+<td>Amazon Redshift、Amazon EMR、Lake Formation、Amazon RDS、DynamoDB など</td>
+</tr>
+<tr>
+<td>適切なユースケースへのストレージサービスの適用</td>
+<td>Amazon S3 など</td>
+</tr>
+<tr>
+<td>データ処理システムへの移行ツールの統合</td>
+<td>AWS Transfer Family など</td>
+</tr>
+<tr>
+<td>データ移行またはリモートアクセス方法の実装</td>
+<td>Amazon Redshiftフェデレーションクエリ、Amazon Redshift マテリアライズドビュー、Amazon Redshift Spectrum など</td>
+</tr>
+</tbody>
+</table>
+<h4 id="213">2.1.3 ストレージの種類</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>オブジェクト</strong></th>
+<th><strong>ブロック</strong></th>
+<th><strong>ファイル</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWSサービス</td>
+<td>S3</td>
+<td>EBS</td>
+<td>EFS</td>
+</tr>
+<tr>
+<td>特徴</td>
+<td>- 階層構造をもたず、データはフラットな形式で保存</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- 日付・保存期間などのメタデータとともに保存され、一意の識別子 (ID) をもつフラットなアドレス空間に保存</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- 仮想化技術を用いて、物理的に離れたサーバを並列化して、一つのストレージプールとして保存</td>
+<td>- 物理マシンの記憶領域をボリュームという単位で分割し、さらにその内部を固定長のブロックに切り出して、ブロックにデータ保存</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- 階層構造を持たず、データへのパスを複数指定できるため、高速なアクセスを行う</td>
+<td>- ファイルやディレクトリといった形式で、階層的にデータを保存。ユーザは階層を辿っていくことでデータにアクセス</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- ファイル名、作成日、サイズなど最低限のメタデータが付与</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ユースケース</td>
+<td>- 構造化データ、非構造化データ問わず、幅広い用途で使われる</td>
+<td>- ファイルストレージやオブジェクトストレージより低いレイヤーに位置づけられる</td>
+<td></td>
+</tr>
+<tr>
+<td>- 仮想サーバの外部記憶などコンピュートサービス用のストレージとして使われる</td>
+<td>- PC用OSで採用されており、多くの人になじみがある</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="214-redshift">2.1.4 Redshiftの各タイプ</h4>
+<p>ノードタイプ</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>DC (Dense Compute)</strong></th>
+<th><strong>DS (Dense Storage)</strong></th>
+<th><strong>RA3</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>主な用途</strong></td>
+<td>計算集約的なワークロード</td>
+<td>ストレージ集約的なワークロード</td>
+<td>柔軟性とパフォーマンスを最適化</td>
+</tr>
+<tr>
+<td><strong>ストレージタイプ</strong></td>
+<td>SSD</td>
+<td>HDD</td>
+<td>Managed Storage (SSD + S3)</td>
+</tr>
+<tr>
+<td><strong>シナリオ</strong></td>
+<td>頻繁にクエリ実行</td>
+<td>大量のデータを安価に保存</td>
+<td>データの成長が予測できないホット/コールドデータ</td>
+</tr>
+<tr>
+<td><strong>拡張性</strong></td>
+<td>クラスタ内のノード数でスケーリング</td>
+<td>クラスタ内のノード数でスケーリング</td>
+<td>ストレージとコンピュートを独立して主ケーリング</td>
+</tr>
+<tr>
+<td><strong>コスト</strong></td>
+<td>高い計算能力のためコスト高</td>
+<td>ストレージが主なためコスト安</td>
+<td>使用したストレージのみ料金がかかる柔軟性</td>
+</tr>
+</tbody>
+</table>
+<p>分散タイプ</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>KEY</strong></th>
+<th><strong>EVEN</strong></th>
+<th><strong>ALL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>説明</strong></td>
+<td>分散キーで特定の1つのカラムの値に基づいて、行がスライス全体に分散</td>
+<td>特定カラムの値を考慮することなく、ラウンドロビン方式 (均等) で行がスライスに分散。データの均等な分散を保証</td>
+<td>テーブル全体のコピーが各ノードに分布される。これによりテーブルとの結合がノード内でローカルに行える</td>
+</tr>
+<tr>
+<td><strong>ユースケース</strong></td>
+<td>分散キーで頻繁にテーブルを結合</td>
+<td>デフォルトで明確な結合パターンがない<br>テーブルがあまり頻繁に結合に関与しない</td>
+<td>比較的小さなルックアップテーブルで、大きなテーブルと頻繁に結合</td>
+</tr>
+<tr>
+<td><strong>例</strong></td>
+<td>ordersテーブルとcustomersテーブルがあり、customer_idカラムで頻繁に結合される場合、customer_idを両方のテーブルの分散キーにする</td>
+<td>他のテーブルとあまり結合しないlog_entriesテーブル</td>
+<td>product_categoriesルックアップテーブルが、より大きなproductsテーブルと頻繁に結合される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22">2.2: データカタログシステムを理解する</h3>
+<h4 id="_9">対象知識:</h4>
+<ul>
+<li>データカタログの作成方法</li>
+<li>要件に基づくデータ分類</li>
+<li>メタデータとデータカタログのコンポーネント</li>
+</ul>
+<h4 id="_10">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>データカタログを使用したデータソースのデータの利用</td>
+<td></td>
+</tr>
+<tr>
+<td>データカタログの構築と参照</td>
+<td>AWS Glue Data Catalog、Apache Hiveメタストアなど</td>
+</tr>
+<tr>
+<td>スキーマの発見と AWS Glue クローラによるデータカタログへの入力</td>
+<td></td>
+</tr>
+<tr>
+<td>パーティションとデータカタログの同期</td>
+<td></td>
+</tr>
+<tr>
+<td>カタログ用の新しいソース接続またはターゲット接続の作成</td>
+<td>AWS Glueなど</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23">2.3: データのライフサイクルを管理する</h3>
+<h4 id="231">2.3.1 対象知識:</h4>
+<ul>
+<li>ホットデータおよびコールドデータ要件に対応する適切なストレージソリューション</li>
+<li>データライフサイクルに基づいてストレージのコストを最適化する方法</li>
+<li>ビジネス要件および法的要件を満たすためにデータを削除する方法</li>
+<li>データ保持ポリシーとアーカイブ戦略</li>
+<li>適切な回復性と可用性でデータを保護する方法</li>
+</ul>
+<h4 id="232">2.3.2 対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amazon S3 と Amazon Redshift の間でデータを移動するためのロードおよびアンロード操作の実行</td>
+<td></td>
+</tr>
+<tr>
+<td>S3 データのストレージ階層を変更するための S3 ライフサイクルポリシーの管理</td>
+<td></td>
+</tr>
+<tr>
+<td>S3 ライフサイクルポリシーを使用して特定の期限に達したデータを無効化</td>
+<td></td>
+</tr>
+<tr>
+<td>S3 バージョニングと DynamoDB TTL の管理</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="233">2.3.3 データレイヤー</h4>
+<table>
+<thead>
+<tr>
+<th><strong>データレイヤー名</strong></th>
+<th><strong>説明</strong></th>
+<th><strong>ライフサイクルポリシー戦略の例</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>未加工</strong></td>
+<td>未処理の未処理データを含み、データがデータレイクに取り込まれるレイヤーです。<br>可能であれば、元のファイル形式を維持し、S3 バケットのバージョン管理を有効にしてください。</td>
+<td>1 年後、ファイルを <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html">Amazon S3 低頻度アクセス (IA) ストレージクラスに移動します</a>。Amazon S3 IA で 2 年間使用した後、<a href="https://docs.aws.amazon.com/amazonglacier/latest/dev/introduction.html">それらを Amazon S3 Glacierにアーカイブします</a></td>
+</tr>
+<tr>
+<td><strong>ステージ</strong></td>
+<td>使用に最適化された処理済みの中間データが含まれます (CSV から Apache Parquet に変換された未処理ファイルまたはデータ変換など)。<br>AWS Glueジョブは未処理レイヤーからファイルを読み取り、データを検証します。その後、AWS Glueジョブはデータを Apache Parquet 形式のファイルに保存し、AWS Glueメタデータはデータカタログのテーブルに保存されます。</td>
+<td>データは、一定期間経過後、または組織の要件に従って削除できます。<br>一部のデータ派生要素 (元の JSON 形式の Apache Avro 変換など) は、短時間 (たとえば 90 日後) にデータレイクから削除できます。</td>
+</tr>
+<tr>
+<td><strong>分析</strong></td>
+<td>特定のユースケースの集計データを、すぐに使用できる形式 (Apache Parquet など) で格納します。</td>
+<td>データは Amazon S3 IA に移動して、一定期間経過後、または組織の要件に従って削除できます。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24">2.4: データモデルとスキーマの進化を設計する</h3>
+<h4 id="_11">対象知識:</h4>
+<ul>
+<li>データモデリングの概念</li>
+<li>データリネージを使用してデータの正確性と信頼性を確保する方法</li>
+<li>インデックス作成、パーティショニング戦略、圧縮、その他のデータ最適化手法のベストプラクティス</li>
+<li>構造化データ、半構造化データ、非構造化データをモデル化する方法</li>
+<li>スキーマ進化の手法</li>
+</ul>
+<h4 id="_12">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amazon Redshift、DynamoDB、Lake Formation のスキーマの設計</td>
+<td></td>
+</tr>
+<tr>
+<td>データ特性の変化への対処</td>
+<td></td>
+</tr>
+<tr>
+<td>スキーマ変換の実行</td>
+<td>AWS Schema Conversion Tool [AWS SCT] や AWS DMS Schema Conversion の使用など</td>
+</tr>
+<tr>
+<td>AWS ツールを使用してデータリネージを確立</td>
+<td>Amazon SageMaker ML Lineage Tracking など</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">第 3 分野: データ運用とサポート</h2>
+<h3 id="31-aws">3.1: AWS サービスを使用してデータ処理を自動化する</h3>
+<h4 id="_13">対象知識:</h4>
+<ul>
+<li>反復可能なビジネス成果を得るためのデータ処理の維持とトラブルシューティング方法</li>
+<li>データ処理のための API コール</li>
+<li>スクリプティングを使用できるサービス (Amazon EMR、Amazon Redshift、AWS Glue など)</li>
+</ul>
+<h4 id="_14">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>データパイプラインのオーケストレーション</td>
+<td>Amazon MWAA、Step Functions など</td>
+</tr>
+<tr>
+<td>Amazon マネージドワークフローのトラブルシューティング</td>
+<td></td>
+</tr>
+<tr>
+<td>SDK を呼び出してコードから Amazon の機能にアクセス</td>
+<td></td>
+</tr>
+<tr>
+<td>AWS サービスの機能を使用してデータを処理</td>
+<td>Amazon EMR、Amazon Redshift、AWS Glue など</td>
+</tr>
+<tr>
+<td>データ API の使用と管理</td>
+<td></td>
+</tr>
+<tr>
+<td>データ変換の準備</td>
+<td>AWS Glue DataBrew など</td>
+</tr>
+<tr>
+<td>データのクエリ</td>
+<td>Amazon Athena など</td>
+</tr>
+<tr>
+<td>Lambda を使用してデータ処理を自動化</td>
+<td></td>
+</tr>
+<tr>
+<td>イベントとスケジューラの管理</td>
+<td>EventBridge など</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-aws">3.2: AWS サービスを使用してデータを分析する</h3>
+<h4 id="_15">対象知識:</h4>
+<ul>
+<li>プロビジョニングされたサービスとサーバーレスサービスのトレードオフ</li>
+<li>SQL クエリ (例えば、複数の修飾子または JOIN 句を含む SELECTステートメント)</li>
+<li>分析のためにデータを視覚化する方法</li>
+<li>クレンジングテクニックが必要になる状況と適用方法</li>
+<li>データ集約、移動平均、グループ化、ピボット</li>
+</ul>
+<h4 id="_16">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS のサービスとツールを使用してデータを視覚化</td>
+<td>AWS Glue DataBrew、Amazon QuickSight など</td>
+</tr>
+<tr>
+<td>データの検証とクリーニング</td>
+<td>Lambda、Athena、QuickSight、Jupyter Notebook、Amazon SageMaker Data Wrangler など</td>
+</tr>
+<tr>
+<td>Athena を使用したデータのクエリやビューの作成</td>
+<td></td>
+</tr>
+<tr>
+<td>Apache Spark 対応の Athena ノートブックを使用してデータを探索</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="amazon-quicksight">Amazon QuickSight</h4>
+<p>BIツール。経営層が必要なダッシュボードやレポートを提供。以下、Quicksightの特徴：</p>
+<ul>
+<li>柔軟なクエリ： Quicksight Qにより問い合わせを自然言語で処理しレポート</li>
+<li>オートスケーリング： インメモリエンジンSPICEによりスケールアップ・ダウンを自動化</li>
+<li>細かなセキュリティ設定： 行レベルセキュリティ (Row-Level Security - RLS) を提供</li>
+<li>多様なグラフ：折れ線グラフ、コンボチャート、水平棒グラフ、 ヒートマップ、ツリーマップ、散布図、ヒストグラム、箱ひげ図、等</li>
+</ul>
+<h3 id="33">3.3: データパイプラインの保守とモニタリングを行う</h3>
+<h4 id="_17">対象知識:</h4>
+<ul>
+<li>アプリケーションデータのログを記録する方法</li>
+<li>パフォーマンスチューニングのベストプラクティス</li>
+<li>AWS サービスへのアクセスをログに記録する方法</li>
+<li>Amazon Macie、AWS CloudTrail、Amazon CloudWatch</li>
+</ul>
+<h4 id="_18">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>監査のためのログの抽出</td>
+<td></td>
+</tr>
+<tr>
+<td>監査とトレーサビリティを促進するためのログ記録およびモニタリングソリューションのデプロイ</td>
+<td></td>
+</tr>
+<tr>
+<td>モニタリング中に通知を使用したアラートの送信</td>
+<td></td>
+</tr>
+<tr>
+<td>パフォーマンス問題のトラブルシューティング</td>
+<td></td>
+</tr>
+<tr>
+<td>CloudTrail を使用した API コールの追跡</td>
+<td></td>
+</tr>
+<tr>
+<td>パイプラインのトラブルシューティングとメンテナンス</td>
+<td>AWS Glue、Amazon EMR など</td>
+</tr>
+<tr>
+<td>Amazon CloudWatch Logs を使用してアプリケーションデータをログに記録 (設定とオートメーションに重点を置く)</td>
+<td></td>
+</tr>
+<tr>
+<td>AWS サービスによるログの分析</td>
+<td>Athena、Amazon EMR、Amazon OpenSearch Service、CloudWatch Logs Insights、ビッグデータアプリケーションログなど</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34">3.4: データ品質を確保する</h3>
+<h4 id="_19">対象知識:</h4>
+<ul>
+<li>データサンプリング技法</li>
+<li>データスキューメカニズムの実装方法</li>
+<li>データ検証 (データの完全性、一貫性、正確性、整合性)</li>
+<li>データプロファイリング</li>
+</ul>
+<h4 id="_20">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>データ処理時にデータ品質チェックを実行する (空のフィールドのチェックなど)</td>
+<td></td>
+</tr>
+<tr>
+<td>データ品質ルールの定義</td>
+<td>AWS Glue DataBrew など</td>
+</tr>
+<tr>
+<td>データの一貫性の調査</td>
+<td>AWS Glue DataBrew など</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4">第 4 分野: データセキュリティとガバナンス</h2>
+<h3 id="41">4.1: 認証メカニズムを適用する</h3>
+<h4 id="_21">対象知識:</h4>
+<ul>
+<li>VPC セキュリティネットワークの概念</li>
+<li>マネージドサービスとアンマネージドサービスの違い</li>
+<li>認証方法 (パスワードベース、証明書ベース、ロールベース)</li>
+<li>AWS マネージドポリシーとカスタマーマネージドポリシーの違い</li>
+</ul>
+<h4 id="_22">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VPC セキュリティグループの更新</td>
+<td></td>
+</tr>
+<tr>
+<td>IAM グループ、ロール、エンドポイント、サービスの作成と更新</td>
+<td></td>
+</tr>
+<tr>
+<td>パスワード管理用の認証情報の作成とローテーション</td>
+<td>AWS Secrets Managerなど</td>
+</tr>
+<tr>
+<td>アクセス用の IAM ロールのセットアップ</td>
+<td>Lambda、Amazon API Gateway、AWS CLI、CloudFormation など</td>
+</tr>
+<tr>
+<td>ロール、エンドポイント、サービスへの IAM ポリシーの適用</td>
+<td>S3 Access Points、AWS PrivateLink など</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42">4.2: 認可メカニズムを適用する</h3>
+<h4 id="_23">対象知識:</h4>
+<ul>
+<li>認可方法 (ロールベース、ポリシーベース、タグベース、属性ベース)</li>
+<li>AWS セキュリティに適用される最小権限の原則</li>
+<li>ロールベースのアクセス制御と想定されるアクセスパターン</li>
+<li>サービス間の不正アクセスからデータを保護する方法</li>
+</ul>
+<h4 id="_24">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>マネージドポリシーがニーズを満たさない場合のカスタム IAM ポリシーの作成</td>
+<td></td>
+</tr>
+<tr>
+<td>アプリケーションとデータベースの認証情報の保存</td>
+<td>Secrets Manager、AWS Systems Manager Parameter Store など</td>
+</tr>
+<tr>
+<td>データベースユーザー、グループ、ロールにデータベースへのアクセス権と権限を付与する</td>
+<td>Amazon Redshift など</td>
+</tr>
+<tr>
+<td>Lake Formation を通じてアクセス許可を管理する</td>
+<td>Amazon Redshift、Amazon EMR、Athena、Amazon S3 用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43">4.3: データ暗号化とマスキングを実行する</h3>
+<h4 id="_25">対象知識:</h4>
+<ul>
+<li>AWS 分析サービス (Amazon Redshift、Amazon EMR、AWS Glue など) で利用できるデータ暗号化オプション</li>
+<li>クライアント側の暗号化とサーバー側の暗号化の違い</li>
+<li>機密データの保護</li>
+<li>データの匿名化、マスキング、キーソルティング</li>
+</ul>
+<h4 id="_26">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンプライアンス法または企業ポリシーに従ってデータマスキングと匿名化を適用</td>
+<td></td>
+</tr>
+<tr>
+<td>暗号化キーを使用してデータを暗号化または復号化</td>
+<td>AWS KMS など</td>
+</tr>
+<tr>
+<td>AWS アカウントの境界を越えた暗号化の設定</td>
+<td></td>
+</tr>
+<tr>
+<td>転送中のデータの暗号化を有効化</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="44">4.4: 監査用のログを準備する</h3>
+<h4 id="_27">対象知識:</h4>
+<ul>
+<li>アプリケーションデータのログを記録する方法</li>
+<li>AWS サービスへのアクセスをログに記録する方法</li>
+<li>一元化された AWS ログ</li>
+</ul>
+<h4 id="_28">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CloudTrail を使用した API コールの追跡</td>
+<td></td>
+</tr>
+<tr>
+<td>CloudWatch Logs を使用してアプリケーションログを保存</td>
+<td></td>
+</tr>
+<tr>
+<td>一元化されたログのクエリに AWS CloudTrail Lake を使用</td>
+<td></td>
+</tr>
+<tr>
+<td>AWS サービスを使用してログを分析</td>
+<td>Athena、CloudWatch Logs Insights、Amazon OpenSearch Service など</td>
+</tr>
+<tr>
+<td>ログの記録のためにさまざまな AWS サービスを統合</td>
+<td>大容量ログデータの場合に Amazon EMR を使用するなど</td>
+</tr>
+</tbody>
+</table>
+<h3 id="45">4.5: データプライバシーとガバナンスを理解する</h3>
+<h4 id="_29">対象知識:</h4>
+<ul>
+<li>個人を特定できる情報 (PII) を保護する方法</li>
+<li>データ主権</li>
+</ul>
+<h4 id="_30">対象スキル:</h4>
+<table>
+<thead>
+<tr>
+<th><strong>スキル</strong></th>
+<th><strong>関連サービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>データ共有のアクセス許可を付与</td>
+<td>Amazon Redshift のデータ共有など</td>
+</tr>
+<tr>
+<td>PII 識別の実装</td>
+<td>Lake Formation による Macie など</td>
+</tr>
+<tr>
+<td>許可されていない AWS リージョンへのデータのバックアップやレプリケーションを防ぐためのデータプライバシー戦略の実装</td>
+<td></td>
+</tr>
+<tr>
+<td>アカウントで発生した設定変更の管理</td>
+<td>AWS Config など</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_31">付録</h2>
+<h3 id="aws">範囲内の AWS のサービスと機能</h3>
+<p>以下に、試験範囲の AWS のサービスと機能のリストを示します。このリストはすべて<br>
+を網羅しているわけではなく、また、変更される場合があります。各 AWS のサービス<br>
+は、サービスの主な機能に応じたカテゴリに分けられています。</p>
+<table>
+<thead>
+<tr>
+<th><strong>カテゴリ</strong></th>
+<th><strong>関連AWSサービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分析</td>
+<td>- Amazon Athena</td>
+</tr>
+<tr>
+<td>- Amazon EMR</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Glue</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Glue DataBrew</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Lake Formation</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Kinesis Data Firehose</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Kinesis Data Streams</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Managed Service for Apache Flink</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Managed Streaming for Apache Kafka (Amazon MSK)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon OpenSearch Service</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon QuickSight</td>
+<td></td>
+</tr>
+<tr>
+<td>アプリケーション統合</td>
+<td>- Amazon AppFlow</td>
+</tr>
+<tr>
+<td>- Amazon EventBridge</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Managed Workflows for Apache Airflow (Amazon MWAA)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon SNS</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon SQS</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Step Functions</td>
+<td></td>
+</tr>
+<tr>
+<td>クラウド財務管理</td>
+<td>- AWS Budgets</td>
+</tr>
+<tr>
+<td>- AWS Cost Explorer</td>
+<td></td>
+</tr>
+<tr>
+<td>コンピューティング</td>
+<td>- AWS Batch</td>
+</tr>
+<tr>
+<td>- Amazon EC2</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Lambda</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Serverless Application Model (AWS SAM)</td>
+<td></td>
+</tr>
+<tr>
+<td>コンテナ</td>
+<td>- Amazon ECR</td>
+</tr>
+<tr>
+<td>- Amazon ECS</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon EKS</td>
+<td></td>
+</tr>
+<tr>
+<td>データベース</td>
+<td>- Amazon DocumentDB (MongoDB 互換)</td>
+</tr>
+<tr>
+<td>- Amazon DynamoDB</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Keyspaces (Apache Cassandra 向け)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon MemoryDB for Redis</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Neptune</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon RDS</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Redshift</td>
+<td></td>
+</tr>
+<tr>
+<td>デベロッパーツール</td>
+<td>- AWS CLI</td>
+</tr>
+<tr>
+<td>- AWS Cloud9</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS CDK</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS CodeBuild</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS CodeCommit</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS CodeDeploy</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS CodePipeline</td>
+<td></td>
+</tr>
+<tr>
+<td>フロントエンドのウェブとモバイル</td>
+<td>- Amazon API Gateway</td>
+</tr>
+<tr>
+<td>機械学習</td>
+<td>- Amazon SageMaker</td>
+</tr>
+<tr>
+<td>マネジメントとガバナンス</td>
+<td>- AWS CloudFormation</td>
+</tr>
+<tr>
+<td>- AWS CloudTrail</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon CloudWatch</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon CloudWatch Logs</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Config</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Managed Grafana</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Systems Manager</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Well-Architected Tool</td>
+<td></td>
+</tr>
+<tr>
+<td>移行と転送</td>
+<td>- AWS Application Discovery Service</td>
+</tr>
+<tr>
+<td>- AWS Application Migration Service</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS DMS</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS DataSync</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Schema Conversion Tool (AWS SCT)</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Snow ファミリー</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Transfer Family</td>
+<td></td>
+</tr>
+<tr>
+<td>ネットワークとコンテンツ配信</td>
+<td>- Amazon CloudFront</td>
+</tr>
+<tr>
+<td>- AWS PrivateLink</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Route 53</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon VPC</td>
+<td></td>
+</tr>
+<tr>
+<td>セキュリティ、アイデンティティ、コンプライアンス</td>
+<td>- AWS Identity and Access Management (IAM)</td>
+</tr>
+<tr>
+<td>- AWS Key Management Service (AWS KMS)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Macie</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Secrets Manager</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Shield</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS WAF</td>
+<td></td>
+</tr>
+<tr>
+<td>ストレージ</td>
+<td>- AWS Backup</td>
+</tr>
+<tr>
+<td>- Amazon EBS</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon EFS</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon S3</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon S3 Glacier</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="aws_1">範囲外の AWS のサービスと機能</h3>
+<p>以下に、試験対象外の AWS のサービスと機能のリストを示します。このリストはすべてを網羅しているわけではなく、また、変更される場合があります。試験の対象となる職務内容に完全に関係のない AWS のサービスは、このリストから除外されています。</p>
+<table>
+<thead>
+<tr>
+<th><strong>カテゴリ</strong></th>
+<th><strong>関連AWSサービス</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分析</td>
+<td>- Amazon FinSpace</td>
+</tr>
+<tr>
+<td>ビジネスアプリケーション</td>
+<td>- Alexa for Business</td>
+</tr>
+<tr>
+<td>- Amazon Chime</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Connect</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Honeycode</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IQ</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon WorkDocs</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon WorkMail</td>
+<td></td>
+</tr>
+<tr>
+<td>コンピューティング</td>
+<td>- AWS App Runner</td>
+</tr>
+<tr>
+<td>- AWS Elastic Beanstalk</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Lightsail</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Outposts</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Serverless Application Repository</td>
+<td></td>
+</tr>
+<tr>
+<td>コンテナ</td>
+<td>- Red Hat OpenShift Service on AWS (ROSA)</td>
+</tr>
+<tr>
+<td>データベース</td>
+<td>- Amazon Timestream</td>
+</tr>
+<tr>
+<td>デベロッパーツール</td>
+<td>- AWS Fault Injection Simulator (AWS FIS)</td>
+</tr>
+<tr>
+<td>- AWS X-Ray</td>
+<td></td>
+</tr>
+<tr>
+<td>フロントエンドのウェブとモバイル</td>
+<td>- AWS Amplify</td>
+</tr>
+<tr>
+<td>- AWS AppSync</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Device Farm</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Location Service</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Pinpoint</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Simple Email Service (Amazon SES)</td>
+<td></td>
+</tr>
+<tr>
+<td>IoT</td>
+<td>- FreeRTOS</td>
+</tr>
+<tr>
+<td>- AWS IoT 1-Click</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT Device Defender</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT Device Management</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT Events</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT FleetWise</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT RoboRunner</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT SiteWise</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS IoT TwinMaker</td>
+<td></td>
+</tr>
+<tr>
+<td>機械学習</td>
+<td>- Amazon CodeWhisperer</td>
+</tr>
+<tr>
+<td>- Amazon DevOps Guru</td>
+<td></td>
+</tr>
+<tr>
+<td>マネジメントとガバナンス</td>
+<td>- AWS Activate</td>
+</tr>
+<tr>
+<td>- AWS Managed Services (AMS)</td>
+<td></td>
+</tr>
+<tr>
+<td>メディアサービス</td>
+<td>- Amazon Elastic Transcoder</td>
+</tr>
+<tr>
+<td>- AWS Elemental Appliances and Software</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaConnect</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaConvert</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaLive</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaPackage</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaStore</td>
+<td></td>
+</tr>
+<tr>
+<td>- AWS Elemental MediaTailor</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Interactive Video Service (Amazon IVS)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Amazon Nimble Studio</td>
+<td></td>
+</tr>
+<tr>
+<td>移行と転送</td>
+<td>- AWS Mainframe Modernization</td>
+</tr>
+<tr>
+<td>- AWS Migration Hub</td>
+<td></td>
+</tr>
+<tr>
+<td>ストレージ</td>
+<td>- EC2 Image Builder</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?nc1=h_ls">AWS Certified Data Engineer - Associate 認定 | AWS 認定</a></li>
+</ul></article></main>
+<footer>© Blahfe &amp; Grpr. <a href="/www.blahfe.com/page/contact/">コンタクト</a> · <a href="https://github.com/blahfe/www.blahfe.com">GitHub</a></footer></body></html>
