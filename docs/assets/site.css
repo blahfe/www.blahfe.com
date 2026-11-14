@@ -15,18 +15,15 @@ html{scroll-behavior:smooth}body{margin:0}.skip{position:absolute;left:-10000px;
 .has-static-background>.le_entity_content{position:relative;z-index:1}
 #rw_wrapper .rw_banner{overflow:hidden}
 
-/* Keep the navigation visible at every width and render the header artwork in its own layer. */
-#rw_header.site-header{box-sizing:border-box;position:relative!important;isolation:isolate;display:flex;align-items:center;justify-content:center;min-height:104px;height:auto;padding:26px 32px!important;overflow:hidden;background:#e7ece7}
-.site-header>.header-background{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center 45%;pointer-events:none}
-.site-header-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:40px;width:100%;max-width:1200px}
-.site-brand{flex:none;font-size:22px;font-weight:400;line-height:1.5;color:#172d2b!important;text-decoration:none;padding:8px 4px}
-.site-navigation{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:24px}
-.site-navigation a{display:block;color:#172d2b!important;text-decoration:none;font-size:15px;font-weight:600;line-height:1.6;padding:8px 2px;white-space:nowrap}
-.site-navigation a:hover,.site-brand:hover{text-decoration:underline;text-underline-offset:6px}
-#rw_header.site-header a[aria-current=page]{border-bottom:1px solid #647c74}
-@media(max-width:767px){#rw_header.site-header{padding:16px!important;min-height:112px}.site-header-inner{flex-direction:column;gap:8px}.site-brand{font-size:20px;padding:0}.site-navigation{gap:8px 12px}.site-navigation a{font-size:14px;padding:5px 0}}
-
-/* Night Eye's page-level brightness clips pale artwork to white; keep this image visible. */
-html[nighteye="active"] .site-header>.header-background{filter:brightness(.35) contrast(1.3)}
-html[nighteye="active"] .site-header .site-brand,html[nighteye="active"] .site-header .site-navigation a{color:#fff!important}
-html[nighteye="active"] #rw_header.site-header a[aria-current=page]{border-bottom-color:#e2e9e5}
+/* Match the original transparent header; keep the requested, always-visible menu sizes. */
+#rw_header.site-header{box-sizing:border-box;position:sticky!important;top:0;z-index:2;isolation:isolate;display:flex;align-items:center;justify-content:center;height:104px;padding:30px 40px!important;overflow:hidden;background:transparent}
+.site-header>.header-background{position:absolute;top:0;left:0;z-index:0;display:block;width:100%;height:500px;max-width:none;object-fit:cover;object-position:50% 50%;pointer-events:none}
+.site-header-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:20px;width:100%;height:44px}
+.site-brand{flex:none;font-size:22px;font-weight:400;line-height:40px;color:#000!important;text-decoration:none;padding:12px 20px}
+.site-navigation{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;height:40px}
+.site-navigation a{display:flex;align-items:center;justify-content:center;color:#000!important;text-decoration:none;font-size:15px;font-weight:400;line-height:40px;height:40px;padding:0 16px;white-space:nowrap}
+.site-navigation a:hover,.site-brand:hover{background:rgba(17,17,17,.1)}
+#rw_header.site-header a[aria-current=page]{border-bottom:1px solid rgba(17,17,17,.2)}
+/* Undo only page-level brightness/contrast on the original pale artwork, without darkening it. */
+html[nighteye="active"] .header-background,html[nighteye="active"] .static-banner-background{filter:brightness(var(--artwork-brightness,1)) contrast(var(--artwork-contrast,1))}
+@media(max-width:767px){#rw_header.site-header{height:auto;min-height:112px;padding:16px!important}.site-header-inner{flex-direction:column;height:auto;gap:8px}.site-brand{font-size:20px;line-height:30px;padding:0}.site-navigation{height:auto;gap:8px 12px}.site-navigation a{font-size:14px;line-height:24px;height:32px;padding:4px 0}}

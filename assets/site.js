@@ -1,3 +1,31 @@
+// Preserve the original banner pixels when a browser extension filters the entire page.
+(() => {
+  let last = '';
+  let queued = false;
+  const factor = (filter, name) => {
+    const match = filter.match(new RegExp(name + '\\(([-\\d.]+)(%)?\\)'));
+    return match ? Number(match[1]) / (match[2] ? 100 : 1) : 1;
+  };
+  const update = () => {
+    queued = false;
+    const root = document.documentElement;
+    const filter = getComputedStyle(root).filter;
+    const key = root.getAttribute('nighteye') + ':' + filter;
+    if (key === last) return;
+    last = key;
+    const active = root.getAttribute('nighteye') === 'active';
+    const brightness = active ? factor(filter, 'brightness') : 1;
+    const contrast = active ? factor(filter, 'contrast') : 1;
+    root.style.setProperty('--artwork-brightness', String(brightness > 0 ? 1 / brightness : 1));
+    root.style.setProperty('--artwork-contrast', String(contrast > 0 ? 1 / contrast : 1));
+  };
+  const schedule = () => {
+    if (!queued) { queued = true; requestAnimationFrame(update); }
+  };
+  new MutationObserver(schedule).observe(document.documentElement, { attributes: true, attributeFilter: ['nighteye', 'style', 'class'] });
+  new MutationObserver(schedule).observe(document.head, { childList: true, subtree: true });
+  update();
+})();
 const siteScriptURL = document.currentScript?.src;
 for (const button of document.querySelectorAll('[data-tree-toggle]')) {
   button.addEventListener('click', () => {
