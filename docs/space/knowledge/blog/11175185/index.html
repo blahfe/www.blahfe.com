@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elixirではてなブックマーク | Blahfe &amp; Grpr</title><meta name="description" content="Blahfe &amp; Grpr — IT・セキュリティコンサルティングとナレッジ">
+<link rel="canonical" href="https://www.blahfe.com/space/knowledge/blog/11175185/"><link rel="stylesheet" href="/www.blahfe.com/assets/site.css">
+</head><body><a class="skip" href="#main">本文へ</a><header><a class="brand" href="/www.blahfe.com/">Blahfe &amp; Grpr</a><nav aria-label="メイン"><a href="/www.blahfe.com/page/vision/">ビジョン</a><a href="/www.blahfe.com/page/member/">メンバー</a><a href="/www.blahfe.com/space/knowledge/">ナレッジ</a><a href="/www.blahfe.com/page/contact/">コンタクト</a></nav></header>
+<main id="main"><article><h1>Elixirではてなブックマーク</h1><p><img alt="image" src="/www.blahfe.com/assets/attachments/att11862830.png" /></p>
+<p>紆余曲折合ってはてなブックマークの運用を見直す必要が出てきました。人の興味というのは尽きないもので知りたいことが次々出てきます。にも拘わらず人の時間は有限でそれにあがなうための手段を考えたわけです。</p>
+<h2 id="problem">PROBLEM</h2>
+<blockquote>
+<p>❌ フィードリーダーで記事を読んだ後にはてなブックマーク（ブクマ）するとフィード消化するのに時間がかかる
+❌
+❌ - フィードをそのままブクマしていると下記の問題がでてくる
+❌   - あとで確認することができない
+❌   - 読みたくない記事をブクマしてしまう
+❌   - 適切でないURLでブクマしてしまう</p>
+</blockquote>
+<h2 id="solution">SOLUTION</h2>
+<p>下記の方針でブクマすることにしました。設置方法の詳細は<a href="https://github.com/nabinno/keshikimi2">GitHubレポジトリ</a>を参照ください。そして、方針は下記の通りになります。</p>
+<p><strong>方針</strong></p>
+<ul>
+<li>フィードごとにタグづけする</li>
+<li>ブクマ対象になる記事をリンクとタイトルで除外判定する</li>
+<li>ブクマ対象になる記事をリンクから校正すべきものかリダイレクトすべきものか判定する</li>
+<li>上記設定はYAMLファイルで簡単に管理できるようにする</li>
+<li>フィード読込とブクマを非同期処理できるようElixirで実装する</li>
+</ul>
+<h3 id="_1">ブクマの管理方法</h3>
+<p>まずブクマの管理ですが、下記5つのYAMLファイルで構成しています、構造はマップとリストのみ。ブクマしたいと思う記事を読みすすめる中で気になるキーワードが出てきたら都度 <code>feed.yaml</code> を更新します。また、記事にノイズが多いようだったら傾向を分析して除外ファイル <code>feed_excluded_link.yaml</code> <code>feed_excluded_title.yaml</code> を更新します。</p>
+<table>
+<thead>
+<tr>
+<th>item</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feed.yaml</code></td>
+<td>フィードグループ名に対するリンク、タグのマップ</td>
+</tr>
+<tr>
+<td><code>feed_excluded_link.yaml</code></td>
+<td>除外すべきフィードリンクのリスト</td>
+</tr>
+<tr>
+<td><code>feed_excluded_title.yaml</code></td>
+<td>除外すべきフィードタイトルのリスト</td>
+</tr>
+<tr>
+<td><code>feed_corrected_link.yaml</code></td>
+<td>フィードリンクに対するトリミングすべきパラメータのマップ</td>
+</tr>
+<tr>
+<td><code>feed_redirected_link.yaml</code></td>
+<td>フィードリンクに対するリダイレクト先リンクのマップ</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-yaml"># feed.yaml
+nabinno/sports/feed_group_name:
+  tags:
+    - ski
+  links:
+    - &lt;http://rss.example.com/ski_feed.rss&gt;
+    - &lt;http://rss.example.com/snowboard_feed.rss&gt;
+    - &lt;http://ski-status.example.com/rss&gt;
+
+# feed_excluded_link.yaml
+- anti-ski.example.com
+- awesome-snowboard.example.com
+
+# feed_excluded_title.yaml
+- queer
+- two-planker
+- beaver-tail
+
+# feed_corrected_link.yaml
+amazon.com:
+  - ref
+  - ie
+
+# feed_redirected_link.yaml
+ski-status.example.com:
+  - Floki.find(fst, &quot;.post__body a&quot;)
+</code></pre>
+<h3 id="elixir">Elixirによる非同期処理</h3>
+<p>Elixirで非同期処理を行っているのですが、大きく分けて監視機構のSupervisorと非同期処理のTask.async_streamを使っています。</p>
+<h4 id="supervisor">監視機構 Supervisor</h4>
+<p>まず、Supervisor。Elixirには監視機構Supervisorがあり、それが各ワーカーを子プロセスとして管理しています。ここではフィード読込とブクマは別々のワーカーで処理しますが、キャッシュが暖気処理を別ワーカーで行っているため再起動戦略は「失敗したイベントの中にあるすべての子プロセスを再起動」（ <code>one_for_all</code> ）にしてあります。再起動戦略の詳細は「<a href="https://elixirschool.com/ja/lessons/advanced/otp-supervisors/">OTPスーパバイザ · Elixir School</a>」を参照下さい。</p>
+<p>下記のように <code>Supervisor.start_link</code> を <code>Keshikimi2.Application.start</code> に適用すると、アプリケーション開始（ <code>mix run</code> ）した時点で監視機構が起動されます。</p>
+<pre><code class="language-ex">Supervisor.start_link(
+  [
+    :hackney_pool.child_spec(:hatena_bookmark_pool, timeout: 15_000, max_connections: 100),
+    # @todo 当該ワーカーで暖気処理を行っていないので `one_for_one` にした場合、再起動時にほかに影響する
+    supervisor(Cachex, [:feed, []]),
+    supervisor(Keshikimi2Feed.Registry, [prefix]),
+
+    # フィード読込処理 (PubSub)
+    supervisor(Keshikimi2Feed.Subscriber, [prefix]),
+    worker(Keshikimi2Feed.Worker, [prefix]),
+    worker(Keshikimi2Feed.Publisher, [[prefix: prefix, poll_interval: 3_000]]),
+
+    # ブクマ処理
+    worker(Keshikimi2.HatenaBookmark.AddEntry, [
+      [prefix: prefix, poll_interval: 3_000]
+    ])
+  ],
+  strategy: :one_for_all,
+  name: name(prefix)
+)
+</code></pre>
+<h4 id="taskasync_stream">非同期処理 Task.async_stream</h4>
+<p>次に、Task.async_stream。配列を引き回すリクエスト処理は <code>Task.async_stream</code> がうってつけです。下記ではキャッシュからブクマ対象になるフィードリンクを取り出し、除外処理、校正処理を加えて、ブクマのリクエストを出すという流れを組んでいます。Elixirでは、流れをひとまとめにして視覚的にわかりやすく非同期処理してくことができます。</p>
+<pre><code class="language-ex">Cachex.keys!(:feed)
+|&gt; Enum.reject(fn key -&gt;
+  key in [
+    &quot;excluded_links&quot;,
+    &quot;excluded_titles&quot;,
+    &quot;corrected_links&quot;,
+    &quot;redirected_links&quot;,
+    &quot;feed_group&quot;,
+    &quot;archived_links&quot;
+  ]
+end)
+|&gt; Task.async_stream(
+  fn item_link -&gt;
+    with {:ok, [item_title, feed_tags]} &lt;- Cachex.get(:feed, item_link),
+         :ok &lt;- validate_all(item_link, item_title),
+         corrected_link &lt;- correct_all(item_link),
+         {:ok, payload} &lt;-
+           FormData.create(
+             %{
+               url: corrected_link,
+               comment: feed_tags |&gt; Enum.map_join(fn tag -&gt; &quot;[#{tag}]&quot; end),
+               rks: System.get_env(&quot;HATENA_BOOKMARK_RKS&quot;),
+               private: 0,
+               keep_original_url: 1,
+               with_status_op: 1,
+               from: &quot;inplace&quot;,
+               post_twitter: 0,
+               post_evernote: 0
+             },
+             :url_encoded,
+             get: false
+           ) do
+      do_add_entries_to_hb(payload)
+      Logger.info(&quot;add entry: #{item_link}&quot;)
+    end
+
+    archive_link(item_link)
+  end,
+  timeout: 15_000
+)
+|&gt; Stream.run()
+</code></pre>
+<h2 id="wrapup">WRAPUP</h2>
+<p>Elixirの非同期処理を使うことではてなブックマークの運用がとても快適になりました。はてなブックマークとの今後の付き合い方は下記のように考えています。</p>
+<ul>
+<li><strong>手動でブクマ:</strong> 気になった記事があるごとに</li>
+<li><strong>ブクマの確認:</strong> 気になるタグごとにまとめて確認</li>
+</ul>
+<p>ブクマの確認については、例えば、CIでデプロイしている間に最近のGitHubの動向を確認したい場合は「<a href="http://b.hatena.ne.jp/nabinno/github">nabinno/github</a>」をみる、という感じの運用です。</p>
+<p>融通が利かない点で途中運用が難しくなる気もしますが、しばらく回してみます。</p></article></main>
+<footer>© Blahfe &amp; Grpr. <a href="/www.blahfe.com/page/contact/">コンタクト</a> · <a href="https://github.com/blahfe/www.blahfe.com">GitHub</a></footer></body></html>

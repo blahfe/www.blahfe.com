@@ -1,26 +1,30 @@
-# Site configuration of Blahfe & Grpr
+# www.blahfe.com
 
-## Useful commands
+Blahfe & Grprの公開Webサイト。Confluence / RefinedからGitHub Pagesへ移行。
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
+- `content/`: 公開済みコンテンツのMarkdown。内部資料・下書きは含めない。
+- `assets/`: CMSに依存しない画像とスタイル。
+- `scripts/build.py`: Markdownから静的HTMLを生成。
+- `docs/`: GitHub Pages配信ディレクトリ（生成物もコミットする）。
+- `legacy/`: 旧AWS/CDK構成。現行サイトでは使用しない。
 
----
+## 更新
 
-## Epilogue
-
-```
-A whale!
-Down it goes, and more, and more
-Up goes its tail!
-
--Buson Yosa
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python scripts/build.py
+python3 -m http.server 8000 --directory docs
 ```
 
----
+`content/`を編集し、再生成した`docs/`とともにコミットする。
+GitHub Pagesの配信元は`master`ブランチの`/docs`。
+カスタムドメイン切替前は`https://blahfe.github.io/www.blahfe.com/`で確認する。
+内部資料は非公開の https://github.com/blahfe/docs に置く。
 
-Copyright &copy; 2015 Blahfe & Grpr
+## 移管元
+
+https://www.blahfe.com/ の匿名公開Markdown出力から取得。
+公開ナレッジは移管時の公開インデックスで確認できた19ページ・3ブログ。
+Confluence固有の画像参照は添付ファイルに置換する。
+旧URLのID付きパスは404ページで移管先へ案内する。
