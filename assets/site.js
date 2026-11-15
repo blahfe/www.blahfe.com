@@ -42,10 +42,71 @@ document.querySelector('[data-load-pages]')?.addEventListener('click', event => 
   for (const card of document.querySelectorAll('[data-extra-page]')) card.hidden = false;
   event.currentTarget.hidden = true;
 });
-document.querySelector('[data-load-blog]')?.addEventListener('click', event => {
-  for (const card of document.querySelectorAll('[data-extra-blog]')) card.hidden = false;
-  event.currentTarget.hidden = true;
-});
+const BLOG_PAGE_SIZE = 30;
+const blogList = document.querySelector('[data-blog-cards]');
+const blogNav = document.querySelector('[data-blog-pagination]');
+if (blogList && blogNav) {
+  const cards = [...blogList.querySelectorAll(':scope > a.card_container')];
+  const total = Math.max(1, Math.ceil(cards.length / BLOG_PAGE_SIZE));
+  const requested = Number(new URLSearchParams(location.search).get('page') || '1');
+  const current = Number.isInteger(requested) && requested >= 1 ? Math.min(requested, total) : 1;
+  cards.forEach((card, index) => {
+    card.hidden = Math.floor(index / BLOG_PAGE_SIZE) + 1 !== current;
+  });
+  const pageItems = () => {
+    if (total <= 6) return Array.from({ length: total }, (_, index) => index + 1);
+    const pages = [...new Set([1, 2, total - 1, total, current - 1, current, current + 1])]
+      .filter(page => page >= 1 && page <= total)
+      .sort((a, b) => a - b);
+    const items = [];
+    let previous = 0;
+    for (const page of pages) {
+      if (page - previous > 1) items.push('...');
+      items.push(page);
+      previous = page;
+    }
+    return items;
+  };
+  const pageHref = page => {
+    const url = new URL(location.href);
+    if (page === 1) url.searchParams.delete('page');
+    else url.searchParams.set('page', String(page));
+    url.hash = 'blog';
+    return url.pathname + url.search + url.hash;
+  };
+  const addDisabled = label => {
+    const item = document.createElement('span');
+    item.className = 'blog-page is-disabled';
+    item.textContent = label;
+    item.setAttribute('aria-disabled', 'true');
+    blogNav.append(item);
+  };
+  const addLink = (label, page, isCurrent) => {
+    const item = document.createElement('a');
+    item.className = 'blog-page' + (isCurrent ? ' is-current' : '');
+    item.textContent = label;
+    item.href = pageHref(page);
+    if (isCurrent) item.setAttribute('aria-current', 'page');
+    blogNav.append(item);
+  };
+  blogNav.replaceChildren();
+  if (total > 1) {
+    if (current === 1) addDisabled('Prev');
+    else addLink('Prev', current - 1, false);
+    for (const item of pageItems()) {
+      if (item === '...') {
+        const ellipsis = document.createElement('span');
+        ellipsis.className = 'blog-page-ellipsis';
+        ellipsis.textContent = '...';
+        blogNav.append(ellipsis);
+      } else {
+        addLink(String(item), item, item === current);
+      }
+    }
+    if (current === total) addDisabled('Next');
+    else addLink('Next', current + 1, false);
+  }
+}
 const search = document.querySelector('[data-static-search]');
 search?.addEventListener('input', async () => {
   const query = search.value.trim().toLocaleLowerCase();

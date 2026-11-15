@@ -4,7 +4,7 @@ Blahfe & Grprの公開Webサイト（https://www.blahfe.com/）。
 
 ## 構成
 
-- `content/`: 公開コンテンツのMarkdown（固定ページ `page/*.md`、ナレッジ `space/knowledge/*.md`、ブログ `space/knowledge/blog/*.md`）。
+- `content/`: 公開コンテンツのMarkdown（固定ページ `page/*.md`、ナレッジ一覧 `space/knowledge/README.md`、個別ページ `space/knowledge/*.md`、ブログ `space/knowledge/blog/*.md`）。
 - `assets/`: 画像（`design/`、`attachments/`、`blog/`）・フォント・CSS・`site.js`。
 - `templates/`: 固定ページ（`home` / `vision` / `member` / `contact` / `knowledge`）と共通ヘッダー・フッターのHTMLテンプレート。
 - `scripts/build.py`: Markdownとテンプレートから静的HTML・検索インデックス・サイトマップを生成。
@@ -21,7 +21,7 @@ python3 -m http.server 8000 --directory docs
 
 - ナレッジ・ブログ本文は `content/`、固定ページの配置・文言は `templates/` と対応する `content/` のMarkdownを編集し、`scripts/build.py` で再生成した `docs/` とともにコミットする。
 - 引数なしの `build.py` が `https://www.blahfe.com/` 向けの canonical URL、`docs/CNAME`、`docs/search-index.json`、`docs/sitemap.xml`、`docs/404.html` を出力する。
-- ナレッジ検索・ツリー展開・追加読み込みは `assets/site.js` で動作する。
+- ナレッジ検索・ツリー展開・Blogのページ送りは `assets/site.js` で動作する。Blogは30件ずつ表示し、超える分は `Prev`、ページ番号、`Next` のリンク（`?page=`）で移動する。
 - GitHub Pagesの配信元はこのリポジトリ（`blahfe/www.blahfe.com`）の `master` ブランチ・`/docs` ディレクトリ。`master` へマージするとそのまま公開される。
 
 ## 独自ドメイン（DNS）
