@@ -4,13 +4,11 @@ Blahfe & Grprの公開Webサイト（https://www.blahfe.com/）。
 
 ## 構成
 
-- `content/`: 公開コンテンツのMarkdown（固定ページ `page/*.md`、ナレッジ `space/knowledge/*.md`、ブログ `space/knowledge/blog/*.md`）。内部資料・下書きは含めない。
+- `content/`: 公開コンテンツのMarkdown（固定ページ `page/*.md`、ナレッジ `space/knowledge/*.md`、ブログ `space/knowledge/blog/*.md`）。
 - `assets/`: 画像（`design/`、`attachments/`、`blog/`）・フォント・CSS・`site.js`。
 - `templates/`: 固定ページ（`home` / `vision` / `member` / `contact` / `knowledge`）と共通ヘッダー・フッターのHTMLテンプレート。
 - `scripts/build.py`: Markdownとテンプレートから静的HTML・検索インデックス・サイトマップを生成。
 - `docs/`: GitHub Pages配信ディレクトリ（生成物もコミットする）。
-
-内部資料は非公開の https://github.com/blahfe/docs で管理する。
 
 ## 更新・ビルド
 
