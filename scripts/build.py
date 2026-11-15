@@ -70,9 +70,16 @@ def page(title, body, route, toc_html='', date_html=''):
 <link rel="icon" href="{base}assets/design/favicon.png"><link rel="canonical" href="{site_url}{route}"><link rel="stylesheet" href="{base}assets/design/refined.css?v={asset_versions['assets/design/refined.css']}"><link rel="stylesheet" href="{base}assets/design/theme.css?v={asset_versions['assets/design/theme.css']}"><link rel="stylesheet" href="{base}assets/design/components.css?v={asset_versions['assets/design/components.css']}"><link rel="stylesheet" href="{base}assets/site.css?v={asset_versions['assets/site.css']}">
 <script src="{base}assets/site.js?v={asset_versions['assets/site.js']}" defer></script></head><body><a class="skip" href="#rw_main_id">本文へ</a>{shell}</body></html>'''
 
+def route_for(rel):
+    # index.md and README.md are the page for their directory. content/index.md stays the home page.
+    if rel.name in {'index.md', 'README.md'}:
+        parent = rel.parent.as_posix()
+        return '' if parent == '.' else parent + '/'
+    return rel.with_suffix('').as_posix() + '/'
+
 for source in sorted((ROOT / 'content').rglob('*.md')):
     rel = source.relative_to(ROOT / 'content')
-    route = '' if str(rel) == 'index.md' else str(rel.with_suffix('')) + '/'
+    route = route_for(rel)
     text = source.read_text()
     title = source.stem
     toc_depth = '1-3'

@@ -23,6 +23,7 @@
 - [ソフトウェア工学](/space/knowledge/5603329.md)
 - [資格 (ソフトウェア工学)](/space/knowledge/5603355.md)
 - [CISSPまとめ](/space/knowledge/7962733.md)
+- [ナレッジ](/space/knowledge/README.md)
 - [踏み台をSSM Session ManagerとAWS SSOで実現する](/space/knowledge/blog/n119.md)
 - [Increment Pは住所のバリデーションチェックでどの程度使えるか](/space/knowledge/blog/n124.md)
 - [Trend Micro Vision Oneを試してみる](/space/knowledge/blog/n127.md)
@@ -61,4 +62,3 @@
 - [yubinbango-dataをどうやって生成するか](/space/knowledge/blog/n90.md)
 - [Hardware-Accelerated GPU Scheduling機能を使ったWSL2はどのくらいパフォーマンスが向上するか](/space/knowledge/blog/n91.md)
 - [AWS CloudTrail用のコスパの良いSIEMを探す](/space/knowledge/blog/n93.md)
-- [ナレッジ](/space/knowledge.md)
