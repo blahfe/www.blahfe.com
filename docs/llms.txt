@@ -3,6 +3,7 @@
 - [Blahfe & Grpr](/index.md)
 - [コンタクト](/page/contact.md)
 - [メンバー](/page/member.md)
+- [プライバシーポリシー](/page/privacy.md)
 - [ビジョン](/page/vision.md)
 - [AWS DEAまとめ](/space/knowledge/102957064.md)
 - [BABOKまとめ](/space/knowledge/11174208.md)

@@ -56,7 +56,8 @@ def page(title, body, route, toc_html='', date_html=''):
         main = (templates / (name + '.html')).read_text()
     else:
         outline = f'<details class="article-toc" open><summary>目次</summary><nav aria-label="この記事の目次">{toc_html}</nav></details>' if toc_html else ''
-        main = f'<main id="rw_main_id" class="knowledge-article"><article><a class="breadcrumb" href="/space/knowledge/">ナレッジ</a>{date_html}<h1>{title}</h1>{outline}{body}</article></main>'
+        breadcrumb = '<a class="breadcrumb" href="/space/knowledge/">ナレッジ</a>' if route.startswith('space/knowledge/') else ''
+        main = f'<main id="rw_main_id" class="knowledge-article"><article>{breadcrumb}{date_html}<h1>{title}</h1>{outline}{body}</article></main>'
     header = (templates / 'header.html').read_text()
     header = re.sub(r' aria-current="page"', '', header)
     header = header.replace(' rw_active', '').replace('router-link-active', '').replace('router-link-exact-active', '')
